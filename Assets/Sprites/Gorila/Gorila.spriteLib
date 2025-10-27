@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5e6fedc2472449cead18ef23b5cb30d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Library:
+  - m_Name: Boca
+    m_Hash: 666348061
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Enfadat
+      m_Hash: 135886142
+      m_Sprite: {fileID: -2509563016521833072, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -2509563016521833072, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+    - m_Name: Normal
+      m_Hash: 640249298
+      m_Sprite: {fileID: -8989783675254379776, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8989783675254379776, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Nas
+    m_Hash: 816776120
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Normal
+      m_Hash: 640249298
+      m_Sprite: {fileID: -1328309184152761153, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -1328309184152761153, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+    - m_Name: Enfadat
+      m_Hash: 135886142
+      m_Sprite: {fileID: 8453129340467847121, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 8453129340467847121, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Fum
+    m_Hash: 706590774
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Fum
+      m_Hash: 706590774
+      m_Sprite: {fileID: -4722531659068124109, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -4722531659068124109, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+    - m_Name: NoFum
+      m_Hash: 402167620
+      m_Sprite: {fileID: -4698600402995417950, guid: 71280b87cb2046c42814dfd9f88df46d, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -4698600402995417950, guid: 71280b87cb2046c42814dfd9f88df46d, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Ulls
+    m_Hash: 471733989
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Obert
+      m_Hash: 164864151
+      m_Sprite: {fileID: -6188265226541130990, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -6188265226541130990, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+    - m_Name: Tancat
+      m_Hash: 946450229
+      m_Sprite: {fileID: 354541306929358242, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 354541306929358242, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Celles
+    m_Hash: 141026503
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Enfadat
+      m_Hash: 135886142
+      m_Sprite: {fileID: 2935153970636969602, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2935153970636969602, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+    - m_Name: Normal
+      m_Hash: 640249298
+      m_Sprite: {fileID: -308785974108502363, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -308785974108502363, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  m_PrimaryLibraryGUID: 
+  m_ModificationHash: 638971706720630112
+  m_Version: 1
