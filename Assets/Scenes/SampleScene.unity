@@ -119,63 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &25222930
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -8653719598885068355, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_Name
-      value: GorilaUpdated
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7552582706839291426, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 4843985084834002234, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
 --- !u!1 &181078311
 GameObject:
   m_ObjectHideFlags: 0
@@ -784,6 +727,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3880708105553484760, guid: f876baaec6d0b994ca1d336cdc87a8fc, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4133377549726970399, guid: f876baaec6d0b994ca1d336cdc87a8fc, type: 3}
       propertyPath: m_SortingOrder
       value: 4
@@ -864,6 +811,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 96225174396625754, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -8989783675254379776, guid: 8e3360cf2316f06458f6c66585f115c4, type: 3}
     - target: {fileID: 196368045275931916, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.9942692
@@ -1004,6 +955,26 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.3552383
       objectReference: {fileID: 0}
+    - target: {fileID: 3023002511995626449, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.09375
+      objectReference: {fileID: 0}
+    - target: {fileID: 3023002511995626449, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.197266
+      objectReference: {fileID: 0}
+    - target: {fileID: 3023002511995626449, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3023002511995626449, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3023002511995626449, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3352309406474510866, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.7609148
@@ -1048,6 +1019,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 1.89
       objectReference: {fileID: 0}
+    - target: {fileID: 5045555054661222801, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -4698600402995417950, guid: 71280b87cb2046c42814dfd9f88df46d, type: 3}
     - target: {fileID: 5067562311453912003, guid: 3e4446c60fc9d6d4081ea2530e5c668b, type: 3}
       propertyPath: m_Name
       value: GorilaSpriteLibary+IK
@@ -1241,4 +1216,3 @@ SceneRoots:
   - {fileID: 1342036709}
   - {fileID: 181078314}
   - {fileID: 3788436527546122168}
-  - {fileID: 25222930}
