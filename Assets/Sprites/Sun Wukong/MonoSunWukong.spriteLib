@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5e6fedc2472449cead18ef23b5cb30d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Library:
+  - m_Name: Boca
+    m_Hash: 666348061
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Boca normal
+      m_Hash: 588948384
+      m_Sprite: {fileID: -3955092555653295922, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -3955092555653295922, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+    - m_Name: Boca Feliz
+      m_Hash: 276808945
+      m_Sprite: {fileID: 4928351875294834982, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4928351875294834982, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+    - m_Name: Boca enfadat
+      m_Hash: 920082144
+      m_Sprite: {fileID: 1229152491082468866, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 1229152491082468866, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 3
+  - m_Name: Ulls
+    m_Hash: 471733989
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Ojos abiertos
+      m_Hash: 212466816
+      m_Sprite: {fileID: 6929439413272784759, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 6929439413272784759, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+    - m_Name: Ulls tancats
+      m_Hash: 554963537
+      m_Sprite: {fileID: 2701826230938086750, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2701826230938086750, guid: af75fe48f092eeb40b016a6e15d65227, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  m_PrimaryLibraryGUID: 
+  m_ModificationHash: 638975139144390338
+  m_Version: 1
