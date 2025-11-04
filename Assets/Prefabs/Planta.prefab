@@ -127,7 +127,6 @@ MonoBehaviour:
   rayLength: 5
   bulletPrefab: {fileID: 1875731115399608958, guid: 1349cdd534ac93c46924fc60a6cd5362, type: 3}
   poolSize: 10
-  timeBetShoot: 1
   spawnPoint: {fileID: 5666719725756240097}
 --- !u!1 &2464335165214595013
 GameObject:
@@ -206,7 +205,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 586107633460368534, guid: bb0d576953f571a4fb086983f214387a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -294,8 +293,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
-  m_Sprite: {fileID: -8696925952158855310, guid: 6ed25062b63737443bdf98697701263e, type: 3}
+  m_SortingOrder: 0
+  m_Sprite: {fileID: -5229434950165587585, guid: 6ed25062b63737443bdf98697701263e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
