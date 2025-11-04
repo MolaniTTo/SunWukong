@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovment : MonoBehaviour, InputSystem_Actions.IPlayerActions //hereda de la interficie IPlayerActions generada pel Input System per implementar els mètodes d'input
+public class PlayerMovment : MonoBehaviour, InputSystem_Actions.IPlayerActions //hereda de la interficie IPlayerActions generada pel Input System per implementar els mï¿½todes d'input
 {
     [Header("Movment")]
     public float speed = 5f;
@@ -25,33 +25,33 @@ public class PlayerMovment : MonoBehaviour, InputSystem_Actions.IPlayerActions /
 
     void OnEnable()
     {
-        controls.Player.Enable(); //activa el mapa de controls de Player (per defecte està desactivat)
+        controls.Player.Enable(); //activa el mapa de controls de Player (per defecte estï¿½ desactivat)
     }
 
     void OnDisable()
     {
-        controls.Player.Disable(); //desactiva el mapa de controls de Player (quan l'script està desactivat o destruït)
+        controls.Player.Disable(); //desactiva el mapa de controls de Player (quan l'script estï¿½ desactivat o destruï¿½t)
     }
 
-    public void OnMove(InputAction.CallbackContext context) //mètode cridat quan hi ha input de moviment
+    public void OnMove(InputAction.CallbackContext context) //mï¿½tode cridat quan hi ha input de moviment
     {
         moveInput = context.ReadValue<Vector2>(); //llegeix el valor de l'input de moviment (Vector2) i l'assigna a moveInput
     }
 
-    public void OnJump(InputAction.CallbackContext context) //mètode cridat quan hi ha input de salt
+    public void OnJump(InputAction.CallbackContext context) //mï¿½tode cridat quan hi ha input de salt
     {
-        CheckIfGrounded(); //comprova si el jugador està a terra
-        if (context.performed && isGrounded) //si l'input de salt s'ha realitzat i el jugador està a terra
+        CheckIfGrounded(); //comprova si el jugador estï¿½ a terra
+        if (context.performed && isGrounded) //si l'input de salt s'ha realitzat i el jugador estï¿½ a terra
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); //aplica una força de salt al Rigidbody2D en l'eix Y
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); //aplica una forï¿½a de salt al Rigidbody2D en l'eix Y
         }
 
     }
 
-    private void CheckIfGrounded() //comprova si el jugador està a terra mitjançant un raycast
+    private void CheckIfGrounded() //comprova si el jugador estï¿½ a terra mitjanï¿½ant un raycast
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, groundLayer); //tira un raycast cap avall des de la posició del jugador de 0.6 de llargada i només col·lisiona amb el layer de terra
-        isGrounded = hit.collider != null ? true : false; //operador ternari: si el raycast col·lisiona amb alguna cosa, isGrounded és true, sinó és false
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, groundLayer); //tira un raycast cap avall des de la posiciï¿½ del jugador de 0.6 de llargada i nomï¿½s colï¿½lisiona amb el layer de terra
+        isGrounded = hit.collider != null ? true : false; //operador ternari: si el raycast colï¿½lisiona amb alguna cosa, isGrounded ï¿½s true, sinï¿½ ï¿½s false
     }
 
 
@@ -75,10 +75,10 @@ public class PlayerMovment : MonoBehaviour, InputSystem_Actions.IPlayerActions /
 
     private void OnDrawGizmos()
     {
-        //Dibuixa el raycast per comprovar si està a terra
+        //Dibuixa el raycast per comprovar si estï¿½ a terra
         Gizmos.color = Color.red;
 
-        //Distancia del raycast per comprovar si està a terra
+        //Distancia del raycast per comprovar si estï¿½ a terra
         float rayDistance = 1.1f;
 
         Gizmos.DrawLine(transform.position, transform.position + Vector3.down * rayDistance);
