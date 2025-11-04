@@ -9,15 +9,27 @@ public class PlayerStateMachine : MonoBehaviour
         Idle,
         Running,
         Jumping,
-        Attaking,
+        AttackPunch,
+        AttackTail,
+        Block,
+        BeingHit,
+        Healing,
+        SpecialAttackPunch,
+        SpecialAttackStaff,
+        Swinging,
         Climbing,
-        Swinging
+        Death
+
+
     }
 
     [Header("Movment")]
     public float speed = 5f;
     public float jumpForce = 15f;
     [SerializeField] private LayerMask groundLayer;
+
+   // [Header("Animation")]
+   // [SerializeField] private Animator animator;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -35,9 +47,9 @@ public class PlayerStateMachine : MonoBehaviour
         currentState = PlayerState.Idle;
     }
 
-    private void Update()
+      private void Update()
     {
-        switch(currentState)
+        switch (currentState)
         {
             case PlayerState.Idle:
                 HandleIdle();
@@ -51,18 +63,50 @@ public class PlayerStateMachine : MonoBehaviour
                 HandleJumping();
                 break;
 
-            case PlayerState.Attaking:
+            case PlayerState.AttackPunch:
+                //HandleAttackPunch();
+                break;
+
+            case PlayerState.AttackTail:
+                //HandleAttackTail();
+                break;
+
+            case PlayerState.Block:
+                //HandleBlock();
+                break;
+
+            case PlayerState.BeingHit:
+                //HandleBeingHit();
+                break;
+
+            case PlayerState.Healing:
+                //HandleHealing();
+                break;
+
+            case PlayerState.SpecialAttackPunch:
+                //HandleSpecialAttackPunch();
+                break;
+
+            case PlayerState.SpecialAttackStaff:
+                //HandleSpecialAttackStaff();
+                break;
+
+            case PlayerState.Swinging:
+                //HandleSwinging();
                 break;
 
             case PlayerState.Climbing:
+                //HandleClimbing();
+                break;
+
+            case PlayerState.Death:
+                //HandleDeath();
                 break;
 
             default:
                 currentState = PlayerState.Idle;
                 break;
-
         }
-        
     }
 
     private void HandleIdle() 
