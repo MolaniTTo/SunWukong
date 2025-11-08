@@ -262,7 +262,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1079631543}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pierna derecha_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -278,7 +278,7 @@ Transform:
   m_GameObject: {fileID: 1079631542}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.74373686, w: -0.66847265}
-  m_LocalPosition: {x: 0.45664024, y: 0.5774889, z: 0}
+  m_LocalPosition: {x: 0.41302824, y: 0.688725, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -293,7 +293,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1278590424}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo izquierdo_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -309,7 +309,7 @@ Transform:
   m_GameObject: {fileID: 1278590423}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.36475745, w: -0.9311025}
-  m_LocalPosition: {x: 0.8192377, y: 1.6244347, z: 0}
+  m_LocalPosition: {x: 0.92611647, y: 1.5427284, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -324,7 +324,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1676778371}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo Derecho_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -340,7 +340,7 @@ Transform:
   m_GameObject: {fileID: 1676778370}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.44842547, w: -0.8938203}
-  m_LocalPosition: {x: -0.5520811, y: 1.3672495, z: 0}
+  m_LocalPosition: {x: -0.63021946, y: 1.357482, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -507,7 +507,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3026754719249472819}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -522,8 +522,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8934651877002687798}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.9998252, w: -0.018695716}
-  m_LocalPosition: {x: 1.3744928, y: 0.30605686, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9998376, w: 0.018024333}
+  m_LocalPosition: {x: 1.461792, y: 0.2551334, z: 0}
   m_LocalScale: {x: 0.99999976, y: 0.99999976, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -539,7 +539,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7291740914123878421}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pierna Izquierda
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -557,7 +557,7 @@ GameObject:
   - component: {fileID: 2134611985609488673}
   - component: {fileID: 3564738790337008633}
   - component: {fileID: 4580845366759026458}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: "Pa\xF1uelo"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -575,7 +575,7 @@ GameObject:
   - component: {fileID: 8523821101597614704}
   - component: {fileID: 1316625543897525028}
   - component: {fileID: 4316153322348477618}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Hombro derecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -591,7 +591,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6013230401165750389}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -607,7 +607,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9053633451545778715}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: "Pa\xF1uelo 1"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -670,7 +670,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 706924144837064783}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pecho_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -745,11 +745,11 @@ GameObject:
   - component: {fileID: 5782904810177552834}
   - component: {fileID: 7620137471783415785}
   - component: {fileID: 7620137471783415790}
-  - component: {fileID: 7620137471783415791}
   - component: {fileID: 7620137471783415792}
-  m_Layer: 0
+  - component: {fileID: 7620137471783415793}
+  m_Layer: 3
   m_Name: MonoSunWukongDef
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -764,7 +764,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6153337582766525142}
   - component: {fileID: 2478644734871014198}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cola
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -780,7 +780,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5822804612491873389}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cola_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -850,7 +850,7 @@ GameObject:
   - component: {fileID: 384756895332433427}
   - component: {fileID: 5460126102501043968}
   - component: {fileID: 8641073636944850961}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Hombro izquierdo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -866,7 +866,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6133481165658437638}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cinturon_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -968,7 +968,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1778101051313460926}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.00800505, w: 0.999968}
+  m_LocalRotation: {x: 0, y: 0, z: -0.007999051, w: 0.99996805}
   m_LocalPosition: {x: 0.33198678, y: 0.000000026116501, z: 0}
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1016,7 +1016,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8996368548112206512}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.0002050426, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.00021915088, w: 1}
   m_LocalPosition: {x: 0.7601262, y: -0.00020235781, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1055,7 +1055,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2996990667357908854}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pie izquierdo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1088,7 +1088,7 @@ GameObject:
   - component: {fileID: 5372379132695699347}
   - component: {fileID: 4739524665935932844}
   - component: {fileID: 6023265902268425790}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo izquierdo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1104,7 +1104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3038597203682368445}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo Derecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1119,7 +1119,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8179291901308834459}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.07188016, w: 0.99741334}
+  m_LocalRotation: {x: -0, y: -0, z: -0.035213146, w: 0.9993799}
   m_LocalPosition: {x: 0.4735829, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1237,7 +1237,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4478607097731963695}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pierna izquierda limb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1305,7 +1305,7 @@ GameObject:
   - component: {fileID: 1065364755792388543}
   - component: {fileID: 2991145192567095080}
   - component: {fileID: 3807322829957476097}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tobillo Derecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1321,7 +1321,7 @@ Transform:
   m_GameObject: {fileID: 524370270816428937}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.913641, y: -4.993812, z: 0}
+  m_LocalPosition: {x: -6.935201, y: -5.0584936, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1365,7 +1365,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1910608891393230915}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pierna izquierda_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1381,7 +1381,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 886468480528195487}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1397,7 +1397,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5252668470606386323}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_26
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1413,7 +1413,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5086765530977775287}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_25
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1429,7 +1429,7 @@ Transform:
   m_GameObject: {fileID: 1757664817464555020}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.70053333, w: 0.71361977}
-  m_LocalPosition: {x: 0.6100044, y: -0.20896196, z: 0}
+  m_LocalPosition: {x: 0.63299894, y: 0.07509136, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1461,7 +1461,7 @@ GameObject:
   - component: {fileID: 1173223717412332364}
   - component: {fileID: 4669427895393180033}
   - component: {fileID: 5930250403178256621}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cola
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1479,7 +1479,7 @@ GameObject:
   - component: {fileID: 4106220917744339951}
   - component: {fileID: 8587742589766426358}
   - component: {fileID: 5053008377331399560}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: "pu\xF1o Izquierdo"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1550,7 +1550,7 @@ Transform:
   m_GameObject: {fileID: 159210948242011465}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.31599998, y: 0.96700007, z: 0}
+  m_LocalPosition: {x: 0.84208345, y: 1.3967578, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1567,7 +1567,7 @@ GameObject:
   - component: {fileID: 8570865307696727340}
   - component: {fileID: 7094697300438436266}
   - component: {fileID: 5285850217844445376}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pierna izquierda
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1632,7 +1632,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3807621951621288561}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.42866325, w: 0.9034644}
+  m_LocalRotation: {x: 0, y: -0, z: 0.0063187005, w: 0.9999801}
   m_LocalPosition: {x: 0.51070654, y: 0.0041185017, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1640,7 +1640,7 @@ Transform:
   - {fileID: 7717882850988779161}
   - {fileID: 6074387647318308530}
   m_Father: {fileID: 2993895112414599726}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 43.503}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 1.969}
 --- !u!1 &2435730576538798358
 GameObject:
   m_ObjectHideFlags: 0
@@ -1650,7 +1650,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7717882850988779161}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo izquierdo limb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1819,7 +1819,7 @@ GameObject:
   - component: {fileID: 7517417584662966338}
   - component: {fileID: 2714966248760184487}
   - component: {fileID: 3270282644244067521}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cinturon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1889,7 +1889,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5406994532394449476}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.9814787, w: 0.19157135}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9973552, w: -0.07268119}
   m_LocalPosition: {x: 0.55217683, y: -0.35603288, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1973,7 +1973,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1071316800297373699}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.9242549, w: -0.38177598}
+  m_LocalRotation: {x: 0, y: 0, z: -0.9276034, w: -0.37356645}
   m_LocalPosition: {x: 0.72063833, y: 0.35046187, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1992,7 +1992,7 @@ GameObject:
   - component: {fileID: 1635741389231993219}
   - component: {fileID: 9071228244359062326}
   - component: {fileID: 2994877000399188806}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Antebrazo izquierdo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2010,7 +2010,7 @@ GameObject:
   - component: {fileID: 4222149955394013786}
   - component: {fileID: 4376750009683378800}
   - component: {fileID: 7929346360238054478}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: "Pu\xF1o derecho"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2078,7 +2078,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5208000641387046377}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: "Pa\xF1uelo 2"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2186,7 +2186,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7652650570407291445}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo Derecho Limb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2203,7 +2203,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8589730755226263407}
   - component: {fileID: 1166100546842279077}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo Derecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2221,7 +2221,7 @@ GameObject:
   - component: {fileID: 6063670319232362193}
   - component: {fileID: 6300307197115853372}
   - component: {fileID: 7448526528988242518}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Mano derecha baston
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2259,7 +2259,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2407066066118326997}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Antebrazo izquierdo_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2366,7 +2366,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2403408032236516094}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cola_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2397,7 +2397,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1922935151793522183}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cola Chain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2462,7 +2462,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6210754611466574643}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.14909802, w: 0.98882246}
+  m_LocalRotation: {x: 0, y: 0, z: -0.14909193, w: 0.98882335}
   m_LocalPosition: {x: 0.2853407, y: 0.00000009885789, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2575,7 +2575,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3532567756100131812}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cabeza_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2590,7 +2590,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1343999367507095422}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.005417503, w: 0.9999854}
+  m_LocalRotation: {x: -0, y: -0, z: -0.019251226, w: 0.9998147}
   m_LocalPosition: {x: 0.4584019, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2608,7 +2608,7 @@ GameObject:
   - component: {fileID: 6632858771866050268}
   - component: {fileID: 836318878641774943}
   - component: {fileID: 6108967632304531909}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pie Izquierdo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2880,7 +2880,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4853177400199964349}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_27
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2916,7 +2916,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1819429625728829640}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.4234743, w: 0.9059081}
+  m_LocalRotation: {x: 0, y: 0, z: 0.42347226, w: 0.9059091}
   m_LocalPosition: {x: 0.31297833, y: -0.000000024536563, z: 0}
   m_LocalScale: {x: 0.99999976, y: 0.99999976, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2935,7 +2935,7 @@ GameObject:
   - component: {fileID: 5826047564940976553}
   - component: {fileID: 4793770035335623522}
   - component: {fileID: 7064087839407459042}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pie Derecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3019,7 +3019,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7974142600612019461}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Mano derecha
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3049,7 +3049,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6452802196845234885}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.41223434, w: 0.91107786}
+  m_LocalRotation: {x: 0, y: 0, z: 0.41223174, w: 0.91107905}
   m_LocalPosition: {x: 0.32290456, y: -0.0013098955, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3066,7 +3066,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2993895112414599726}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo izquierdo_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3139,7 +3139,7 @@ GameObject:
   - component: {fileID: 3600549243205362541}
   - component: {fileID: 3828634626599623792}
   - component: {fileID: 2561622502756442218}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cabeza
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3157,7 +3157,7 @@ GameObject:
   - component: {fileID: 7262670460839860837}
   - component: {fileID: 8651895378568638698}
   - component: {fileID: 3937702152867016277}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Mano izquierda baston
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3227,7 +3227,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5848347191648648743}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.038345177, w: 0.9992646}
+  m_LocalRotation: {x: 0, y: 0, z: 0.038345553, w: 0.9992646}
   m_LocalPosition: {x: 0.3657552, y: -0.0000000016967461, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3292,7 +3292,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 578632187438094516}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.545669, w: 0.8380008}
+  m_LocalRotation: {x: 0, y: 0, z: 0.5456716, w: 0.8379991}
   m_LocalPosition: {x: -0.2772393, y: 0.26523206, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3324,7 +3324,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5638360750750174788}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_22
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3425,7 +3425,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 226487790691854753}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.2823898, w: 0.9592998}
+  m_LocalRotation: {x: 0, y: 0, z: -0.28241006, w: 0.95929384}
   m_LocalPosition: {x: 0.21846491, y: 0.000000048554423, z: 0}
   m_LocalScale: {x: 1.0000004, y: 1.0000004, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3547,7 +3547,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5704787196360016694}
   - component: {fileID: 912296388883972537}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo izquierdo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3563,7 +3563,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4372660026392125157}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3634,7 +3634,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5382243067712625616}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_23
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3652,7 +3652,7 @@ GameObject:
   - component: {fileID: 5137708301225276869}
   - component: {fileID: 2047319623137126388}
   - component: {fileID: 1005709501514035118}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pierna Derecha
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3684,7 +3684,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8191228261224793636}
   - component: {fileID: 370525802748938568}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pierna izquierda
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3754,7 +3754,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8762201986895006712}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.318167, w: 0.94803476}
+  m_LocalRotation: {x: 0, y: 0, z: 0.22712615, w: 0.9738654}
   m_LocalPosition: {x: 0.7488876, y: 0.00000004089862, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3793,7 +3793,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 710946209647560393}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3882,7 +3882,7 @@ GameObject:
   - component: {fileID: 2378300393671078398}
   - component: {fileID: 5632143307939517288}
   - component: {fileID: 4440268430881005889}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Brazo derecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3912,8 +3912,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 94720222579121479}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.9999919, w: 0.0040411353}
-  m_LocalPosition: {x: 1.368536, y: -0.289633, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: -0.99958754, w: 0.028721249}
+  m_LocalPosition: {x: 1.4458005, y: -0.24548316, z: 0}
   m_LocalScale: {x: 0.99999976, y: 0.99999976, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4045,7 +4045,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 9d694351c6a1daf4b8b8abdde30521ae, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -4081,8 +4081,28 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!70 &7620137471783415791
-CapsuleCollider2D:
+--- !u!114 &7620137471783415792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 524370270816428937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16da0d0991c2811419b3f4448833c4a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  jumpForce: 15
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  animator: {fileID: 7620137471783415785}
+  isGrounded: 1
+  currentState: 0
+--- !u!61 &7620137471783415793
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -4115,29 +4135,18 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.14145589, y: 1.9111466}
-  m_Size: {x: 2.2803502, y: 3.9969044}
-  m_Direction: 0
---- !u!114 &7620137471783415792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 524370270816428937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c17b205efc0cc44a8e40f9cda6f1833, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  jumpForce: 15
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  animator: {fileID: 7620137471783415785}
-  isGrounded: 1
-  currentState: 0
+  m_Offset: {x: -0.1655078, y: 1.782285}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 2.899889, y: 3.43543}
+  m_EdgeRadius: 0
 --- !u!1 &7631532134299656359
 GameObject:
   m_ObjectHideFlags: 0
@@ -4150,7 +4159,7 @@ GameObject:
   - component: {fileID: 6860176233165780371}
   - component: {fileID: 4423765193572426220}
   - component: {fileID: 7997236028386366255}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Boca '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4165,7 +4174,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3782201938431721370}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.25674582, w: -0.96647894}
+  m_LocalRotation: {x: -0, y: -0, z: -0.3386268, w: -0.9409208}
   m_LocalPosition: {x: 0.5235729, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4181,7 +4190,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8936964583307973220}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tobillo derecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4196,7 +4205,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2435730576538798358}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.03310674, w: 0.9994518}
+  m_LocalRotation: {x: -0, y: 0, z: 0.20288026, w: 0.9792035}
   m_LocalPosition: {x: 0.575731, y: -0.0026449177, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4211,7 +4220,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8388146845367666812}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.47985113, w: 0.87735}
+  m_LocalRotation: {x: 0, y: 0, z: 0.4798499, w: 0.8773506}
   m_LocalPosition: {x: 0.3388641, y: -0.00000024343464, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4230,7 +4239,7 @@ GameObject:
   - component: {fileID: 910195966883722}
   - component: {fileID: 7404872616589298924}
   - component: {fileID: 2380305569357157422}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4298,7 +4307,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4367305788524655561}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pie derecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4314,7 +4323,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1108930142539269119}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ' Pierna derecha limb'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4364,7 +4373,7 @@ GameObject:
   - component: {fileID: 3271238655725859060}
   - component: {fileID: 5950750586581724032}
   - component: {fileID: 7422530054270987323}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: AnteBrazo Derecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4380,7 +4389,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7727588959768638898}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_24
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4399,7 +4408,7 @@ GameObject:
   - component: {fileID: 423770379741528330}
   - component: {fileID: 1452358670431068379}
   - component: {fileID: 7162527128925116545}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ojos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4516,7 +4525,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6074387647318308530}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Mano izquierdo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4607,7 +4616,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7053726869910902024}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ' Antebrazo derecho'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4625,7 +4634,7 @@ GameObject:
   - component: {fileID: 3023277759457652304}
   - component: {fileID: 4967364130473558062}
   - component: {fileID: 3566663557023157795}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tobillo izquierdo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4641,7 +4650,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 68653328833207022}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pierna derecha
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4656,7 +4665,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7654762679650415788}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: 0.00000039929648, w: 1}
+  m_LocalRotation: {x: 0, y: -0, z: 0.0000007342436, w: 1}
   m_LocalPosition: {x: 0.721658, y: -0.0000000953597, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4674,7 +4683,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 948427730116452052}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tobillo izquierdo_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4761,7 +4770,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8256144047871138371}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bone_18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4778,7 +4787,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3824370578172411313}
   - component: {fileID: 806163073070785869}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pierna derecha
   m_TagString: Untagged
   m_Icon: {fileID: 0}
