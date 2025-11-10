@@ -21,6 +21,7 @@ public class EnemyTiger : EnemyBase
 
     public override bool CanSeePlayer()
     {
+        return false;
     }
 
     public override void Attack() 
