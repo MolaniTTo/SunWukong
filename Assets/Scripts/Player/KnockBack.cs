@@ -3,9 +3,7 @@ using System.Collections;
 
 public class KnockBack : MonoBehaviour
 {
-    [SerializeField] private float knockBackForce = 5f;
-    [SerializeField] private float knockBachDuration = 0.2f;
-
+    
     private Rigidbody2D rb;
     private bool isKnockedBack = false;
 
@@ -14,20 +12,21 @@ public class KnockBack : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void ApplyKnockBack(Vector2 direction)
+    public void ApplyKnockBack(GameObject sender, float duration, float force)
     {
         if (!isKnockedBack)
         {
+            Vector2 direction = transform.position - sender.transform.position; 
             isKnockedBack = true;
-            rb.AddForce(direction.normalized * knockBackForce, ForceMode2D.Impulse);
-            StartCoroutine(EndKnockBack());
+            rb.AddForce(direction.normalized * force, ForceMode2D.Impulse);
+            StartCoroutine(EndKnockBack(duration));
         }
 
     }
 
-    private IEnumerator EndKnockBack()
+    private IEnumerator EndKnockBack(float duration)
     {
-        yield return new WaitForSeconds(knockBachDuration); //Esperem el temps de knockback
+        yield return new WaitForSeconds(duration); //Esperem el temps de knockback
         rb.linearVelocity = Vector2.zero; //Detenem l'empenta
         isKnockedBack = false;
     }

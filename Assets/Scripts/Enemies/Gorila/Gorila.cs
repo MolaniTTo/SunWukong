@@ -20,6 +20,7 @@ public class Gorila : EnemyBase
     public CinemachineCamera confinerCamera; //la cam
     public BossTriggerZone2D bossTriggerZone; //referencia a la zona de trigger del boss
     public GameObject punchCollider; //collider que s'activa durant l'atac de puny
+    public CameraShake cameraShake; //referencia al component de camera shake
 
 
     [Header("Stats")]
@@ -194,6 +195,8 @@ public class Gorila : EnemyBase
                 wave.transform.localScale.y,
                 wave.transform.localScale.z
             );
+
+            cameraShake.Shake(3f, 3.5f, 1.2f); //sacsegem la camara en l'impacte del puny
         }
     }
     public void OnChargedJumpEnd()
@@ -204,6 +207,7 @@ public class Gorila : EnemyBase
     public void OnPunchImpact() //cridat mitjançant un event a la animacio de punch quan arriba al punt d'impacte
     {
         punchCollider.SetActive(true); //activem el collider d'atac durant el frame d'impacte
+        cameraShake.Shake(1.5f, 2.0f, 0.4f); //sacsegem la camara en l'impacte del puny
     }
     public void OnPunchImpactEnd()
     {
