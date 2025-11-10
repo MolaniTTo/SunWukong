@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
 
-public class CharacterLife : MonoBehaviour
+public class CharacterHealth : MonoBehaviour
 {
     [Header("Stats")]
     public float maxHealth = 100f;
-    [HideInInspector] public float currentHealth;
+    public float currentHealth;
 
     [Header("Identification")]
     public string characterName = "Unnamed";

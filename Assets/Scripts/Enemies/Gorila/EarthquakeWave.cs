@@ -14,7 +14,6 @@ public class EarthquakeWave : MonoBehaviour
         if ( gorila == null) { Debug.LogError("EarthquakeWave: No s'ha trobat el component Gorila al pare!"); }
         direction = -Mathf.Sign(gorila.transform.localScale.x);
         Destroy(gameObject, lifetime);
-
     }
 
     private void Update()
@@ -27,18 +26,17 @@ public class EarthquakeWave : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("EarthquakeWave: Colision amb el jugador detectada.");
+            CharacterHealth characterHealth = other.GetComponent<CharacterHealth>();
             KnockBack knockBack = other.GetComponent<KnockBack>();
+
+            Debug.Log("EarthquakeWave: Colision amb el jugador detectada.");
             if (knockBack != null) 
             {
-                Vector2 knockBackDirection = new Vector2(direction, 1).normalized; //Direcció diagonal cap amunt
-                knockBack.ApplyKnockBack(knockBackDirection);
+                knockBack.ApplyKnockBack(this.gameObject, 0.3f, 15f);
             }
-            var health = other.GetComponent<PlayerHealth>();
-            if (health != null) 
+            if (characterHealth != null) 
             {
-                health.TakeDamage(damage); 
-                Destroy(gameObject); //destrueix l'ona després de colisionar amb el jugador
+                characterHealth.TakeDamage(damage); 
             }
         }
     }
