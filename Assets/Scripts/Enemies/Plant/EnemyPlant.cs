@@ -8,9 +8,9 @@ public class EnemyPlant : EnemyBase
 {
     [Header("Plant Settings")]
     public float detectionRange = 5f;
-    public LayerMask playerLayer; //Capa del jugador per detectar col·lisions amb el jugador
+    public LayerMask playerLayer; //Capa del jugador per detectar colï¿½lisions amb el jugador
     public bool facingRight = true; //Indica si la planta mira cap a la dreta o cap a l'esquerra
-    public Animator animator; //Referència a l'animator de la planta
+    public Animator animator; //Referï¿½ncia a l'animator de la planta
 
     [Header("Raycast Settings")]
     public Transform rayOrigin; //Origen del raycast (el cap)
