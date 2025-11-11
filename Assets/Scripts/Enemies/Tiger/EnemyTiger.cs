@@ -1,15 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.Tilemaps;
 using UnityEngine;
+using UnityEngine.Rendering;
 
-public class EnemyTiger : MonoBehaviour
+public class EnemyTiger : EnemyBase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    
     void Start()
     {
         
     }
 
-    // Update is called once per frame
+    
     void Update()
+    {
+        
+    }
+
+
+    public override bool CanSeePlayer()
+    {
+        return false;
+    }
+
+    public override void Attack() 
+    {
+    }
+
+    public override void Die()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void Move()
     {
         
     }
