@@ -2900,7 +2900,6 @@ GameObject:
   - component: {fileID: 3540900562619999069}
   - component: {fileID: 8771832148260595215}
   - component: {fileID: 3860238717485606797}
-  - component: {fileID: 1772882823443192394}
   - component: {fileID: 4654781438903304351}
   m_Layer: 3
   m_Name: MonoSunWukongDef 1
@@ -3049,36 +3048,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &1772882823443192394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6075280321421305136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16da0d0991c2811419b3f4448833c4a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  jumpForce: 15
-  climbSpeed: 3
-  groundCheckDistance: 1.1
-  attackDuration: 0.5
-  specialAttackDuration: 1
-  blockDuration: 0.3
-  hitStunDuration: 0.4
-  healingDuration: 2
-  maxHealth: 100
-  currentHealth: 100
-  healAmount: 20
-  animator: {fileID: 8771832148260595215}
-  climbableLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  climbCheckDistance: 0.6
-  currentState: 0
 --- !u!61 &4654781438903304351
 BoxCollider2D:
   m_ObjectHideFlags: 0

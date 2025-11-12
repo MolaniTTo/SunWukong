@@ -83,6 +83,7 @@ public class EnemyTiger : EnemyBase
     {
         float direction = facingRight ? 1f : -1f;
         rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
+        Debug.Log($"Moving: direction={direction}, speed={speed}, velocity={rb.linearVelocity}");
     }
 
     public void StopMovement()
@@ -102,7 +103,15 @@ public class EnemyTiger : EnemyBase
 
     public bool IsGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+        if (groundCheck == null)
+        {
+            Debug.LogWarning("GroundCheck no asignado!");
+            return true; // Asumimos que está en el suelo si no hay GroundCheck
+        }
+        
+        bool grounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+        Debug.Log($"IsGrounded: {grounded} - GroundCheck pos: {groundCheck.position} - Radius: {checkRadius}");
+        return grounded;
     }
 
     public bool IsWallAhead()
