@@ -29,6 +29,9 @@ public class PlayerStateMachine : MonoBehaviour
     public float speed = 5f;
     public float jumpForce = 15f;
     [SerializeField] private LayerMask groundLayer;
+    private float groundCheckDelay = 0.1f;
+    private float lastJumpTime = 0f;
+    private bool facingRight = true; //esta mirant a la dreta (default)
 
     [Header("Stats")]
     private Rigidbody2D rb;
@@ -38,9 +41,15 @@ public class PlayerStateMachine : MonoBehaviour
 
     [Header("Refs")]
     [SerializeField] private Animator animator;
-    [SerializeField] private LayerMask vineLayer; // asigna en el inspector la capa "Liana"
-    [SerializeField] private float vineCheckRadius = 0.5f; // radio de detección de la liana
-    [SerializeField] private bool nearVine = false; // si está cerca de una liana
+
+    [Header("Swing")]
+    [SerializeField] private LayerMask vineLayer;
+    [SerializeField] private float vineCheckRadius = 1.5f;
+    [SerializeField] private Transform vineCheckPoint;
+    private bool nearVine = false;
+    private Collider2D cachedVineCollider = null;
+    private HingeJoint2D currentVineJoint;
+    //https://chatgpt.com/share/6914a30e-bb80-8009-b15b-1df22331e1b0
 
     public PlayerState currentState;
 
@@ -340,12 +349,21 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void CheckIfNearVine() //deteccio de liana
     {
-        //posicion del mono +1 en y para que el circulo este a la altura del mono y no en los pies
         Vector2 checkPosition = new Vector2(transform.position.x, transform.position.y + 2f);
+
         nearVine = Physics2D.OverlapCircle(checkPosition, vineCheckRadius, vineLayer);
-        //dibujar el raycast en la escena para debug
+
         Debug.DrawRay(checkPosition, Vector2.right * vineCheckRadius, nearVine ? Color.green : Color.red);
 
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = nearVine ? Color.green : Color.red;
+
+        // Misma posición y radio que tu detección
+        Vector2 checkPosition = new Vector2(transform.position.x, transform.position.y + 2f);
+        Gizmos.DrawWireSphere(checkPosition, vineCheckRadius);
     }
 
     private void HandleSwingInput()
@@ -373,11 +391,30 @@ public class PlayerStateMachine : MonoBehaviour
         //aqui va la logica de moure's a la liana
     }
 
+    private void HandleFlip()
+    {
+        if(currentState == PlayerState.Idle ||
+            currentState == PlayerState.Running ||
+            currentState == PlayerState.OnAir)
+        {
+            if(moveInput.x > 0 && !facingRight) //si es mou a la dreta i no esta mirant a la dreta
+            {
+                Flip();
+            }
+            else if(moveInput.x < 0 && facingRight) //si es mou a l'esquerra i no esta mirant a l'esquerra
+            {
+                Flip();
+            }
+        }
+    }
 
-
-
-
-
+    private void Flip()
+    {
+        facingRight = !facingRight; //canviem la direccio
+        Vector3 localScale = transform.localScale; //agafem l'escala actual
+        localScale.x *= -1; //invertim l'escala en X
+        transform.localScale = localScale; //apliquem l'escala invertida
+    }
 
 
     private void ChangeState(PlayerState newState) //El currentState passa a ser el newState
@@ -390,15 +427,17 @@ public class PlayerStateMachine : MonoBehaviour
         rb.linearVelocity = new Vector2(moveInput.x * speed, rb.linearVelocity.y);
         CheckIfGrounded();
     }
-
+    
     private void Jump()
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         isGrounded = false;
+        lastJumpTime = Time.time;
     }
 
     void CheckIfGrounded()
     {
+        if (Time.time - lastJumpTime < groundCheckDelay) return; // Evita comprovar si està a terra immediatament després de saltar
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, LayerMask.GetMask("Ground"));
         isGrounded = hit.collider != null;
         Debug.DrawRay(transform.position, Vector2.down * 1.0f, isGrounded ? Color.green : Color.red);
@@ -406,9 +445,11 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void FixedUpdate()
     {
-        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), 0); 
+        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), 0); //Agafem input horitzontal per moure'ns
 
-        if (currentState == PlayerState.Running || currentState == PlayerState.OnAir)
+        HandleFlip(); //el posem aqui ja que ho mirem just despres del moveInput
+
+        if (currentState == PlayerState.Running || currentState == PlayerState.OnAir) //podem moure'ns en aquests estats
         {
             Move();
         }

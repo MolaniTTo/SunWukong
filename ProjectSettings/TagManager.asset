@@ -8,15 +8,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Player
+  - Ground
   - Water
   - UI
-  - Ground
-  - BossTriggerZone2D
-  - BossWalls
-<<<<<<< HEAD
+  - ConfinerWalls
   - Vine
-
+  - 
+  - 
   - 
   - 
   - 
@@ -42,9 +40,6 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Planta
-    uniqueID: 3145667775
     locked: 0
   m_RenderingLayers:
   - Default
