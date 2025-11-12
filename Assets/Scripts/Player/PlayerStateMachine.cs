@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 using UnityEngine.XR;
@@ -42,6 +42,10 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("Refs")]
     [SerializeField] private Animator animator;
 
+    [Header("Jump tuning")]
+    [SerializeField] private float fallMultiplier = 2.5f;
+    [SerializeField] private float lowJumpMultiplier = 2f;
+
     [Header("Swing")]
     [SerializeField] private LayerMask vineLayer;
     [SerializeField] private float vineCheckRadius = 1.5f;
@@ -49,7 +53,7 @@ public class PlayerStateMachine : MonoBehaviour
     private bool nearVine = false;
     private Collider2D cachedVineCollider = null;
     private HingeJoint2D currentVineJoint;
-    //https://chatgpt.com/share/6914a30e-bb80-8009-b15b-1df22331e1b0
+    
 
     public PlayerState currentState;
 
@@ -74,7 +78,7 @@ public class PlayerStateMachine : MonoBehaviour
         HandleAttackInput(); //Funcio que mira els inputs d'atac
         HandleSwingInput(); //Funcio que comprova el input de liana
         CheckIfNearVine(); //Funcio que comprova si estem a prop d'una liana
-
+        ApplyJumpMultiplier(); //Funcio que aplica el jump multiplier per fer saltos mes naturals
 
         switch (currentState)
         {
@@ -339,56 +343,117 @@ public class PlayerStateMachine : MonoBehaviour
         ChangeState(PlayerState.Death);
         animator.SetTrigger("Death");
         rb.linearVelocity = Vector2.zero;
-        rb.simulated = false; // desactiva fÌsicas para que no se mueva m·s
+        rb.simulated = false; // desactiva f√≠sicas para que no se mueva m√°s
     }
 
     private void HandleDeath() 
     {
         //logica de respawn
     }
-
-    private void CheckIfNearVine() //deteccio de liana
+    private void CheckIfNearVine()
     {
-        Vector2 checkPosition = new Vector2(transform.position.x, transform.position.y + 2f);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(vineCheckPoint.position, vineCheckRadius, vineLayer);
+        if (hits.Length > 0)
+        {
+            float minDist = float.MaxValue;
+            Collider2D closest = null;
 
-        nearVine = Physics2D.OverlapCircle(checkPosition, vineCheckRadius, vineLayer);
+            foreach (var hit in hits)
+            {
+                float dist = Vector2.Distance(vineCheckPoint.position, hit.transform.position);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    closest = hit;
+                }
+            }
 
-        Debug.DrawRay(checkPosition, Vector2.right * vineCheckRadius, nearVine ? Color.green : Color.red);
-
+            cachedVineCollider = closest;
+            nearVine = true;
+        }
+        else
+        {
+            cachedVineCollider = null;
+            nearVine = false;
+        }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = nearVine ? Color.green : Color.red;
 
-        // Misma posiciÛn y radio que tu detecciÛn
-        Vector2 checkPosition = new Vector2(transform.position.x, transform.position.y + 2f);
-        Gizmos.DrawWireSphere(checkPosition, vineCheckRadius);
+    private void AttachToVine()
+    {
+        if (cachedVineCollider == null || currentVineJoint != null) { return; } //si no hi ha liana o ja estem enganxats a una liana, sortim
+
+        currentVineJoint = gameObject.AddComponent<HingeJoint2D>(); //creem un nou HingeJoint2D al jugador
+        currentVineJoint.connectedBody = cachedVineCollider.attachedRigidbody; //connectem el HingeJoint2D al Rigidbody2D de la liana
+        currentVineJoint.autoConfigureConnectedAnchor = false; //desactivem l'auto configuracio dels anchors (per defecte estan a (0,0))
+
+        currentVineJoint.anchor = new Vector2(1.1f, 2.3f);
+        currentVineJoint.connectedAnchor = Vector2.zero;
+
+        rb.linearVelocity = Vector2.zero; //aturar la velocitat del jugador al enganxar-se a la liana
+        rb.gravityScale = 1f; //revisar si cal posar-ho aqui
+        ChangeState(PlayerState.Swinging); //canviem a estat Swinging
     }
+
+
+    private void DetachFromVine()
+    {
+        if (currentVineJoint != null) //si ja tenim un HingeJoint2D creat
+        {
+            Destroy(currentVineJoint); //eliminem el HingeJoint2D
+            currentVineJoint = null;
+        }
+
+        cachedVineCollider = null;
+        nearVine = false;
+        rb.gravityScale = 1f; //revisar si cal posar-ho aqui
+        animator.SetTrigger("ExitSwing");
+        ChangeState(PlayerState.OnAir);
+    }
+
 
     private void HandleSwingInput()
     {
         if (Input.GetKeyDown(KeyCode.Q) && currentState == PlayerState.OnAir && nearVine) //si li donem a la Q i estem en l'aire i a prop d'una liana
         {
-            Debug.Log("Agafant la liana");
-            ChangeState(PlayerState.Swinging);
+            AttachToVine();
             animator.SetTrigger("Swing");
-            rb.linearVelocity = Vector2.zero; //revisar aveure com fem lo de la liana
-            rb.gravityScale = 0; //revisar tambe
         }
 
-        if (Input.GetKeyUp(KeyCode.Q) && currentState == PlayerState.Swinging) //si deixem anar la Q mentre estem a l'estat de Swinging
+        if (Input.GetKeyUp(KeyCode.Q) && currentState == PlayerState.Swinging)
         {
-            rb.gravityScale = 1; //revisar tambe
-            Jump(); //saltem de la liana
-            ChangeState(PlayerState.OnAir); //anem a OnAir
+            Vector2 ropeDir = (transform.position - currentVineJoint.connectedBody.transform.position).normalized;
+            Vector2 jumpDir = (ropeDir + Vector2.up).normalized;
+
+            DetachFromVine();
+            rb.linearVelocity = jumpDir * jumpForce * 8f; //apliquem una velocitat en la direccio de saltar
+            Debug.Log("Desenganxat de la liana");
         }
     }
 
     private void HandleSwinging()
     {
-        //per sortir de l'estat ja ho fem amb el propi handleSwingInput()
-        //aqui va la logica de moure's a la liana
+        if (currentVineJoint == null) return;
+
+        float swingInput = Input.GetAxisRaw("Horizontal");
+
+        if(Mathf.Abs(swingInput) > 0.1f)
+        {
+            Vector2 ropeDir = (transform.position - currentVineJoint.connectedBody.transform.position).normalized; //vector que va des de la liana al jugador
+
+            Vector2 tangent = new Vector2(-ropeDir.y, ropeDir.x); //vector tangent a la liana (perpendicular al vector ropeDir)
+
+            rb.AddForce(tangent * swingInput * 5f, ForceMode2D.Force); //apliquem una for√ßa en la direccio tangent per simular el balanceig
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Vector2 ropeDir = (transform.position - currentVineJoint.connectedBody.transform.position).normalized;
+            Vector2 jumpDir = (ropeDir + Vector2.up).normalized;
+
+            DetachFromVine();
+            rb.AddForce(jumpDir * 3f, ForceMode2D.Impulse);
+        }
     }
 
     private void HandleFlip()
@@ -435,9 +500,23 @@ public class PlayerStateMachine : MonoBehaviour
         lastJumpTime = Time.time;
     }
 
+    private void ApplyJumpMultiplier()
+    {
+        if (rb.linearVelocity.y < 0) //si esta  
+        {
+            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime; //apliquem una for√ßa extra cap avall per fer que caigui mes rapid
+        }
+
+        else if (rb.linearVelocity.y > 0 && !Input.GetKey(KeyCode.Space)) //si esta pujant pero no premem el boto de saltar
+        {
+            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime; //apliquem una for√ßa extra cap avall per fer que no pugi tant
+        }
+    }
+
+
     void CheckIfGrounded()
     {
-        if (Time.time - lastJumpTime < groundCheckDelay) return; // Evita comprovar si est‡ a terra immediatament desprÈs de saltar
+        if (Time.time - lastJumpTime < groundCheckDelay) return; // Evita comprovar si est√† a terra immediatament despr√©s de saltar
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, LayerMask.GetMask("Ground"));
         isGrounded = hit.collider != null;
         Debug.DrawRay(transform.position, Vector2.down * 1.0f, isGrounded ? Color.green : Color.red);
