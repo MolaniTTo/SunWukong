@@ -28,10 +28,9 @@ public class TigerWalk : IState
         // Moverse en la dirección actual
         tiger.MoveTowards(tiger.walkSpeed);
 
-        // Comprobar si debe girar
+        // Comprobar si debe girar (temporalmente sin check de suelo)
         bool atBoundary = tiger.IsAtPatrolBoundary();
         bool wallAhead = tiger.IsWallAhead();
-        bool grounded = tiger.IsGrounded();
         
         if (atBoundary)
         {
@@ -43,11 +42,12 @@ public class TigerWalk : IState
             Debug.Log("TigerWalk: Pared detectada, vuelvo a Idle");
             tiger.StateMachine.ChangeState(new TigerIdle(tiger));
         }
-        else if (!grounded)
-        {
-            Debug.Log("TigerWalk: No estoy en el suelo, vuelvo a Idle");
-            tiger.StateMachine.ChangeState(new TigerIdle(tiger));
-        }
+        // Comentado temporalmente el check de suelo
+        //else if (!grounded)
+        //{
+        //    Debug.Log("TigerWalk: No estoy en el suelo, vuelvo a Idle");
+        //    tiger.StateMachine.ChangeState(new TigerIdle(tiger));
+        //}
     }
 
     public void Exit()
