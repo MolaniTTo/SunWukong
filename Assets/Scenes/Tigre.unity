@@ -892,18 +892,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectionRange: 8
   attackRange: 2
-  moveSpeed: 3
-  runSpeed: 6
   playerLayer:
     serializedVersion: 2
-    m_Bits: 8
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 0
   facingRight: 1
   animator: {fileID: 327167892}
-  rb: {fileID: 0}
-  player: {fileID: 1697564793407454186}
+  walkSpeed: 2
+  runSpeed: 6
+  groundCheck: {fileID: 0}
+  wallCheck: {fileID: 0}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  checkRadius: 0.2
+  patrolDistance: 5
+  rayOrigin: {fileID: 0}
+  rayLength: 8
   attackDamage: 20
   attackCooldown: 2
 --- !u!4 &430968627 stripped
