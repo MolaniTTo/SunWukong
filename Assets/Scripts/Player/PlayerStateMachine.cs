@@ -65,6 +65,9 @@ public class PlayerStateMachine : MonoBehaviour
     private Collider2D cachedVineCollider = null;
     private HingeJoint2D currentVineJoint;
 
+    [Header("Dialogue")]
+    [SerializeField] private bool dialogueLocked = false; //true mentre el diàleg està actiu
+
     public PlayerState currentState;
 
     private struct InputFlags
@@ -204,6 +207,10 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void HandleInputs()
     {
+        if (dialogueLocked) //si el diàleg està actiu, no processem inputs
+        {
+            return;
+        }
         //Horizontal
         input.horizontal = Input.GetAxisRaw("Horizontal");
 
@@ -753,6 +760,18 @@ public class PlayerStateMachine : MonoBehaviour
         {
             lastCheckPoint = collision.transform;
         }
+    }
+
+    public void EnterDialogueMode()
+    {
+        ForceNewState(PlayerState.Idle); //posem al jugador en Idle
+        dialogueLocked = true;
+    }
+
+    public void ExitDialogueMode()
+    {
+        dialogueLocked = false;
+        ReturnToDefaultState(); //torna a l'estat per defecte segons si estem a terra o en l'aire
     }
 
     /*private void HandleHealingInput()
