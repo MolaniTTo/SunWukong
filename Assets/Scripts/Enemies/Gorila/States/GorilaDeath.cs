@@ -19,11 +19,11 @@ public class GorilaDeath : IState
 
     public void Exit()
     {
-        throw new System.NotImplementedException();
+        //no implementat ja que es l'ultim estat
     }
 
     public void Update()
     {
-        throw new System.NotImplementedException();
+        //no implementat ja que es l'ultim estat
     }
 }

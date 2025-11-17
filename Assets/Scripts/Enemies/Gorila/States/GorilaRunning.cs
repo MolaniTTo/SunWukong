@@ -57,12 +57,5 @@ public class GorilaRunning : IState
             gorila.punchCounter = 0; //resetejem el contador d'atacs normals
             return;
         }
-
-        if (gorila.health <= 0)
-        {
-            gorila.StateMachine.ChangeState(gorila.DeathState);
-            return;
-        }
-
     }
 }

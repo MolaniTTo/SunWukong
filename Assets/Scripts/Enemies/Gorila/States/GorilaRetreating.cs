@@ -33,7 +33,7 @@ public class GorilaRetreating : IState
 
         Vector2 retreatDir = new Vector2(-gorila.facingDirection, 0);
 
-        float speed = (gorila.health <= gorila.lowHealthThreshold ? gorila.speedAtLowHealth : gorila.baseSpeed) * retreatSpeedMultiplier;
+        float speed = (gorila.characterHealth.currentHealth <= gorila.lowHealthThreshold ? gorila.speedAtLowHealth : gorila.baseSpeed) * retreatSpeedMultiplier;
 
         gorila.rb.linearVelocity = retreatDir * speed;
 

@@ -30,12 +30,5 @@ public class GorilaPunchAttack : IState
             gorila.animationFinished = false;
             return;
         }
-        if(gorila.health <= 0)
-        {
-            gorila.StateMachine.ChangeState(gorila.DeathState);
-            return;
-        }
-
     }
-
 }

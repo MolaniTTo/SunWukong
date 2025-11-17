@@ -11,6 +11,7 @@ public class EnemyPlant : EnemyBase
     public LayerMask playerLayer; //Capa del jugador per detectar col�lisions amb el jugador
     public bool facingRight = true; //Indica si la planta mira cap a la dreta o cap a l'esquerra
     public Animator animator; //Refer�ncia a l'animator de la planta
+    public CharacterHealth characterHealth; //referencia al component de vida
 
     [Header("Raycast Settings")]
     public Transform rayOrigin; //Origen del raycast (el cap)
@@ -27,6 +28,34 @@ public class EnemyPlant : EnemyBase
     {
         base.Awake(); //Cridem a l'Awake de la classe base EnemyBase perque inicialitzi la maquina d'estats
         InitializeBulletPool(); //inicialitzem la pool de bales
+        if (characterHealth == null)
+        {
+            characterHealth = GetComponent<CharacterHealth>();
+        }
+        if (characterHealth != null)
+        {
+            characterHealth.OnDeath += Death;
+            characterHealth.OnTakeDamage += (currentHealth, attacker) => Damaged();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (characterHealth != null)
+        {
+            characterHealth.OnDeath -= Death;
+            characterHealth.OnTakeDamage -= (currentHealth, attacker) => Damaged();
+        }
+    }
+
+    private void Death()
+    {
+        animator.SetTrigger("Death"); //Activem la animacio de mort
+    }
+
+    private void Damaged()
+    {
+        animator.SetTrigger("Damaged"); //Activem la animacio de mort
     }
 
     private void Start()
@@ -112,6 +141,7 @@ public class EnemyPlant : EnemyBase
 
     public override void Die()
     {
+        //No implementat ja que la mort es gestiona des del component CharacterHealth
         throw new System.NotImplementedException();
     }
 

@@ -24,7 +24,7 @@ public class GorilaChargedJump : IState
 
     public void Update()
     {
-        if (gorila.health <= 0)
+        if (gorila.characterHealth.currentHealth <= 0)
         {
             gorila.StateMachine.ChangeState(gorila.DeathState);
             return;
