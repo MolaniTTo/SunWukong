@@ -117,7 +117,8 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void Update()
     {
-        HandleInputs();
+
+        if (!dialogueLocked) { HandleInputs(); } 
 
         animator.SetBool("isGrounded", isGrounded); //important per les transicions cap a OnAir i Idle/Running
         animator.SetFloat("speed", Mathf.Abs(moveInput.x)); //important per les transicions cap a Running i Idle
@@ -194,6 +195,10 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if(dialogueLocked) //si el diàleg està actiu, no processem moviments
+        {
+            return;
+        }
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), 0); //Agafem input horitzontal per moure'ns
 
         HandleFlip(); //el posem aqui ja que ho mirem just despres del moveInput
@@ -764,8 +769,23 @@ public class PlayerStateMachine : MonoBehaviour
 
     public void EnterDialogueMode()
     {
-        ForceNewState(PlayerState.Idle); //posem al jugador en Idle
         dialogueLocked = true;
+
+        ForceNewState(PlayerState.Idle); //posem l'estat a Idle per evitar problemes
+        input = new InputFlags();
+
+        animator.SetBool("HealButton", false);
+        animator.SetBool("Blocking", false);
+
+        animator.ResetTrigger("AttackPunch");
+        animator.ResetTrigger("AttackTail");
+        animator.ResetTrigger("SpecialAttackPunch");
+        animator.ResetTrigger("StaffClimbing");
+
+        ForceNewState(PlayerState.Idle);
+        animator.SetTrigger("ForceIdle");
+
+
     }
 
     public void ExitDialogueMode()
