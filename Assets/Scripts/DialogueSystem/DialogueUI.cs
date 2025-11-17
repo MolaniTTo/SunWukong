@@ -1,7 +1,8 @@
-using System.Collections;
-using TMPro;
 using Unity.Cinemachine;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,10 +17,10 @@ public class DialogueUI : MonoBehaviour
 
     [Header("Camera Zoom (optional)")]
     public bool useCameraZoom = true; // si quieres usar zoom via Camera.main
-    public float zoomedOrthoSize = 3.5f; //Mida ortogràfica quan fem zoom
     public float zoomDuration = 0.35f;
-    public CinemachineCamera vcam; //Referència a la càmera virtual de Cinemachine
-
+    public CinemachineCamera vcam;
+    public float zoomedFOV = 30f;
+    private float originalFOV = -1f;
 
     //ESTAT DEL DIÀLEG
     private DialogueData.DialogueLine[] lines; //Línies del diàleg actuals
@@ -29,7 +30,6 @@ public class DialogueUI : MonoBehaviour
     private System.Action onFinishCallback; //Callback quan el diàleg acaba
     private Animator currentTargetAnimator; //Referència a l'animator de l'NPC actual
 
-    private float originalOrthoSize = -1f; 
     private Coroutine zoomCoroutine;
 
     private Coroutine typingCoroutine;
@@ -61,9 +61,9 @@ public class DialogueUI : MonoBehaviour
 
         if (dialoguePanel != null) { dialoguePanel.SetActive(true); }//Activa el panell de diàleg
 
-        if (vcam != null && originalOrthoSize < 0) //Assegura que guardem la mida original de la càmera només una vegada
+        if (vcam != null && originalFOV < 0) //Assegura que guardem la mida original de la càmera només una vegada
         {
-            originalOrthoSize = vcam.Lens.OrthographicSize; 
+            //originalFOV = vcam.Lens.VerticalFOV;
         }
 
         ShowNextLine();
@@ -82,11 +82,12 @@ public class DialogueUI : MonoBehaviour
         currentTargetAnimator = null;
         onFinishCallback = null;
 
-        if(useCameraZoom && vcam != null && originalOrthoSize >= 0) //Torna a la mida original de la càmera si cal
+        if(useCameraZoom && vcam != null && originalFOV >= 0) //Torna a la mida original de la càmera si cal
         {
             if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
             {
-                StartCoroutine(ZoomTo(originalOrthoSize, zoomDuration));
+                StartCoroutine(ZoomToFOV(originalFOV, zoomDuration));
+
             }
         }
     }
@@ -135,14 +136,14 @@ public class DialogueUI : MonoBehaviour
         if (line.requestCameraZoom && useCameraZoom && vcam != null) //Fes zoom si la línia ho sol·licita
         {
             if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
-            zoomCoroutine = StartCoroutine(ZoomTo(zoomedOrthoSize, zoomDuration));
+            zoomCoroutine = StartCoroutine(ZoomToFOV(zoomedFOV, zoomDuration));
         }
         else
         {
-            if (useCameraZoom && originalOrthoSize >= 0f && vcam != null) //Torna a la mida original de la càmera si cal
+            if (useCameraZoom && originalFOV >= 0f && vcam != null) //Torna a la mida original de la càmera si cal
             {
                 if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
-                zoomCoroutine = StartCoroutine(ZoomTo(originalOrthoSize, zoomDuration));
+                zoomCoroutine = StartCoroutine(ZoomToFOV(originalFOV, zoomDuration));
             }
         }
 
@@ -169,28 +170,30 @@ public class DialogueUI : MonoBehaviour
         canContinue = true;
     }
 
-    IEnumerator ZoomTo(float targetSize, float duration) //Corrutina per fer zoom de la càmera
+    IEnumerator ZoomToFOV(float targetFOV, float duration)
     {
-        if (vcam == null) { yield break; }
-        float start = vcam.Lens.OrthographicSize;
+        //float startFOV = vcam.Lens.VerticalFOV;
         float elapsed = 0f;
-        while (elapsed < duration) //mentre no hagi acabat la durada del zoom 
+
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
-            vcam.Lens.OrthographicSize = Mathf.Lerp(start, targetSize, t); //Interpolació suau entre la mida inicial i la mida objectiu
+            //vcam.Lens.VerticalFOV = Mathf.Lerp(startFOV, targetFOV, t);
             yield return null;
         }
-        vcam.Lens.OrthographicSize = targetSize;
+
+        //cam.Lens.VerticalFOV = targetFOV;
     }
+
     private void EndDialogue()
     {
         if (dialoguePanel != null) { dialoguePanel.SetActive(false); } //Desactiva el panell de diàleg
-        if (vcam != null && originalOrthoSize >= 0) //Torna a la mida original de la càmera si cal
+        if (vcam != null && originalFOV >= 0) //Torna a la mida original de la càmera si cal
         {
             if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
             {
-                StartCoroutine(ZoomTo(originalOrthoSize, zoomDuration));
+                StartCoroutine(ZoomToFOV(originalFOV, zoomDuration));
             }
             
         }
@@ -205,15 +208,15 @@ public class DialogueUI : MonoBehaviour
 
     public void ForceCameraZoom()
     {
-        if (!useCameraZoom) return;
+        if (!useCameraZoom) return; //No fem res si no s'ha activat l'opció de zoom
         if (vcam == null) return;
     
-        if (originalOrthoSize < 0f)
-            originalOrthoSize = vcam.Lens.OrthographicSize;
+        if (originalFOV < 0f)
+            originalFOV = vcam.Lens.OrthographicSize;
 
         if (zoomCoroutine != null)
             StopCoroutine(zoomCoroutine);
 
-        zoomCoroutine = StartCoroutine(ZoomTo(zoomedOrthoSize, zoomDuration));
+        zoomCoroutine = StartCoroutine(ZoomToFOV(zoomedFOV, zoomDuration));
     }
 }
