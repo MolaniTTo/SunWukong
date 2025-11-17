@@ -17,15 +17,25 @@ public class CharacterHealth : MonoBehaviour
     public event Action<float, GameObject> OnTakeDamage; //event per notificar que ha rebut danys (passa la vida actual i el gameobject que l'ha causat)
 
     private bool isDead = false;
+    private PlayerStateMachine playerStateMachine;
 
     private void Awake() //ho fem virtual perque els fills puguin sobreescriure-ho i cridar al base.awake()
     {
         currentHealth = maxHealth;
+        if (isPlayer)
+        {
+            playerStateMachine = GetComponent<PlayerStateMachine>();
+        }
     }
 
-    public void TakeDamage(float amount, GameObject attacker = null)
+    public void TakeDamage(float amount, GameObject attacker)
     {
         if (isDead) { return; }
+
+        if(isPlayer && playerStateMachine != null && playerStateMachine.currentState == PlayerStateMachine.PlayerState.Block)
+        {
+            amount *= 0.5f; //si el jugador esta bloquejant, redueixim el dany a la meitat
+        }
 
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); //Assegurem que la vida no baixi de 0 ni superi la vida maxima
@@ -33,9 +43,27 @@ public class CharacterHealth : MonoBehaviour
         OnTakeDamage?.Invoke(currentHealth, attacker); //notifiquem que ha rebut danys
         OnHealthChanged?.Invoke(currentHealth); //notifiquem el canvi de vida
 
+        if (isPlayer)
+        {
+            CombatEvents.PlayerDamaged(amount); //notifiquem als subscrits que el jugador ha rebut danys
+        }
+
+        else
+        {
+            CombatEvents.DamageDealt(amount); //notifiquem als subscrits que un enemic ha rebut danys
+            CombatEvents.Hit(attacker, gameObject); //notifiquem als subscrits que un enemic ha estat colpejat
+        }
+
         if (currentHealth <= 0)
         {
             Die();
+            return;
+        }
+
+        if (isPlayer && playerStateMachine != null)
+        {
+            playerStateMachine.animator.SetTrigger("BeingHit"); //activem la animacio de ser colpejat
+            playerStateMachine.ForceNewState(PlayerStateMachine.PlayerState.BeingHit); //canviem l'estat del jugador a BeingHit
         }
     }
 
@@ -54,16 +82,31 @@ public class CharacterHealth : MonoBehaviour
 
         OnDeath?.Invoke(); //notifiquem la mort del personatge
 
-        if (isPlayer)
+        if (!isPlayer) //si no es el jugador, notifiquem que un enemic ha mort
         {
-            //gestionar spawnPoints
-            //gestionar contador de morts per les estadistiques
+            CombatEvents.EnemyKilled(gameObject);
+            return;
         }
+
         else
         {
-            //gestionar barra de ki pel jugador
-            //gestionar numero de morts per les estadistiques
+            if (playerStateMachine != null)
+            {
+                playerStateMachine.animator.SetTrigger("Death");
+                playerStateMachine.ForceNewState(PlayerStateMachine.PlayerState.Death);
+            }
+
+            CombatEvents.PlayerDeath(true);
         }
+
+    }
+
+    public void RestoreFullHealth()
+    {
+        isDead = false;
+        currentHealth = maxHealth;
+
+        OnHealthChanged?.Invoke(currentHealth);
     }
 
 

@@ -39,15 +39,17 @@ public class Bullet : MonoBehaviour
        
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Obstacle"))
+        if (collision.CompareTag("Player")) //Si colisiona amb el jugador
         {
-            rb.linearVelocity = Vector2.zero; //aturar la bala en colisio
-            plant.RechargeBullet(gameObject);
-            //Aqui ja restarem la vida al player accedint a la classe PlayerHealth o similar
+            rb.linearVelocity = Vector2.zero;
+            plant.RechargeBullet(gameObject); //Recarreguem la bala a la pool
         }
+
     }
+
 
 
 

@@ -73,11 +73,5 @@ public class GorilaIdle : IState
             gorila.StateMachine.ChangeState(gorila.RunState);
             return;
         }
-
-        if (gorila.health <= 0)
-        {
-            gorila.StateMachine.ChangeState(gorila.DeathState);
-            return;
-        }
     }
 }

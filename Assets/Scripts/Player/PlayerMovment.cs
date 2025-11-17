@@ -113,4 +113,34 @@ public class PlayerMovment : MonoBehaviour, InputSystem_Actions.IPlayerActions /
     {
      
     }
+
+    public void OnHeal(InputAction.CallbackContext context)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnAttackPunch(InputAction.CallbackContext context)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnAttackTail(InputAction.CallbackContext context)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnSpecialAttackPunch(InputAction.CallbackContext context)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnBlock(InputAction.CallbackContext context)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnClimbing(InputAction.CallbackContext context)
+    {
+        throw new System.NotImplementedException();
+    }
 }
