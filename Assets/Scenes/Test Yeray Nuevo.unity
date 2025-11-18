@@ -5748,7 +5748,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -2.010254, y: -2.1275024}
+  m_AnchoredPosition: {x: -2.0097656, y: -2.1274414}
   m_SizeDelta: {x: 4.0205, y: 4.2551003}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &772871302
@@ -18380,8 +18380,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 311.5, y: 172}
-  m_SizeDelta: {x: 1920, y: 1060.1605}
+  m_AnchoredPosition: {x: 311.5, y: 172.31374}
+  m_SizeDelta: {x: 1920, y: 1058.2267}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1297050561
 GameObject:
@@ -18504,7 +18504,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.000061035156, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.22419406, y: 0.49746308}
 --- !u!114 &1325698775
@@ -19501,6 +19501,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3dd64b8581395048a9129f1ad98bab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sliderKi: {fileID: 0}
+  playerStateMachine: {fileID: 0}
+  animarCambios: 1
+  velocidadAnimacion: 5
 --- !u!1 &1570649607
 GameObject:
   m_ObjectHideFlags: 0
