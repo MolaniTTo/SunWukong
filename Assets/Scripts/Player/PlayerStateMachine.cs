@@ -32,6 +32,20 @@ public class PlayerStateMachine : MonoBehaviour
     private float lastJumpTime = 0f;
     private bool facingRight = true; //esta mirant a la dreta (default)
 
+
+    [Header("Ki System")]
+    public float maxKi = 100f;
+    [HideInInspector] public float currentKi;
+
+    [Header("Ki Costs")]
+    public float specialAttackPunchCost = 50f;
+    public float specialAttackStaffCost = 50f;
+    public float healingKiCostPerSecond = 10f;
+
+
+    [Header("Ki Regeneration")]
+    public float kiPerEnemyKilled = 20f;
+
     [Header("Stats")]
     public Rigidbody2D rb;
     private Vector2 moveInput;
@@ -96,9 +110,10 @@ public class PlayerStateMachine : MonoBehaviour
         public bool specialAttackStaffDown; //tecla d'atac especial de pal baixada
 
     }
-
+    public event System.Action<float> OnKiChanged;  
     private InputFlags input;
 
+    
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -108,11 +123,22 @@ public class PlayerStateMachine : MonoBehaviour
         punchDamageCollider.SetActive(false); //desactivem el collider de dany al iniciar
         tailDamageCollider.SetActive(false); //desactivem el collider de dany al iniciar
         if (!hasStaff) { staffObj.SetActive(false); }
+
+         currentKi = maxKi;
+        OnKiChanged?.Invoke(currentKi);
     }
 
     private void Start()
     {
         currentState = PlayerState.Idle;
+
+        CombatEvents.OnEnemyKilled += OnEnemyKilled;
+    }
+
+        private void OnDestroy()
+    {
+       
+        CombatEvents.OnEnemyKilled -= OnEnemyKilled;
     }
 
     private void Update()
@@ -252,6 +278,53 @@ public class PlayerStateMachine : MonoBehaviour
         ProcessInputActions();
     }
 
+        private void OnEnemyKilled(GameObject enemy)
+    {
+        // Regenerar Ki al matar un enemigo
+        AddKi(kiPerEnemyKilled);
+        Debug.Log($"¡Enemigo eliminado! +{kiPerEnemyKilled} Ki. Ki actual: {currentKi}/{maxKi}");
+    }
+
+        private void AddKi(float amount)
+    {
+        currentKi += amount;
+        currentKi = Mathf.Clamp(currentKi, 0, maxKi);
+        OnKiChanged?.Invoke(currentKi);
+    }
+
+    private bool TryConsumeKi(float amount)
+    {
+        if (currentKi >= amount)
+        {
+            currentKi -= amount;
+            currentKi = Mathf.Clamp(currentKi, 0, maxKi);
+            OnKiChanged?.Invoke(currentKi);
+            return true;
+        }
+        return false;
+    }
+
+    private void ConsumeKiOverTime(float amountPerSecond)
+    {
+        if (currentKi > 0)
+        {
+            currentKi -= amountPerSecond * Time.deltaTime;
+            currentKi = Mathf.Clamp(currentKi, 0, maxKi);
+            OnKiChanged?.Invoke(currentKi);
+        }
+    }
+
+    public bool HasEnoughKi(float amount)
+    {
+        return currentKi >= amount;
+    }
+
+    public void RestoreFullKi()
+    {
+        currentKi = maxKi;
+        OnKiChanged?.Invoke(currentKi);
+    }
+
     private void ProcessInputActions()
     {
         //BLOQUEIG
@@ -275,14 +348,18 @@ public class PlayerStateMachine : MonoBehaviour
         //HEAL
         if (input.healDown)
         {
-            if (isGrounded && !isHealing) //nomes ens podem curar si estem a terra i si no ens estem curant
+            if (isGrounded && !isHealing && currentKi > 0)
             {
                 isHealing = true;
                 animator.SetBool("HealButton", true);
-                ChangeState(PlayerState.Healing); //Canviem a estat Healing
+                ChangeState(PlayerState.Healing);
+            }
+            else if (currentKi <= 0)
+            {
+                Debug.Log("¡No tienes Ki para curarte!");
             }
         }
-        if (input.healUp) //si deixem anar el boto de curar mentre ens estem curant
+        if (input.healUp)
         {
             if (isHealing)
             {
@@ -314,12 +391,19 @@ public class PlayerStateMachine : MonoBehaviour
             }
         }
 
-        if (input.specialAttackPunch) //si premem el boto d'atac especial de puny i estem en un estat que ho permet
+        if (input.specialAttackPunch)
         {
             if (currentState == PlayerState.Idle || currentState == PlayerState.Running)
             {
-                ChangeState(PlayerState.SpecialAttackPunch);
-                animator.SetTrigger("SpecialAttackPunch");
+                if (TryConsumeKi(specialAttackPunchCost))
+                {
+                    ChangeState(PlayerState.SpecialAttackPunch);
+                    animator.SetTrigger("SpecialAttackPunch");
+                }
+                else
+                {
+                    Debug.Log("¡No tienes suficiente Ki para el ataque especial de puño!");
+                }
             }
         }
 
@@ -370,23 +454,33 @@ public class PlayerStateMachine : MonoBehaviour
         }
     }
 
-    private void HandleHealing()
+private void HandleHealing()
+{
+    if (isHealing)
     {
-        if (isHealing) //si ens estem curant
+        if (currentKi > 0)
         {
-            characterHealth.Heal(1f * Time.deltaTime); //curar-se amb el temps
+            characterHealth.Heal(1f * Time.deltaTime);
+            ConsumeKiOverTime(healingKiCostPerSecond);
         }
-
-        if (!isHealing) //si ens hem acabat de curar, i ja no estem a la animacio de stop healing
+        else
         {
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.IsName("Idle"))
-            {
-                ChangeState(PlayerState.Idle); //Nomes podem anar a Idle despres de healing
-            }
+            // Si se acaba el Ki, detener curación
+            isHealing = false;
+            animator.SetBool("HealButton", false);
+            Debug.Log("¡Ki agotado! No puedes seguir curándote.");
         }
-       
     }
+
+    if (!isHealing)
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.IsName("Idle"))
+        {
+            ChangeState(PlayerState.Idle);
+        }
+    }
+}
 
     private void HandleAttackPunch()
     {
@@ -483,12 +577,19 @@ public class PlayerStateMachine : MonoBehaviour
             ChangeState(PlayerState.OnAir); //anem a estat OnAir
         }
 
-        if (input.specialAttackStaffDown) //fem el atac especial amb el pal
+        if (input.specialAttackStaffDown)
         {
-            staffController.ResetStaff();
-            animator.SetTrigger("SpecialAttackStaff");
-            rb.gravityScale = 2f;
-            ChangeState(PlayerState.SpecialAttackStaff); //anem a estat SpecialAttackStaff
+            if (TryConsumeKi(specialAttackStaffCost))
+            {
+                staffController.ResetStaff();
+                animator.SetTrigger("SpecialAttackStaff");
+                rb.gravityScale = 2f;
+                ChangeState(PlayerState.SpecialAttackStaff);
+            }
+            else
+            {
+                Debug.Log("¡No tienes suficiente Ki para el ataque especial del bastón!");
+            }
         }
     }
 
