@@ -38,11 +38,12 @@ public class DialogueManager : MonoBehaviour
         });
     }
 
-    public void StartTriggerDialogue(DialogueData data, bool blockPlayerDuringDialogue = false, System.Action onFinish = null) //Inicia un diàleg des de trigger sense animator d'NPC
+    public void StartTriggerDialogue(DialogueData data, bool blockPlayerDuringDialogue = false, System.Action onFinish = null, bool autoAdvance = false) //Inicia un diàleg des de trigger sense animator d'NPC
     {
         if (data == null) { return; }
         
         if (DialogueActive) { return; }
+
         DialogueActive = true;
 
         if (blockPlayerDuringDialogue && player != null)
@@ -53,12 +54,11 @@ public class DialogueManager : MonoBehaviour
         dialogueUI.StartDialogue(data, null, () =>
         {
             if (blockPlayerDuringDialogue && player != null)
-            {
                 player.ExitDialogueMode();
-            }
+
             DialogueActive = false;
             onFinish?.Invoke();
-        });
+        }, autoAdvance);
     }
 
     public void ForceClose() //Força el tancament del diàleg actual

@@ -7,6 +7,7 @@ public class TriggerDialogueZone : MonoBehaviour
     public bool closeOnExit = true; //tanca diàleg en sortir de la zona
     public bool blockPlayerDuringDialogue = true; // para tutorials a veces true
     public bool onlyOnce = true; //nomes s'executa el dialeg una vegada
+    public bool autoAdvance = false; //si es true el diàleg avança automàticament (sense esperar input del jugador)
 
     private bool hasTriggered = false;
 
@@ -30,7 +31,7 @@ public class TriggerDialogueZone : MonoBehaviour
             DialogueManager.Instance.StartTriggerDialogue(dialogue, blockPlayerDuringDialogue, () =>
             {
                 if (onlyOnce) hasTriggered = true;
-            });
+            }, autoAdvance);
         }
     }
 
