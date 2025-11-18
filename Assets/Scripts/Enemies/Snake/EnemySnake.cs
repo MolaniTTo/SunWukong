@@ -4,10 +4,10 @@ using System.Collections;
 public class EnemySnake : EnemyBase
 {
     [Header("States")]
-    public SnakePatrol PatrolState { get; private set; }
-    public SnakeChase ChaseState { get; private set; }
-    public SnakeAttack AttackState { get; private set; }
-    public SnakeDeath DeathState { get; private set; }
+    //public SnakePatrol PatrolState { get; private set; }
+    //public SnakeChase ChaseState { get; private set; }
+    //public SnakeAttack AttackState { get; private set; }
+    //public SnakeDeath DeathState { get; private set; }
 
     [Header("References")]
     public Transform player;
@@ -82,12 +82,12 @@ public class EnemySnake : EnemyBase
 
     private void Start()
     {
-        PatrolState = new SnakePatrol(this);
-        ChaseState = new SnakeChase(this);
-        AttackState = new SnakeAttack(this);
-        DeathState = new SnakeDeath(this);
+        //PatrolState = new SnakePatrol(this);
+        //ChaseState = new SnakeChase(this);
+        //AttackState = new SnakeAttack(this);
+        //DeathState = new SnakeDeath(this);
 
-        StateMachine.Initialize(PatrolState);
+        //StateMachine.Initialize(PatrolState);
     }
 
     protected override void Update()
@@ -253,9 +253,9 @@ public class EnemySnake : EnemyBase
 
     private void HandleDeath()
     {
-        if (DeathState != null && StateMachine != null)
+        //if (DeathState != null && StateMachine != null)
         {
-            StateMachine.ChangeState(DeathState);
+            //StateMachine.ChangeState(DeathState);
         }
         StopMovement();
     }

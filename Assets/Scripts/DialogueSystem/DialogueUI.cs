@@ -13,6 +13,7 @@ public class DialogueUI : MonoBehaviour
     public TMP_Text dialogueText;
     public Button continueButton; //Botó per continuar el diàleg pero podem utilitzar la tecla E
     public float typingSpeed = 0.03f;
+    private bool autoAdvance = false;
 
 
     [Header("Camera Zoom (optional)")]
@@ -42,13 +43,13 @@ public class DialogueUI : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && canContinue) //Permet continuar el diàleg amb la tecla E
+        if (!autoAdvance && Input.GetKeyDown(KeyCode.E) && canContinue)
         {
             OnContinuePressed();
         }
     }
 
-    public void StartDialogue(DialogueData data, Animator targetAnimator = null, System.Action onFinish = null) //Inicia un diàleg amb les dades proporcionades
+    public void StartDialogue(DialogueData data, Animator targetAnimator = null, System.Action onFinish = null, bool autoAdvance = false) //Inicia un diàleg amb les dades proporcionades
     {
         if (data == null) { return; }
 
@@ -67,6 +68,7 @@ public class DialogueUI : MonoBehaviour
         }
 
         ShowNextLine();
+        this.autoAdvance = autoAdvance;
     }
 
     public void ForceCloseUI()
@@ -132,6 +134,10 @@ public class DialogueUI : MonoBehaviour
         if (lines == null || index < 0 || index >= lines.Length) return;
 
         DialogueData.DialogueLine line = lines[index]; //Línia actual del diàleg
+        if (autoAdvance && continueButton != null)
+        {
+            continueButton.gameObject.SetActive(false);
+        }
 
         if (line.requestCameraZoom && useCameraZoom && vcam != null) //Fes zoom si la línia ho sol·licita
         {
@@ -168,6 +174,11 @@ public class DialogueUI : MonoBehaviour
         }
         isTyping = false;
         canContinue = true;
+        if (autoAdvance)
+        {
+            yield return new WaitForSeconds(0.4f);
+            OnContinuePressed();
+        }
     }
 
     IEnumerator ZoomToFOV(float targetFOV, float duration)

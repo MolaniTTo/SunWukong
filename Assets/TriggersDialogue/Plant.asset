@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac904e20e0756e5478f5a82c04981101, type: 3}
+  m_Name: Plant
+  m_EditorClassIdentifier: 
+  lines:
+  - text: "\xA1Cuidado! Esa planta dispara desde lejos\u2026 y tiene buena punter\xEDa."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 0
+  - text: "Prueba a atacarla pulsando C: tu ataque a distancia deber\xEDa alcanzarla
+      sin problemas."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 0
