@@ -16,6 +16,11 @@ public class NPCDialogue : MonoBehaviour
     public KeyCode talkKey = KeyCode.E;         
     public bool forceCameraZoomOnStart = false;
 
+    [Header("Monje References")]
+    public GameObject objectToHide;
+    public MonjeBueno monjeBueno;
+
+
     private bool playerInRange = false;
     private Transform player;
 

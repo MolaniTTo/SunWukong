@@ -51,7 +51,7 @@ public class PlayerStateMachine : MonoBehaviour
     private Vector2 moveInput;
     [SerializeField] private bool isGrounded = true;
     [SerializeField] private bool isHealing = false;
-    [SerializeField] private bool hasStaff = false;
+    public bool hasStaff = false;
     public bool isBlocking => currentState == PlayerState.Block;
 
     [Header("Refs")]
@@ -81,6 +81,25 @@ public class PlayerStateMachine : MonoBehaviour
 
     [Header("Dialogue")]
     [SerializeField] private bool dialogueLocked = false; //true mentre el diàleg està actiu
+
+    [Header("Slope Handling")]
+    [SerializeField] private float maxSlopeAngle = 45f;
+    private float slopeAngle;
+    private Vector2 slopeNormal;
+    public bool onSlope;
+
+    [Header("Wall Check")]
+    [SerializeField] private float wallCheckDistance = 0.6f;
+    [SerializeField] private bool isAgainstWall;
+    public GameObject wallCheckPosition;
+
+    [Header("Slope Step")]
+    [SerializeField] private float stepHeight = 0.25f;
+    [SerializeField] private float stepCheckDistance = 0.1f;
+    public Transform lowerOrigin;
+    public Transform upperOrigin;
+
+
 
     public PlayerState currentState;
 
@@ -229,10 +248,12 @@ public class PlayerStateMachine : MonoBehaviour
 
         HandleFlip(); //el posem aqui ja que ho mirem just despres del moveInput
         CheckIfGrounded();
+        CheckWallCollision();
 
         if (currentState == PlayerState.Running || currentState == PlayerState.OnAir || currentState == PlayerState.AttackPunch || currentState == PlayerState.AttackTail) //podem moure'ns en aquests estats
         {
             Move();
+            HandleSlopeStep();
         }
     }
 
@@ -820,8 +841,16 @@ private void HandleHealing()
     }
 
     private void Move()
-    {
-        rb.linearVelocity = new Vector2(moveInput.x * speed, rb.linearVelocity.y);
+    { 
+        if (isAgainstWall)
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            return;
+        }
+
+        Vector2 targetVelocity = new Vector2(moveInput.x * speed, rb.linearVelocity.y);
+
+        rb.linearVelocity = targetVelocity;
     }
 
     private void Jump()
@@ -848,10 +877,68 @@ private void HandleHealing()
     void CheckIfGrounded()
     {
         if (Time.time - lastJumpTime < groundCheckDelay) return; // Evita comprovar si està a terra immediatament després de saltar
+        
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, LayerMask.GetMask("Ground"));
-        isGrounded = hit.collider != null;
+
+        if (hit.collider != null)
+        {
+            isGrounded = true;
+
+            slopeNormal = hit.normal;
+            slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+            onSlope = slopeAngle > 0f && slopeAngle <= maxSlopeAngle;
+        }
+        else
+        {
+            isGrounded = false;
+            onSlope = false;
+        }
+
         Debug.DrawRay(transform.position, Vector2.down * 1.0f, isGrounded ? Color.green : Color.red);
     }
+
+    private void CheckWallCollision()
+    {
+        Vector2 direction = facingRight ? Vector2.right : Vector2.left;
+
+        RaycastHit2D hit = Physics2D.Raycast(   
+            wallCheckPosition.transform.position,
+            direction,
+            wallCheckDistance,
+            groundLayer
+        );
+        
+        isAgainstWall = hit.collider != null;
+
+        Debug.DrawRay(
+            wallCheckPosition.transform.position,
+            direction * wallCheckDistance,
+            isAgainstWall ? Color.red : Color.green
+        );
+    }
+
+    private void HandleSlopeStep()
+    {
+        if (onSlope) return;
+
+        Vector2 dir = new Vector2(Mathf.Sign(moveInput.x), 0); //direccio del moviment horitzontal
+        Vector2 originLow = lowerOrigin.position; //origen del raycast a nivell baix
+        Vector2 originUp = this.upperOrigin.position; //origen del raycast a nivell alt
+
+        RaycastHit2D lowerHit = Physics2D.Raycast(originLow, dir, stepCheckDistance, groundLayer); //raycast a nivell baix per detectar obstacles petits
+
+        RaycastHit2D upperHit = Physics2D.Raycast(originUp, dir, stepCheckDistance, groundLayer);
+
+        Debug.DrawRay(originLow, dir * stepCheckDistance, Color.red);
+        Debug.DrawRay(originUp, dir * stepCheckDistance, Color.green);
+
+        if (lowerHit && !upperHit)
+        {
+            transform.position += new Vector3(0, stepHeight, 0);
+        }
+    }
+
+
 
     public void ActivateStaff() //ho cridaria el gameManager quan el monje ens dona el basto
     {
@@ -894,82 +981,6 @@ private void HandleHealing()
         dialogueLocked = false;
         ReturnToDefaultState(); //torna a l'estat per defecte segons si estem a terra o en l'aire
     }
-
-    /*private void HandleHealingInput()
-    {
-        if (Input.GetKeyDown(KeyCode.E)) //per exemple la E es per curar
-        {
-            if (isGrounded && !isHealing) //nomes ens podem curar si estem a terra i si no ens estem curant
-            {
-                isHealing = true;
-                animator.SetBool("HealButton", true);
-                ChangeState(PlayerState.Healing); //Canviem a estat Healing
-            }
-
-        }
-        if (Input.GetKeyUp(KeyCode.E) && isHealing) //si deixem anar el boto de curar mentre ens estem curant
-        {
-            isHealing = false;
-            animator.SetBool("HealButton", false);
-        }
-    }
-
-
-
-
-    private void HandleAttackInput()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (currentState == PlayerState.Idle || currentState == PlayerState.Running || currentState == PlayerState.OnAir) //podem atacar desde terra en idle, corrent o en el aire
-            {
-                ChangeState(PlayerState.AttackPunch);
-                animator.SetTrigger("AttackPunch");
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (currentState == PlayerState.Idle || currentState == PlayerState.Running || currentState == PlayerState.OnAir)
-            {
-                ChangeState(PlayerState.AttackTail);
-                animator.SetTrigger("AttackTail");
-            }
-        }
-
-        if( Input.GetKeyDown(KeyCode.G))
-        {
-            if (currentState == PlayerState.Idle || currentState == PlayerState.Running)
-            {
-                ChangeState(PlayerState.SpecialAttackPunch);
-                animator.SetTrigger("SpecialAttackPunch");
-            }
-        }
-    }
-    
-
-    private void HandleBlockInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-        { 
-            if (isGrounded)
-            {
-                ChangeState(PlayerState.Block);
-                animator.SetBool("Blocking", true);
-            }
-        }
-        if (Input.GetKeyUp(KeyCode.Q))
-        {
-            if (currentState == PlayerState.Block)
-            {
-                animator.SetBool("Blocking", false);
-                ReturnToDefaultState();
-            }
-        }
-    }
-    */
-
-
 
 }
 

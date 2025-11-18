@@ -15,5 +15,7 @@ public class DialogueData : ScriptableObject
         public bool requestCameraZoom = false;
 
         public bool blockPlayerDuringLine = true;
+
+        public bool deactivateObjects = false;
     }
 }
