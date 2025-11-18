@@ -30,20 +30,6 @@ public class BarraDeVida : MonoBehaviour
             {
                 characterHealth = player.GetComponent<CharacterHealth>();
             }
-            
-            // Si aún no lo encontramos, buscar cualquier CharacterHealth que sea player
-            if (characterHealth == null)
-            {
-                CharacterHealth[] allHealthComponents = FindObjectsOfType<CharacterHealth>();
-                foreach (var health in allHealthComponents)
-                {
-                    if (health.isPlayer)
-                    {
-                        characterHealth = health;
-                        break;
-                    }
-                }
-            }
         }
 
         // Configurar el slider

@@ -30,6 +30,7 @@ public class DialogueUI : MonoBehaviour
     private bool canContinue;
     private System.Action onFinishCallback; //Callback quan el diàleg acaba
     private Animator currentTargetAnimator; //Referència a l'animator de l'NPC actual
+    private NPCDialogue currentNPCDialogue; //Referència al NPCDialogue actual
 
     private Coroutine zoomCoroutine;
 
@@ -156,6 +157,14 @@ public class DialogueUI : MonoBehaviour
         if (!string.IsNullOrEmpty(line.animatorTrigger) && currentTargetAnimator != null) //Fes l'animació si es proporciona un trigger
         {
             currentTargetAnimator.SetTrigger(line.animatorTrigger); //Activa el trigger de l'animator
+        }
+        if(line.deactivateObjects == true)
+        {
+            if(currentNPCDialogue != null)
+            {
+                currentNPCDialogue.objectToHide.SetActive(false);
+                currentNPCDialogue.monjeBueno.ActivateStaffToPlayer();
+            }
         }
 
         dialogueText.text = ""; //Neteja el text abans d'escriure la nova línia

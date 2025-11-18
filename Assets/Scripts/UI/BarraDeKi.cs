@@ -30,12 +30,6 @@ public class BarraDeKi : MonoBehaviour
             {
                 playerStateMachine = player.GetComponent<PlayerStateMachine>();
             }
-            
-            // Si aún no lo encontramos, buscar cualquier PlayerStateMachine en la escena
-            if (playerStateMachine == null)
-            {
-                playerStateMachine = FindObjectOfType<PlayerStateMachine>();
-            }
         }
 
         // Configurar el slider

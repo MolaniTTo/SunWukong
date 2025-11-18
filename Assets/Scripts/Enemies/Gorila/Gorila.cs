@@ -21,6 +21,7 @@ public class Gorila : EnemyBase
     public GameObject punchCollider; //collider que s'activa durant l'atac de puny
     public CameraShake cameraShake; //referencia al component de camera shake
     public CharacterHealth characterHealth; //referencia al component de vida
+    public MonjeBueno monjeBueno; //referencia al monje que canvia el seu diàleg un cop es derrota el gorila
 
 
     [Header("Stats")]
@@ -103,6 +104,7 @@ public class Gorila : EnemyBase
         // Aturem moviment i desactivem collider d'atac
         StopMovement();
         if (punchCollider != null) { punchCollider.SetActive(false); }
+        monjeBueno.ChangeDialogue("Monje1");
     }
 
     private void Start()
