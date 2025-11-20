@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac904e20e0756e5478f5a82c04981101, type: 3}
+  m_Name: Monje2
+  m_EditorClassIdentifier: 
+  lines:
+  - text: "\xBFQu\xE9\u2026? \xBFQu\xE9 has dicho? \xBFQue lo has derrotado? \xBFAl
+      gorila? \xA1No, no, no, no! \xA1Eso no me lo creo ni aunque me lo jure un dios
+      inmortal!"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+  - text: "\xA1Pero si ese monstruo me lanz\xF3 volando tres veces! Y eso fue solo
+      porque intent\xE9 saludarlo\u2026 \xA1Imag\xEDnate si hubiera luchado de verdad!"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+  - text: "Hmph\u2026 supongo que a mi edad ya no tengo fuerzas ni para levantarme
+      sin que me crujan los huesos. solo porque intent\xE9 saludarlo\u2026 \xA1Imag\xEDnate
+      si hubiera luchado de verdad!"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+  - text: "Mis rezos son lo \xFAnico que me queda\u2026 y lo \xFAnico que me acerca,
+      aunque sea un poquito, a lo divino."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+  - text: "Pero t\xFA\u2026 t\xFA s\xED que tienes camino por delante. Has hecho
+      lo que yo nunca pude. Aunque todav\xEDa no me crea del todo que ese gorila
+      acabara en el suelo y no t\xFA."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+  - text: "Ve. Ve en busca de la inmortalidad. Mi viaje termina aqu\xED, entre rezos
+      y silencios\u2026 pero el tuyo apenas comienza."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 1

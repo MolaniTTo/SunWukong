@@ -99,6 +99,10 @@ public class PlayerStateMachine : MonoBehaviour
     public Transform lowerOrigin;
     public Transform upperOrigin;
 
+    [Header("Particles")]
+    [SerializeField] private GameObject touchGroundParticlePrefab;
+    private Vector2 lastGroundPoint;
+
 
 
     public PlayerState currentState;
@@ -470,6 +474,7 @@ public class PlayerStateMachine : MonoBehaviour
     {
         if (isGrounded)
         {
+            SpawnTouchGroundParticle();
             animator.SetTrigger("TouchGround"); //animacio d'aterrar
             ChangeState(Mathf.Abs(moveInput.x) > 0.1f ? PlayerState.Running : PlayerState.Idle); //Si es mou, a Running, si no a Idle
         }
@@ -883,6 +888,7 @@ private void HandleHealing()
         if (hit.collider != null)
         {
             isGrounded = true;
+            lastGroundPoint = hit.point;
 
             slopeNormal = hit.normal;
             slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
@@ -938,11 +944,20 @@ private void HandleHealing()
         }
     }
 
-
-
     public void ActivateStaff() //ho cridaria el gameManager quan el monje ens dona el basto
     {
         staffObj.SetActive(true);
+        hasStaff = true;
+    }
+
+    private void SpawnTouchGroundParticle()
+    {
+        Debug.Log("SpawnTouchGroundParticle called");
+        if (touchGroundParticlePrefab != null)
+        {
+            Instantiate(touchGroundParticlePrefab,lastGroundPoint, Quaternion.identity);
+        }
+
     }
 
 

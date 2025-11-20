@@ -160,9 +160,11 @@ public class DialogueUI : MonoBehaviour
         }
         if(line.deactivateObjects == true)
         {
-            if(currentNPCDialogue != null)
+            Debug.Log("DialogueUI: Desactivant objectes per la línia de diàleg " + index);
+            if (currentNPCDialogue != null)
             {
-                currentNPCDialogue.objectToHide.SetActive(false);
+                Debug.Log("DialogueUI: Desactivant l'objecte " + currentNPCDialogue.objectToHide.name);
+                currentNPCDialogue.objectToHide.SetActive(false); 
                 currentNPCDialogue.monjeBueno.ActivateStaffToPlayer();
             }
         }
@@ -238,5 +240,10 @@ public class DialogueUI : MonoBehaviour
             StopCoroutine(zoomCoroutine);
 
         zoomCoroutine = StartCoroutine(ZoomToFOV(zoomedFOV, zoomDuration));
+    }
+
+    public void AssignNPC(NPCDialogue npc)
+    {
+        currentNPCDialogue = npc;
     }
 }
