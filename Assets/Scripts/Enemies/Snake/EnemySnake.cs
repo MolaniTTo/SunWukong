@@ -4,23 +4,24 @@ using System.Collections;
 public class EnemySnake : EnemyBase
 {
     [Header("States")]
-    //public SnakePatrol PatrolState { get; private set; }
-    //public SnakeChase ChaseState { get; private set; }
-    //public SnakeAttack AttackState { get; private set; }
-    //public SnakeDeath DeathState { get; private set; }
+    public SerpientePatrol PatrolState { get; private set; }
+    public SerpienteChase ChaseState { get; private set; }
+    public SerpienteAttack AttackState { get; private set; }
+    public SerpienteDeath DeathState { get; private set; }
 
     [Header("References")]
     public Transform player;
     public Rigidbody2D rb;
     public Animator animator;
     public CharacterHealth characterHealth;
-    public Transform attackPoint;
-    public GameObject projectilePrefab;
+    public GameObject biteCollider;
 
     [Header("Movement Stats")]
     public float patrolSpeed = 2f;
     public float chaseSpeed = 3.5f;
     public bool facingRight = true;
+    public bool animationFinished = false;
+    public bool lockFacing = false;
 
     [Header("Patrol Settings")]
     public Transform pointA;
@@ -37,18 +38,16 @@ public class EnemySnake : EnemyBase
     public LayerMask playerLayer;
 
     [Header("Attack Settings")]
-    public float attackRange = 3f;
-    public float minAttackDistance = 2f;
+    public float attackRange = 2f;
     public float attackCooldown = 2f;
     private float lastAttackTime = 0f;
-    public float projectileSpeed = 6f;
 
-    private int facingDirection = 1;
+    [HideInInspector] public int facingDirection = 1;
 
     protected override void Awake()
     {
         base.Awake();
-        
+
         if (player == null)
         {
             var pGo = GameObject.FindGameObjectWithTag("Player");
@@ -56,7 +55,9 @@ public class EnemySnake : EnemyBase
         }
 
         if (rb == null) rb = GetComponent<Rigidbody2D>();
-        
+
+        if (biteCollider != null) biteCollider.SetActive(false);
+
         if (characterHealth == null)
         {
             characterHealth = GetComponent<CharacterHealth>();
@@ -82,17 +83,43 @@ public class EnemySnake : EnemyBase
 
     private void Start()
     {
-        //PatrolState = new SnakePatrol(this);
-        //ChaseState = new SnakeChase(this);
-        //AttackState = new SnakeAttack(this);
-        //DeathState = new SnakeDeath(this);
+        PatrolState = new SerpientePatrol(this);
+        ChaseState = new SerpienteChase(this);
+        AttackState = new SerpienteAttack(this);
+        DeathState = new SerpienteDeath(this);
 
-        //StateMachine.Initialize(PatrolState);
+        StateMachine.Initialize(PatrolState);
     }
 
     protected override void Update()
     {
         StateMachine.Update();
+    }
+
+    public void Flip()
+    {
+        if (!lockFacing)
+        {
+            if (player != null)
+            {
+                if (player.position.x > transform.position.x && facingRight)
+                {
+                    facingRight = false;
+                    facingDirection = -1;
+                    Vector3 scale = transform.localScale;
+                    scale.x = -Mathf.Abs(scale.x);
+                    transform.localScale = scale;
+                }
+                else if (player.position.x < transform.position.x && !facingRight)
+                {
+                    facingRight = true;
+                    facingDirection = 1;
+                    Vector3 scale = transform.localScale;
+                    scale.x = Mathf.Abs(scale.x);
+                    transform.localScale = scale;
+                }
+            }
+        }
     }
 
     public void PatrolMovement()
@@ -105,23 +132,31 @@ public class EnemySnake : EnemyBase
 
         Vector2 direction = (currentTarget.position - transform.position).normalized;
         direction.y = 0;
-        
+
         rb.linearVelocity = direction * patrolSpeed;
 
         float distance = Vector2.Distance(new Vector2(transform.position.x, 0), new Vector2(currentTarget.position.x, 0));
-        
+
         if (distance <= waypointReachDistance)
         {
             StartCoroutine(WaitAtWaypoint());
         }
 
-        if (direction.x > 0 && !facingRight)
+        if (direction.x > 0 && facingRight)
         {
-            Flip();
+            facingRight = false;
+            facingDirection = -1;
+            Vector3 scale = transform.localScale;
+            scale.x = -Mathf.Abs(scale.x);
+            transform.localScale = scale;
         }
-        else if (direction.x < 0 && facingRight)
+        else if (direction.x < 0 && !facingRight)
         {
-            Flip();
+            facingRight = true;
+            facingDirection = 1;
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x);
+            transform.localScale = scale;
         }
     }
 
@@ -129,14 +164,14 @@ public class EnemySnake : EnemyBase
     {
         isWaiting = true;
         StopMovement();
-        
+
         yield return new WaitForSeconds(waitTimeAtWaypoint);
-        
+
         if (currentTarget == pointA)
             currentTarget = pointB;
         else
             currentTarget = pointA;
-        
+
         isWaiting = false;
     }
 
@@ -146,13 +181,7 @@ public class EnemySnake : EnemyBase
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-        if (distanceToPlayer < minAttackDistance)
-        {
-            Vector2 awayFromPlayer = (transform.position - player.position).normalized;
-            awayFromPlayer.y = 0;
-            rb.linearVelocity = awayFromPlayer * patrolSpeed;
-        }
-        else if (distanceToPlayer > attackRange)
+        if (distanceToPlayer > attackRange)
         {
             Vector2 direction = (player.position - transform.position).normalized;
             direction.y = 0;
@@ -162,30 +191,11 @@ public class EnemySnake : EnemyBase
         {
             StopMovement();
         }
-
-        if (player.position.x > transform.position.x && !facingRight)
-        {
-            Flip();
-        }
-        else if (player.position.x < transform.position.x && facingRight)
-        {
-            Flip();
-        }
     }
 
     public void StopMovement()
     {
         if (rb != null) rb.linearVelocity = Vector2.zero;
-    }
-
-    private void Flip()
-    {
-        facingRight = !facingRight;
-        facingDirection = facingRight ? 1 : -1;
-        
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
     }
 
     public override bool CanSeePlayer()
@@ -209,7 +219,7 @@ public class EnemySnake : EnemyBase
         if (player == null) return false;
 
         float distance = Vector2.Distance(transform.position, player.position);
-        return distance <= attackRange && distance >= minAttackDistance;
+        return distance <= attackRange;
     }
 
     public bool CanAttack()
@@ -219,28 +229,22 @@ public class EnemySnake : EnemyBase
 
     public override void Attack()
     {
-        if (projectilePrefab != null && attackPoint != null)
-        {
-            GameObject projectile = Instantiate(projectilePrefab, attackPoint.position, Quaternion.identity);
-            
-            Vector2 direction = (player.position - attackPoint.position).normalized;
-            
-            Rigidbody2D projRb = projectile.GetComponent<Rigidbody2D>();
-            if (projRb != null)
-            {
-                projRb.linearVelocity = direction * projectileSpeed;
-            }
+        lastAttackTime = Time.time;
+    }
 
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            projectile.transform.rotation = Quaternion.Euler(0, 0, angle);
+    public void OnBiteImpact()
+    {
+        biteCollider.SetActive(true);
+    }
 
-            lastAttackTime = Time.time;
+    public void OnBiteImpactEnd()
+    {
+        biteCollider.SetActive(false);
+    }
 
-            if (animator != null)
-            {
-                animator.SetTrigger("Attack");
-            }
-        }
+    public void OnAttackEnd()
+    {
+        animationFinished = true;
     }
 
     private void HandleDamage()
@@ -253,9 +257,9 @@ public class EnemySnake : EnemyBase
 
     private void HandleDeath()
     {
-        //if (DeathState != null && StateMachine != null)
+        if (DeathState != null && StateMachine != null)
         {
-            //StateMachine.ChangeState(DeathState);
+            StateMachine.ChangeState(DeathState);
         }
         StopMovement();
     }
@@ -263,10 +267,10 @@ public class EnemySnake : EnemyBase
     public override void Die()
     {
         StopMovement();
+        if (biteCollider != null) biteCollider.SetActive(false);
     }
 
     public override void Move()
     {
-        // Implementado en PatrolMovement y ChaseMovement
     }
 }

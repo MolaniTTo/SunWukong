@@ -1,16 +1,41 @@
 using UnityEngine;
 
-public class SerpienteAttack : MonoBehaviour
+public class SerpienteAttack : IState
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private EnemySnake snake;
+
+    public SerpienteAttack(EnemySnake snake)
     {
-        
+        this.snake = snake;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Enter()
     {
-        
+        snake.lockFacing = true;
+        snake.StopMovement();
+        snake.animator.SetTrigger("Attack");
+        snake.animationFinished = false;
+    }
+
+    public void Exit()
+    {
+
+    }
+
+    public void Update()
+    {
+        if (snake.animationFinished)
+        {
+            if (snake.CanSeePlayer())
+            {
+                snake.StateMachine.ChangeState(snake.ChaseState);
+            }
+            else
+            {
+                snake.StateMachine.ChangeState(snake.PatrolState);
+            }
+            snake.animationFinished = false;
+            return;
+        }
     }
 }
