@@ -18,6 +18,10 @@ public class EarthquakeWave : MonoBehaviour
     private float direction;
     private Transform ownerTransform;
 
+    [Header("Particle")]
+    [SerializeField] private GameObject particleHitPrefab;
+    [SerializeField] private Transform particleSpawnPoint;
+
     private void Start()
     {
         switch(owner)

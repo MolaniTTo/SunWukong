@@ -13,6 +13,10 @@ public class DamageCollider : MonoBehaviour
     [Header("Owner")]
     [SerializeField] private GameObject owner; // Referència al propietari del collider (ex: Gorila)
 
+    [Header("Particle")]
+    [SerializeField] private GameObject particleHitPrefab;
+    [SerializeField] private Transform particleSpawnPoint;
+
     private void Awake()
     {
         if (owner == null) { owner = transform.root.gameObject; } //Assignem el propietari si no està assignat
@@ -31,7 +35,12 @@ public class DamageCollider : MonoBehaviour
         {
             knockBack.ApplyKnockBack(this.gameObject, knockBackDuration, knockBackForce);
         }
-     
+
+        if (particleHitPrefab != null && particleSpawnPoint != null)
+        {
+            Instantiate(particleHitPrefab, particleSpawnPoint.position, Quaternion.identity); // Creem les partícules d'impacte
+        }
+
         characterHealth.TakeDamage(damage, owner); // Apliquem el dany
 
     }

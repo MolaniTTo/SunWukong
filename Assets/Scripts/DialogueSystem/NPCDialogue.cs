@@ -102,6 +102,8 @@ public class NPCDialogue : MonoBehaviour
         // Le decimos al Manager qué UI debe usar para este NPC
         DialogueManager.Instance.dialogueUI = npcDialogueUI;
 
+        npcDialogueUI.AssignNPC(this);
+
         DialogueManager.Instance.StartNPCDialogue(
             dialogue,
             npcAnimator,

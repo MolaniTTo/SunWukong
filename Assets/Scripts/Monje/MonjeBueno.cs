@@ -24,9 +24,11 @@ public class MonjeBueno : MonoBehaviour
 
     public void ActivateStaffToPlayer()
     {
+        Debug.Log("MonjeBueno: Intentando activar el bastón para el jugador.");
         if (player != null)
         {
-            player.hasStaff = true;
+            Debug.Log("MonjeBueno: Activando el bastón para el jugador.");
+            player.ActivateStaff();
         }
     }
 

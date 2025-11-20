@@ -104,7 +104,7 @@ public class Gorila : EnemyBase
         // Aturem moviment i desactivem collider d'atac
         StopMovement();
         if (punchCollider != null) { punchCollider.SetActive(false); }
-        monjeBueno.ChangeDialogue("Monje1");
+        monjeBueno.ChangeDialogue("Monje2");
     }
 
     private void Start()
