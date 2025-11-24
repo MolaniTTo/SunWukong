@@ -612,7 +612,7 @@ private void HandleHealing()
         {
             staffController.ResetStaff();
             animator.SetTrigger("StopStaffClimbing");
-            RestoreDefaultGravity()
+            RestoreDefaultGravity();
             Jump();
             ChangeState(PlayerState.OnAir); //anem a estat OnAir
         }
