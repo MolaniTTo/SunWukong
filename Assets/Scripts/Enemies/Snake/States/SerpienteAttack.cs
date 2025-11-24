@@ -3,6 +3,7 @@ using UnityEngine;
 public class SerpienteAttack : IState
 {
     private EnemySnake snake;
+    private bool attackExecuted = false;
 
     public SerpienteAttack(EnemySnake snake)
     {
@@ -11,31 +12,31 @@ public class SerpienteAttack : IState
 
     public void Enter()
     {
-        snake.lockFacing = true;
-        snake.StopMovement();
-        snake.animator.SetTrigger("Attack");
-        snake.animationFinished = false;
-    }
-
-    public void Exit()
-    {
-
+        snake.StartAttack();
+        attackExecuted = false;
     }
 
     public void Update()
     {
-        if (snake.animationFinished)
+        AnimatorStateInfo stateInfo = snake.animator.GetCurrentAnimatorStateInfo(0);
+
+        if (stateInfo.IsName("attack") && stateInfo.normalizedTime >= 0.9f && !attackExecuted)
         {
-            if (snake.CanSeePlayer())
-            {
-                snake.StateMachine.ChangeState(snake.ChaseState);
-            }
+            attackExecuted = true;
+
+            if (snake.CanSeePlayer() && snake.IsPlayerInAttackRange() && snake.CanAttack())
+                snake.StateMachine.ChangeState(new SerpienteAttack(snake));
+            else if (snake.CanSeePlayer())
+                snake.StateMachine.ChangeState(new SerpienteChase(snake));
             else
-            {
-                snake.StateMachine.ChangeState(snake.PatrolState);
-            }
-            snake.animationFinished = false;
-            return;
+                snake.StateMachine.ChangeState(new SerpientePatrol(snake));
         }
+    }
+
+    public void Exit()
+    {
+        snake.animator.SetBool("isMoving", false);
+        snake.animator.SetBool("isChasing", false);
+        // No Flip aquí, la dirección se maneja en Patrol o Chase
     }
 }

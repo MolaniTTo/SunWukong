@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 public class EnemySnake : EnemyBase
 {
@@ -9,75 +9,68 @@ public class EnemySnake : EnemyBase
     public SerpienteAttack AttackState { get; private set; }
     public SerpienteDeath DeathState { get; private set; }
 
-    [Header("References")]
-    public Transform player;
-    public Rigidbody2D rb;
+    [Header("Snake Settings")]
+    public float detectionRange = 8f;
+    public float attackRange = 2.5f;
+    public LayerMask playerLayer;
+    public bool facingRight = false;
     public Animator animator;
     public CharacterHealth characterHealth;
-    public GameObject biteCollider;
 
-    [Header("Movement Stats")]
+    [Header("Movement Settings")]
     public float patrolSpeed = 2f;
     public float chaseSpeed = 3.5f;
-    public bool facingRight = true;
-    public bool animationFinished = false;
-    public bool lockFacing = false;
-
-    [Header("Patrol Settings")]
     public Transform pointA;
     public Transform pointB;
-    private Transform currentTarget;
-    public float waypointReachDistance = 0.5f;
-    public float waitTimeAtWaypoint = 1f;
-    private float waitTimer = 0f;
-    private bool isWaiting = false;
+    private bool movingRight = true;
 
-    [Header("Detection Settings")]
-    public float detectionRange = 5f;
-    public float losePlayerRange = 8f;
-    public LayerMask playerLayer;
+    public bool MovingRight => movingRight;
 
-    [Header("Attack Settings")]
-    public float attackRange = 2f;
-    public float attackCooldown = 2f;
+    [Header("Combat Settings")]
+    public float attackDamage = 15f;
+    public float attackCooldown = 0f;
+    public float contactDamage = 10f;
+    public float contactDamageCooldown = 1f;
+    private float lastContactDamageTime = -999f;
     private float lastAttackTime = 0f;
+    public GameObject biteCollider;
 
-    [HideInInspector] public int facingDirection = 1;
+    private Rigidbody2D rb;
+    private Transform player;
+    private bool isAttacking = false;
+
+    public Transform Player => player;
 
     protected override void Awake()
     {
         base.Awake();
 
-        if (player == null)
-        {
-            var pGo = GameObject.FindGameObjectWithTag("Player");
-            if (pGo != null) player = pGo.transform;
-        }
+        rb = GetComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.gravityScale = 0f;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        if (rb == null) rb = GetComponent<Rigidbody2D>();
-
-        if (biteCollider != null) biteCollider.SetActive(false);
-
-        if (characterHealth == null)
-        {
-            characterHealth = GetComponent<CharacterHealth>();
-        }
+        if (animator == null) animator = GetComponent<Animator>();
+        if (characterHealth == null) characterHealth = GetComponent<CharacterHealth>();
 
         if (characterHealth != null)
         {
-            characterHealth.OnDeath += HandleDeath;
-            characterHealth.OnTakeDamage += (currentHealth, attacker) => HandleDamage();
+            characterHealth.OnDeath += Death;
+            characterHealth.OnTakeDamage += Damaged;
         }
 
-        if (pointA != null) currentTarget = pointA;
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null) player = playerObj.transform;
+
+        if (biteCollider != null) biteCollider.SetActive(false);
     }
 
     private void OnDestroy()
     {
         if (characterHealth != null)
         {
-            characterHealth.OnDeath -= HandleDeath;
-            characterHealth.OnTakeDamage -= (currentHealth, attacker) => HandleDamage();
+            characterHealth.OnDeath -= Death;
+            characterHealth.OnTakeDamage -= Damaged;
         }
     }
 
@@ -96,181 +89,151 @@ public class EnemySnake : EnemyBase
         StateMachine.Update();
     }
 
-    public void Flip()
+    private void Death()
     {
-        if (!lockFacing)
+        animator.SetTrigger("Die");
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+    }
+
+    private void Damaged(float currentHealth, GameObject attacker)
+    {
+        animator.SetTrigger("Damaged");
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (!collision.gameObject.CompareTag("Player")) return;
+
+        if (Time.time >= lastContactDamageTime + contactDamageCooldown)
         {
-            if (player != null)
+            CharacterHealth playerHealth = collision.gameObject.GetComponent<CharacterHealth>();
+            if (playerHealth != null)
             {
-                if (player.position.x > transform.position.x && facingRight)
-                {
-                    facingRight = false;
-                    facingDirection = -1;
-                    Vector3 scale = transform.localScale;
-                    scale.x = -Mathf.Abs(scale.x);
-                    transform.localScale = scale;
-                }
-                else if (player.position.x < transform.position.x && !facingRight)
-                {
-                    facingRight = true;
-                    facingDirection = 1;
-                    Vector3 scale = transform.localScale;
-                    scale.x = Mathf.Abs(scale.x);
-                    transform.localScale = scale;
-                }
+                playerHealth.TakeDamage(contactDamage, gameObject);
+                lastContactDamageTime = Time.time;
             }
         }
     }
 
-    public void PatrolMovement()
+    public void Flip()
     {
-        if (currentTarget == null || isWaiting)
-        {
-            StopMovement();
-            return;
-        }
-
-        Vector2 direction = (currentTarget.position - transform.position).normalized;
-        direction.y = 0;
-
-        rb.linearVelocity = direction * patrolSpeed;
-
-        float distance = Vector2.Distance(new Vector2(transform.position.x, 0), new Vector2(currentTarget.position.x, 0));
-
-        if (distance <= waypointReachDistance)
-        {
-            StartCoroutine(WaitAtWaypoint());
-        }
-
-        if (direction.x > 0 && facingRight)
-        {
-            facingRight = false;
-            facingDirection = -1;
-            Vector3 scale = transform.localScale;
-            scale.x = -Mathf.Abs(scale.x);
-            transform.localScale = scale;
-        }
-        else if (direction.x < 0 && !facingRight)
-        {
-            facingRight = true;
-            facingDirection = 1;
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x);
-            transform.localScale = scale;
-        }
-    }
-
-    private IEnumerator WaitAtWaypoint()
-    {
-        isWaiting = true;
-        StopMovement();
-
-        yield return new WaitForSeconds(waitTimeAtWaypoint);
-
-        if (currentTarget == pointA)
-            currentTarget = pointB;
-        else
-            currentTarget = pointA;
-
-        isWaiting = false;
-    }
-
-    public void ChaseMovement()
-    {
-        if (player == null) return;
-
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-
-        if (distanceToPlayer > attackRange)
-        {
-            Vector2 direction = (player.position - transform.position).normalized;
-            direction.y = 0;
-            rb.linearVelocity = direction * chaseSpeed;
-        }
-        else
-        {
-            StopMovement();
-        }
-    }
-
-    public void StopMovement()
-    {
-        if (rb != null) rb.linearVelocity = Vector2.zero;
+        facingRight = !facingRight;
+        Vector3 scale = transform.localScale;
+        scale.x *= -1f;
+        transform.localScale = scale;
     }
 
     public override bool CanSeePlayer()
     {
         if (player == null) return false;
-
-        float distance = Vector2.Distance(transform.position, player.position);
-        return distance <= detectionRange;
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        return distanceToPlayer <= detectionRange;
     }
 
-    public bool HasLostPlayer()
-    {
-        if (player == null) return true;
-
-        float distance = Vector2.Distance(transform.position, player.position);
-        return distance > losePlayerRange;
-    }
-
-    public bool IsInAttackRange()
+    public bool IsPlayerInAttackRange()
     {
         if (player == null) return false;
-
-        float distance = Vector2.Distance(transform.position, player.position);
-        return distance <= attackRange;
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        return distanceToPlayer <= attackRange;
     }
 
-    public bool CanAttack()
+    public override void Move() { }
+
+    public void MoveTowardsPlayer()
     {
-        return Time.time >= lastAttackTime + attackCooldown;
+        if (player == null || rb == null) return;
+
+        Vector2 direction = (player.position - transform.position).normalized;
+
+        if ((direction.x > 0 && !facingRight) || (direction.x < 0 && facingRight))
+            Flip();
+
+        rb.linearVelocity = new Vector2(direction.x * chaseSpeed, rb.linearVelocity.y);
+
+        animator.SetBool("isChasing", true);
+        animator.SetBool("isMoving", false);
+    }
+
+    public void Patrol()
+    {
+        if (pointA == null || pointB == null)
+        {
+            StopMovement();
+            return;
+        }
+
+        float leftLimit = Mathf.Min(pointA.position.x, pointB.position.x);
+        float rightLimit = Mathf.Max(pointA.position.x, pointB.position.x);
+
+        if (transform.position.x <= leftLimit) movingRight = true;
+        else if (transform.position.x >= rightLimit) movingRight = false;
+
+        float dir = movingRight ? 1f : -1f;
+
+        if ((dir > 0 && !facingRight) || (dir < 0 && facingRight)) Flip();
+
+        rb.linearVelocity = new Vector2(dir * patrolSpeed, rb.linearVelocity.y);
+
+        animator.SetBool("isMoving", true);
+        animator.SetBool("isChasing", false);
+    }
+
+    public void StopMovement()
+    {
+        if (rb != null) rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        animator.SetBool("isMoving", false);
+        animator.SetBool("isChasing", false);
     }
 
     public override void Attack()
     {
+        if (player == null) return;
+
+        if (Vector2.Distance(transform.position, player.position) <= attackRange)
+        {
+            CharacterHealth playerHealth = player.GetComponent<CharacterHealth>();
+            if (playerHealth != null) playerHealth.TakeDamage(attackDamage, gameObject);
+        }
+    }
+
+    public bool CanAttack()
+    {
+        return Time.time - lastAttackTime >= attackCooldown && !isAttacking;
+    }
+
+    public void StartAttack()
+    {
+        if (isAttacking) return;
+
+        isAttacking = true;
         lastAttackTime = Time.time;
+        StopMovement();
+
+        animator.SetBool("isMoving", false);
+        animator.SetBool("isChasing", false);
+        animator.SetTrigger("Attack");
     }
 
     public void OnBiteImpact()
     {
-        biteCollider.SetActive(true);
+        if (biteCollider != null) biteCollider.SetActive(true);
+        Attack();
     }
 
     public void OnBiteImpactEnd()
     {
-        biteCollider.SetActive(false);
+        if (biteCollider != null) biteCollider.SetActive(false);
     }
 
     public void OnAttackEnd()
     {
-        animationFinished = true;
-    }
-
-    private void HandleDamage()
-    {
-        if (animator != null)
-        {
-            animator.SetTrigger("Damaged");
-        }
-    }
-
-    private void HandleDeath()
-    {
-        if (DeathState != null && StateMachine != null)
-        {
-            StateMachine.ChangeState(DeathState);
-        }
-        StopMovement();
+        isAttacking = false;
     }
 
     public override void Die()
     {
         StopMovement();
         if (biteCollider != null) biteCollider.SetActive(false);
-    }
-
-    public override void Move()
-    {
     }
 }
