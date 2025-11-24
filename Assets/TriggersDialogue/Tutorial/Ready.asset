@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Ready
   m_EditorClassIdentifier: 
   lines:
-  - text: "\xA1Genial! Ya dominas lo b\xE1sico. Ahora intenta no romper nada."
+  - text: "\xA1Genial! Ya dominas lo b\xE1sico. Vamos con algo mas dificil."
     animatorTrigger: 
     requestCameraZoom: 0
     blockPlayerDuringLine: 0
+    deactivateObjects: 0
