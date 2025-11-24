@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class SerpientePatrol : IState
 {
     private EnemySnake snake;
@@ -11,24 +9,23 @@ public class SerpientePatrol : IState
 
     public void Enter()
     {
-        snake.lockFacing = false;
         snake.animator.SetBool("isMoving", true);
-    }
-
-    public void Exit()
-    {
-        snake.animator.SetBool("isMoving", false);
-        snake.StopMovement();
+        snake.animator.SetBool("isChasing", false);
     }
 
     public void Update()
     {
         if (snake.CanSeePlayer())
         {
-            snake.StateMachine.ChangeState(snake.ChaseState);
+            snake.StateMachine.ChangeState(new SerpienteChase(snake));
             return;
         }
 
-        snake.PatrolMovement();
+        snake.Patrol();
+    }
+
+    public void Exit()
+    {
+        snake.StopMovement();
     }
 }

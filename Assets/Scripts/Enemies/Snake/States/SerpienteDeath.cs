@@ -11,7 +11,6 @@ public class SerpienteDeath : IState
 
     public void Enter()
     {
-        snake.lockFacing = true;
         snake.StopMovement();
         snake.animator.SetTrigger("Die");
     }
