@@ -103,6 +103,10 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField] private GameObject touchGroundParticlePrefab;
     private Vector2 lastGroundPoint;
 
+    private float defaultGravity = 2f;
+    private float currentGravity = 2f;
+
+
 
 
     public PlayerState currentState;
@@ -140,7 +144,7 @@ public class PlayerStateMachine : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 2f; //configuracio inicial de la gravedad
+        SetGravity(2f);
         animator = GetComponent<Animator>();
 
         punchDamageCollider.SetActive(false); //desactivem el collider de dany al iniciar
@@ -253,6 +257,16 @@ public class PlayerStateMachine : MonoBehaviour
         HandleFlip(); //el posem aqui ja que ho mirem just despres del moveInput
         CheckIfGrounded();
         CheckWallCollision();
+        if(onSlope && input.horizontal == 0) //si estem en una pendent i no hi ha input horitzontal, parem el moviment
+        {
+            rb.linearVelocity = Vector2.zero;
+            SetGravity(0f);
+            return;
+        }
+        else if (onSlope && input.horizontal != 0)
+        {
+            RestoreDefaultGravity();
+        }
 
         if (currentState == PlayerState.Running || currentState == PlayerState.OnAir || currentState == PlayerState.AttackPunch || currentState == PlayerState.AttackTail) //podem moure'ns en aquests estats
         {
@@ -590,7 +604,7 @@ private void HandleHealing()
         {
             staffController.ResetStaff(); //reiniciem el pal
             animator.SetTrigger("StopStaffClimbing"); //fa la animacio de treure el pal del terra
-            rb.gravityScale = 2f;
+            RestoreDefaultGravity();  
             ChangeState(PlayerState.OnAir); //anem a estat OnAir
         }
 
@@ -598,7 +612,7 @@ private void HandleHealing()
         {
             staffController.ResetStaff();
             animator.SetTrigger("StopStaffClimbing");
-            rb.gravityScale = 2f;
+            RestoreDefaultGravity()
             Jump();
             ChangeState(PlayerState.OnAir); //anem a estat OnAir
         }
@@ -695,7 +709,7 @@ private void HandleHealing()
 
     public void OnStaffClimbStart() //Cridat des de l'animacio mitjancant un Animation Event
     {
-        rb.gravityScale = 0;
+        SetGravity(0f);
         rb.linearVelocity = Vector2.zero;
         ChangeState(PlayerState.Climbing);
     }
@@ -748,7 +762,7 @@ private void HandleHealing()
         currentVineJoint.connectedAnchor = Vector2.zero;
 
         //rb.linearVelocity = Vector2.zero; ho tinc commentat perque crec que queda millor si conserva la velocitat que portava abans d'agafar la liana
-        rb.gravityScale = 1f; //revisar si cal posar-ho aqui
+        SetGravity(1f); //revisar si cal posar-ho aqui
         ChangeState(PlayerState.Swinging); //canviem a estat Swinging
     }
 
@@ -762,7 +776,7 @@ private void HandleHealing()
 
         cachedVineCollider = null;
         nearVine = false;
-        rb.gravityScale = 2f; //revisar si cal posar-ho aqui
+        RestoreDefaultGravity();
         animator.SetTrigger("ExitSwing");
         ChangeState(PlayerState.OnAir);
     }
@@ -996,6 +1010,18 @@ private void HandleHealing()
         dialogueLocked = false;
         ReturnToDefaultState(); //torna a l'estat per defecte segons si estem a terra o en l'aire
     }
+
+    private void SetGravity(float value)
+    {
+        currentGravity = value;
+        rb.gravityScale = value;
+    }
+
+    private void RestoreDefaultGravity()
+    {
+        SetGravity(defaultGravity);
+    }
+
 
 }
 

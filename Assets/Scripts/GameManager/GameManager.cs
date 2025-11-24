@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -55,7 +56,8 @@ public class GameManager : MonoBehaviour
         {
             if(isOneHitMode) //si estem en mode onetap s'acaba la partida i mostrem stats
             {
-                //aqui canviem de escena i mostrem estadistiques
+                SaveCombatStats();     
+                ChangeToStatsScene();
             }
             else
             {
@@ -96,5 +98,60 @@ public class GameManager : MonoBehaviour
 
 
     //#############################################################
+
+    private void SaveCombatStats()
+    {
+        CombatStatsResult.totalAttacks = totalAttacks;
+        CombatStatsResult.totalHits = totalHits;
+        CombatStatsResult.totalDamageDealt = totalDamageDealt;
+        CombatStatsResult.totalKills = totalKills;
+        CombatStatsResult.totalDamageTaken = totalDamageTaken;
+
+        float finalScore = CalculateFinalScore();
+        CombatStatsResult.finalScore = finalScore;
+        CombatStatsResult.rank = GetRank(finalScore);
+    }
+
+
+    private float CalculateFinalScore()
+    {
+        //Puntuacio basada en precisio, atacs tirats i atacs donats
+        float accuracy = totalAttacks > 0 ? (float)totalHits / totalAttacks : 0f;
+        float accuracyScore = Mathf.Lerp(0f, 30f, accuracy);
+
+        //Puntuacio basada en danys causats i rebuts
+        float ratio = totalDamageDealt / (totalDamageTaken + 1f);
+        float damageScore = Mathf.Clamp(ratio * 5f, 0f, 30f);
+
+        //Nombre de kills
+        float killScore = Mathf.Clamp(totalKills * 3f, 0f, 25f);
+
+        //Puntuacio basada en agressivitat (atacs totals)
+        float aggressionScore = Mathf.Clamp(totalAttacks * 0.05f, 0f, 15f);
+
+        return accuracyScore + damageScore + killScore + aggressionScore;
+    }
+
+    private string GetRank(float score) //retorna el rang segons la puntuacio
+    {
+        if (score < 20f) return "Muy bajo";
+        if (score < 40f) return "Mediocre";
+        if (score < 60f) return "Normal";
+        if (score < 75f) return "Bueno";
+        if (score < 90f) return "Muy bueno";
+        return "Impresionante";
+    }
+
+    private void ChangeToStatsScene()
+    {
+        if (screenFade != null)
+        {
+            screenFade.FadeOut();
+        }
+        //esperem una mica per fer el fade out
+        UnityEngine.SceneManagement.SceneManager.LoadScene("StatsScene");
+
+    }
+
 
 }
