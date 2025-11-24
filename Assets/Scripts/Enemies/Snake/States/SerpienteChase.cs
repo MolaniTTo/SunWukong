@@ -11,32 +11,36 @@ public class SerpienteChase : IState
 
     public void Enter()
     {
-        snake.lockFacing = false;
         snake.animator.SetBool("isChasing", true);
-    }
-
-    public void Exit()
-    {
-        snake.animator.SetBool("isChasing", false);
-        snake.StopMovement();
-        snake.lockFacing = true;
+        snake.animator.SetBool("isMoving", false);
     }
 
     public void Update()
     {
-        if (snake.HasLostPlayer())
+        if (snake.IsPlayerInAttackRange() && snake.CanAttack())
         {
-            snake.StateMachine.ChangeState(snake.PatrolState);
+            snake.StateMachine.ChangeState(new SerpienteAttack(snake));
             return;
         }
 
-        snake.ChaseMovement();
-        snake.Flip();
-
-        if (snake.IsInAttackRange() && snake.CanAttack())
+        if (!snake.CanSeePlayer())
         {
-            snake.StateMachine.ChangeState(snake.AttackState);
+            snake.StateMachine.ChangeState(new SerpientePatrol(snake));
             return;
         }
+
+        if (!snake.IsPlayerInAttackRange())
+        {
+            snake.MoveTowardsPlayer();
+        }
+        else
+        {
+            snake.StopMovement();
+        }
+    }
+
+    public void Exit()
+    {
+        snake.StopMovement();
     }
 }

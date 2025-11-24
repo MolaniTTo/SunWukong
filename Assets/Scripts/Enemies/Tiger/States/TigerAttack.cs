@@ -2,7 +2,7 @@ using UnityEngine;
 public class TigerAttack : IState
 {
     private EnemyTiger tiger;
-    private bool hasAttacked;
+    private bool attackExecuted = false;
 
     public TigerAttack(EnemyTiger tiger)
     {
@@ -11,40 +11,51 @@ public class TigerAttack : IState
 
     public void Enter()
     {
-        tiger.animator.SetTrigger("Attack");
-        tiger.StopMovement();
-        hasAttacked = false;
+        tiger.StartAttack();
+        attackExecuted = false;
     }
 
     public void Update()
     {
-        // El método Attack() se llama desde el AnimationEvent
-        // Aquí solo esperamos a que termine la animación
-
-        // Comprobar si la animación de ataque ha terminado
+        // Esperar a que termine la animación de ataque
         AnimatorStateInfo stateInfo = tiger.animator.GetCurrentAnimatorStateInfo(0);
         
-        if (stateInfo.IsName("Attack") && stateInfo.normalizedTime >= 0.95f)
+        if (stateInfo.IsName("Attack"))
         {
-            // Si el jugador sigue cerca, volver a atacar
-            if (tiger.IsPlayerInAttackRange() && tiger.CanAttack())
+            // Si la animación está casi completa, volver a perseguir o idle
+            if (stateInfo.normalizedTime >= 0.9f && !attackExecuted)
             {
-                tiger.StateMachine.ChangeState(new TigerAttack(tiger));
-            }
-            // Si el jugador está lejos pero visible, perseguir
-            else if (tiger.CanSeePlayer() && tiger.GetDistanceToPlayer() <= tiger.detectionRange)
-            {
-                tiger.StateMachine.ChangeState(new TigerRun(tiger));
-            }
-            // Si no hay jugador, volver a idle
-            else
-            {
-                tiger.StateMachine.ChangeState(new TigerIdle(tiger));
+                attackExecuted = true;
+                
+                // Decidir siguiente estado
+                if (tiger.CanSeePlayer() && tiger.IsPlayerInAttackRange())
+                {
+                    // Seguir atacando si el jugador sigue cerca
+                    if (tiger.CanAttack())
+                    {
+                        tiger.StateMachine.ChangeState(new TigerAttack(tiger));
+                    }
+                    else
+                    {
+                        tiger.StateMachine.ChangeState(new TigerChase(tiger));
+                    }
+                }
+                else if (tiger.CanSeePlayer())
+                {
+                    // Si ve al jugador pero está lejos, perseguir
+                    tiger.StateMachine.ChangeState(new TigerChase(tiger));
+                }
+                else
+                {
+                    // Si no ve al jugador, volver a idle
+                    tiger.StateMachine.ChangeState(new TigerIdle(tiger));
+                }
             }
         }
     }
 
     public void Exit()
     {
+        // Nada especial al salir
     }
 }
