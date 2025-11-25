@@ -17,6 +17,11 @@ public class TigerAttack : IState
 
     public void Update()
     {
+        if(tiger.CheckIfPlayerIsDeath()) //si el jugador esta mort
+        {
+            tiger.StateMachine.ChangeState(new TigerIdle(tiger));
+            return;
+        }
         // Esperar a que termine la animación de ataque
         AnimatorStateInfo stateInfo = tiger.animator.GetCurrentAnimatorStateInfo(0);
         

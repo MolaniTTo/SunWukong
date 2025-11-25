@@ -15,6 +15,10 @@ public class TigerPatrol : IState
 
     public void Update()
     {
+        if (tiger.CheckIfPlayerIsDeath())
+        {
+            return;
+        }
         // Si detecta al jugador, perseguirlo
         if (tiger.CanSeePlayer())
         {

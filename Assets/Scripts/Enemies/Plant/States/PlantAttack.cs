@@ -21,9 +21,9 @@ public class PlantAttack : IState
 
     public void Update()
     {
-        if (!enemyPlant.CanSeePlayer()) //si retorna false
+        if (!enemyPlant.CanSeePlayer() || enemyPlant.CheckIfPlayerIsDeath()) //si retorna false o el jugador esta mort
         {
-            enemyPlant.StateMachine.ChangeState(new PlantIdle(enemyPlant)); //Canviem a l'estat d'atac si pot veure el jugador
+            enemyPlant.StateMachine.ChangeState(new PlantIdle(enemyPlant)); //Canviem a l'estat de idle
         }
     }
 }

@@ -15,6 +15,11 @@ public class TigerChase : IState
 
     public void Update()
     {
+        if(tiger.CheckIfPlayerIsDeath()) //si el jugador esta mort
+        {
+            tiger.StateMachine.ChangeState(new TigerIdle(tiger));
+            return;
+        }
         // Si está en rango de ataque y puede atacar, atacar
         if (tiger.IsPlayerInAttackRange() && tiger.CanAttack())
         {

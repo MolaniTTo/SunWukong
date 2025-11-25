@@ -26,9 +26,13 @@ public class EnemyTiger : EnemyBase
     public float attackDamage = 15f; // Daño del ataque
     public float attackCooldown = 1.5f; // Tiempo entre ataques
     private float lastAttackTime = 0f;
+    public GameObject collider;
 
     private Rigidbody2D rb;
     private Transform player;
+
+    [Header("Player Ref")]
+    public PlayerStateMachine playerRef;
 
     protected override void Awake()
 {
@@ -48,7 +52,9 @@ public class EnemyTiger : EnemyBase
         characterHealth.OnTakeDamage += (currentHealth, attacker) => Damaged();
     }
 
-    GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+    collider.SetActive(false);
+
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
     if (playerObj != null)
         player = playerObj.transform;
 }
@@ -71,6 +77,22 @@ public class EnemyTiger : EnemyBase
     var idleState = new TigerIdle(this);
     StateMachine.Initialize(idleState);
 }
+
+    public bool CheckIfPlayerIsDeath()
+    {
+        return playerRef.isDead;
+    }
+
+    public void OnAttackImpact()
+    {
+        collider.SetActive(true);
+    }
+
+    public void OnAttackEnd()
+    {
+        collider.SetActive(false);;
+    }
+
 
     private void Death()
     {
@@ -198,19 +220,7 @@ public class EnemyTiger : EnemyBase
 
     public override void Attack()
     {
-        // Este método se llama desde el evento de animación
-        if (player == null) return;
-
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-        
-        if (distanceToPlayer <= attackRange)
-        {
-            CharacterHealth playerHealth = player.GetComponent<CharacterHealth>();
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(attackDamage, gameObject);
-            }
-        }
+      
     }
 
     public bool CanAttack()
@@ -220,7 +230,6 @@ public class EnemyTiger : EnemyBase
 
     public void StartAttack()
     {
-        lastAttackTime = Time.time;
         StopMovement();
         animator.SetTrigger("Attack");
     }

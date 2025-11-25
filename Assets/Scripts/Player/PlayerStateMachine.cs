@@ -65,7 +65,7 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField] private Transform earthquakeSpawnPoint;
     public CharacterHealth characterHealth;
     public Transform lastCheckPoint;
-
+    public bool isDead = false;
 
     [Header("Jump tuning")]
     [SerializeField] private float fallMultiplier = 2.5f;
@@ -565,6 +565,8 @@ private void HandleHealing()
     private void HandleDeath()
     {
         rb.linearVelocity = Vector2.zero;
+        isDead = true;
+
         //gameManager fa la resta per nosaltres
     }
 
