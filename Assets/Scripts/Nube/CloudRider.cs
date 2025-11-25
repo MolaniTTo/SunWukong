@@ -2,46 +2,77 @@ using UnityEngine;
 
 public class CloudRider : MonoBehaviour
 {
-    [Header("Movimiento Vertical")]
-    [Tooltip("Velocidad de ascenso automático")]
-    public float ascendSpeed = 3f;
+    [Header("Movimiento")]
+    [Tooltip("Velocidad de movimiento vertical")]
+    public float verticalSpeed = 5f;
     
-    [Header("Movimiento Horizontal")]
-    [Tooltip("Velocidad de movimiento izquierda/derecha")]
+    [Tooltip("Velocidad de movimiento horizontal")]
     public float horizontalSpeed = 5f;
     
-    [Tooltip("Límite máximo a la izquierda")]
-    public float leftBoundary = -4f;
+    [Header("Referencia al Contenedor")]
+    [Tooltip("Referencia al contenedor (LevelContainer) - los límites se detectan automáticamente")]
+    public Transform containerReference;
     
-    [Tooltip("Límite máximo a la derecha")]
-    public float rightBoundary = 4f;
+    [Tooltip("Margen de seguridad desde los bordes del contenedor")]
+    public float edgeMargin = 0.5f;
     
     [Header("Suavizado")]
-    [Tooltip("Suavizado del movimiento horizontal")]
-    public float horizontalSmoothing = 10f;
+    [Tooltip("Suavizado del movimiento")]
+    public float movementSmoothing = 10f;
     
-    private Rigidbody2D rb;
     private float horizontalInput;
-    private float currentVelocityX;
+    private float verticalInput;
+    private Vector2 currentVelocity;
+    private Vector3 lastParentPosition;
+    private BoxCollider2D containerCollider;
+    private Bounds containerBounds;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        
-        // Configurar el Rigidbody2D para este tipo de juego
-        if (rb != null)
+        // Si no se asignó manualmente, buscar el padre
+        if (containerReference == null && transform.parent != null)
         {
-            rb.gravityScale = 0; // Sin gravedad, va volando
-            rb.freezeRotation = true;
+            containerReference = transform.parent;
+        }
+        
+        // Buscar el BoxCollider2D del contenedor
+        if (containerReference != null)
+        {
+            containerCollider = containerReference.GetComponent<BoxCollider2D>();
+            if (containerCollider != null)
+            {
+                UpdateContainerBounds();
+            }
+            else
+            {
+                Debug.LogWarning("CloudRider: No se encontró BoxCollider2D en el contenedor. Añade uno para definir los límites.");
+            }
+            
+            lastParentPosition = containerReference.position;
         }
     }
 
     void Update()
     {
-        // Capturar input horizontal
-        horizontalInput = Input.GetAxisRaw("Horizontal");
+        // ANULAR el movimiento del padre
+        if (containerReference != null)
+        {
+            Vector3 parentMovement = containerReference.position - lastParentPosition;
+            transform.position -= parentMovement; // Contrarresta el arrastre
+            lastParentPosition = containerReference.position;
+            
+            // Actualizar límites del contenedor
+            if (containerCollider != null)
+            {
+                UpdateContainerBounds();
+            }
+        }
         
-        // Girar sprite según dirección (opcional)
+        // Capturar input
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+        
+        // Girar sprite según dirección
         if (horizontalInput < 0)
         {
             transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), 
@@ -54,56 +85,66 @@ public class CloudRider : MonoBehaviour
                                                transform.localScale.y, 
                                                transform.localScale.z);
         }
+
+        // Movimiento
+        MovePlayer();
     }
 
-    void FixedUpdate()
+    void UpdateContainerBounds()
     {
-        if (rb != null)
+        // Obtener los límites actuales del BoxCollider2D
+        containerBounds = containerCollider.bounds;
+    }
+
+    void MovePlayer()
+    {
+        // Calcular velocidad objetivo
+        Vector2 targetVelocity = new Vector2(
+            horizontalInput * horizontalSpeed,
+            verticalInput * verticalSpeed
+        );
+
+        // Suavizado
+        currentVelocity = Vector2.Lerp(currentVelocity, targetVelocity, 
+                                       movementSmoothing * Time.deltaTime);
+
+        // Mover personaje en espacio GLOBAL
+        transform.position += (Vector3)currentVelocity * Time.deltaTime;
+
+        // Aplicar límites basados en el BoxCollider2D del contenedor
+        if (containerCollider != null)
         {
-            // Movimiento vertical automático constante
-            float verticalVelocity = ascendSpeed;
-
-            // Movimiento horizontal suavizado
-            float targetVelocityX = horizontalInput * horizontalSpeed;
-            currentVelocityX = Mathf.Lerp(currentVelocityX, targetVelocityX, 
-                                          horizontalSmoothing * Time.fixedDeltaTime);
-
-            // Aplicar velocidad
-            rb.linearVelocity = new Vector2(currentVelocityX, verticalVelocity);
-
-            // Aplicar límites horizontales
-            Vector3 clampedPosition = transform.position;
-            clampedPosition.x = Mathf.Clamp(clampedPosition.x, leftBoundary, rightBoundary);
-            transform.position = clampedPosition;
+            Vector3 worldPos = transform.position;
+            
+            // Aplicar límites con margen
+            worldPos.x = Mathf.Clamp(worldPos.x, 
+                                    containerBounds.min.x + edgeMargin, 
+                                    containerBounds.max.x - edgeMargin);
+            worldPos.y = Mathf.Clamp(worldPos.y, 
+                                    containerBounds.min.y + edgeMargin, 
+                                    containerBounds.max.y - edgeMargin);
+            
+            transform.position = worldPos;
         }
     }
 
-    // Método alternativo sin Rigidbody2D (usando Transform directamente)
-    void AlternativeMovement()
-    {
-        // Movimiento vertical
-        transform.position += Vector3.up * ascendSpeed * Time.deltaTime;
-
-        // Movimiento horizontal
-        float targetVelocityX = horizontalInput * horizontalSpeed;
-        currentVelocityX = Mathf.Lerp(currentVelocityX, targetVelocityX, 
-                                      horizontalSmoothing * Time.deltaTime);
-        
-        transform.position += Vector3.right * currentVelocityX * Time.deltaTime;
-
-        // Aplicar límites
-        Vector3 pos = transform.position;
-        pos.x = Mathf.Clamp(pos.x, leftBoundary, rightBoundary);
-        transform.position = pos;
-    }
-
-    // Visualizar límites en el editor
+    // Visualizar límites del contenedor en el editor
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(new Vector3(leftBoundary, -10, 0), 
-                       new Vector3(leftBoundary, 100, 0));
-        Gizmos.DrawLine(new Vector3(rightBoundary, -10, 0), 
-                       new Vector3(rightBoundary, 100, 0));
+        if (containerReference == null) return;
+        
+        BoxCollider2D collider = containerReference.GetComponent<BoxCollider2D>();
+        if (collider == null) return;
+        
+        Bounds bounds = collider.bounds;
+        
+        // Dibujar el área de movimiento
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(bounds.center, bounds.size);
+        
+        // Dibujar el área con margen
+        Gizmos.color = Color.yellow;
+        Vector3 marginSize = bounds.size - new Vector3(edgeMargin * 2, edgeMargin * 2, 0);
+        Gizmos.DrawWireCube(bounds.center, marginSize);
     }
 }
