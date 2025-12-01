@@ -22,27 +22,23 @@ public class AutoScrollContainer : MonoBehaviour
         posicionInicioY = puntoInicio != null ? puntoInicio.position.y : transform.position.y;
     }
     
-    void Update()
+   void Update()
+{
+    if (scrollActivo)
     {
-        if (scrollActivo)
+        // En lugar de transform.position +=
+        transform.Translate(Vector3.up * velocidadScroll * Time.deltaTime, Space.World);
+        
+        if (transform.position.y >= limiteScroll)
         {
-            // Mover hacia arriba
-            transform.position += Vector3.up * velocidadScroll * Time.deltaTime;
-            
-            // Verificar si alcanzó el límite
-            if (transform.position.y >= limiteScroll)
-            {
-                // Fijar en el límite exacto
-                Vector3 posicion = transform.position;
-                posicion.y = limiteScroll;
-                transform.position = posicion;
-                
-                // Detener el scroll
-                scrollActivo = false;
-                OnLimiteAlcanzado();
-            }
+            Vector3 posicion = transform.position;
+            posicion.y = limiteScroll;
+            transform.position = posicion;
+            scrollActivo = false;
+            OnLimiteAlcanzado();
         }
     }
+}
     
     // Método que se llama cuando se alcanza el límite
     void OnLimiteAlcanzado()
