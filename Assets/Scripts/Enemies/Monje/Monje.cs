@@ -1,16 +1,14 @@
-Ôªøusing Unity.VisualScripting;
+/*using Unity.VisualScripting;
 using UnityEngine;
 using Unity.Cinemachine;
 using System.Collections;
 
-public class Gorila : EnemyBase
+public class Monje : EnemyBase
 {
-    public GorilaIdle IdleState { get; private set; }
-    public GorilaRunning RunState { get; private set; }
-    public GorilaPunchAttack PunchState { get; private set; }
-    public GorilaChargedJump ChargedJumpState { get; private set; }
-    public GorilaDeath DeathState { get; private set; }
-    public GorilaRetreating RetreatState { get; private set; }
+    public MonjeIdle IdleState { get; private set; }
+    public MonjeRunning RunState { get; private set; }
+    public MonjeDeath DeathState { get; private set; }
+    public MonjeRetreating RetreatState { get; private set; }
 
     [Header("Refs")]
     public Transform player;
@@ -21,19 +19,11 @@ public class Gorila : EnemyBase
     public GameObject punchCollider; //collider que s'activa durant l'atac de puny
     public CameraShake cameraShake; //referencia al component de camera shake
     public CharacterHealth characterHealth; //referencia al component de vida
-    public MonjeBueno monjeBueno; //referencia al monje que canvia el seu di√†leg un cop es derrota el gorila
-
 
     [Header("Stats")]
-    public float baseSpeed = 3.5f;
-    public float speedAtLowHealth = 5.0f;
-    public float lowHealthThreshold = 50f;
     public bool facingRight = false;
     public bool animationFinished = false;
     public bool playerIsOnConfiner = false; //si el player esta dins del confiner o no
-    public bool hasBeenAwaken = false; //si s'ha despertat o no
-    public int punchCounter = 0; //contador de atacs normals
-    public int punchsBeforeCharged = 2; //atacs a fer per carregar l'atac gran
     public bool lockFacing = true;
 
     [Header("Chase")]
@@ -45,8 +35,6 @@ public class Gorila : EnemyBase
 
 
     [Header("Attack settings")]
-    public Transform earthquakeSpawnPoint; //On instanciem la ona
-    public GameObject earthquakePrefab; // Prefab de la ona
 
     [HideInInspector] public int facingDirection = -1;
 
@@ -68,7 +56,7 @@ public class Gorila : EnemyBase
         }
         if (rb == null) rb = GetComponent<Rigidbody2D>();
 
-        if(punchCollider != null) punchCollider.SetActive(false); //Ens assegurem que el collider d'atac esta desactivat al iniciar
+        if (punchCollider != null) punchCollider.SetActive(false); //Ens assegurem que el collider d'atac esta desactivat al iniciar
 
         if (characterHealth == null)
         {
@@ -92,13 +80,13 @@ public class Gorila : EnemyBase
     private void HandleCharacterDeath()
     {
         //Quan CharacterHealth dispara OnDeath -> fem el canvi d'estat a DeathState i alliberem el confiner (boss defeated)
-        //Canviem d'estat si la m√†quina est√† inicialitzada
+        //Canviem d'estat si la m‡quina est‡ inicialitzada
         if (DeathState != null && StateMachine != null)
         {
             StateMachine.ChangeState(DeathState);
         }
 
-        //Alliberar confiner/zonaboss (si est√† assignat). Ho fem aqu√≠ per assegurar que el nivell es desbloqueja.
+        //Alliberar confiner/zonaboss (si est‡ assignat). Ho fem aquÌ per assegurar que el nivell es desbloqueja.
         if (bossTriggerZone != null)
         {
             bossTriggerZone.OnBossDefeated();
@@ -121,8 +109,8 @@ public class Gorila : EnemyBase
 
         var sleepingState = new GorilaSleeping(this); //Creem l'estat de sleeping i li passem una referencia a l'enemic (mirar)
         StateMachine.Initialize(sleepingState); //Inicialitzem la maquina d'estats amb l'estat de sleeping
-        
-        if(playerRef == null && player != null)
+
+        if (playerRef == null && player != null)
         {
             playerRef = player.GetComponent<PlayerStateMachine>();
         }
@@ -195,20 +183,20 @@ public class Gorila : EnemyBase
 
         float distanceToPlayer = Mathf.Abs(desiredDir.x); //distancia horitzontal al jugador
 
-        if (distanceToPlayer < 2.5f) 
+        if (distanceToPlayer < 2.5f)
         {
             rb.linearVelocity = Vector2.zero;
             return false; //esta massa a prop del jugador, no es mou
         }
 
         desiredDir.Normalize(); //normalitzem la direccio desitjada (nomes tindra component X)
-        
+
         currentDir = Vector2.Lerp(currentDir, desiredDir, Time.deltaTime * 3f); //interpolacio suau cap a la direccio desitjada
 
         float speed = (characterHealth != null && characterHealth.currentHealth <= lowHealthThreshold) ? speedAtLowHealth : baseSpeed; //ajustem la velocitat segons la vida actual
         rb.linearVelocity = currentDir * speed; //assignem la velocitat al rigidbody
 
-        return true; //s'est√† movent cap al jugador
+        return true; //s'est‡ movent cap al jugador
     }
 
     public override void Attack() { }
@@ -221,8 +209,8 @@ public class Gorila : EnemyBase
 
     public void StartWakeUpSequence()
     {
-        var playerCtrl = player.GetComponent<PlayerStateMachine>(); //bloquejem el control del player mentre s'executa la animaci√≥ de wakeUp
-        if (playerCtrl != null) 
+        var playerCtrl = player.GetComponent<PlayerStateMachine>(); //bloquejem el control del player mentre s'executa la animaciÛ de wakeUp
+        if (playerCtrl != null)
         {
             playerCtrl.rb.linearVelocity = Vector2.zero; //aturrem el moviment del player
             playerCtrl.ForceNewState(PlayerStateMachine.PlayerState.Idle); //forcem al player a l'estat d'idle perque no es mogui
@@ -231,7 +219,7 @@ public class Gorila : EnemyBase
         if (animator != null) animator.SetTrigger("WakeUp"); //activem l'animacio de despertar
     }
 
-    public void OnWakeUpEnd() //es crida mitjan√ßant un event a la animacio de wakeUp quan acaba l'animacio
+    public void OnWakeUpEnd() //es crida mitjanÁant un event a la animacio de wakeUp quan acaba l'animacio
     {
         var playerCtrl = player.GetComponent<PlayerStateMachine>();
         if (playerCtrl != null) playerCtrl.enabled = true; //donem control al player una altra vegada
@@ -263,7 +251,7 @@ public class Gorila : EnemyBase
         animationFinished = true;
     }
 
-    public void OnPunchImpact() //cridat mitjan√ßant un event a la animacio de punch quan arriba al punt d'impacte
+    public void OnPunchImpact() //cridat mitjanÁant un event a la animacio de punch quan arriba al punt d'impacte
     {
         punchCollider.SetActive(true); //activem el collider d'atac durant el frame d'impacte
         cameraShake.Shake(1.5f, 2.0f, 0.4f); //sacsegem la camara en l'impacte del puny
@@ -272,9 +260,9 @@ public class Gorila : EnemyBase
     {
         punchCollider.SetActive(false); //desactivem el collider d'atac un cop ha passat el frame d'impacte
     }
-    
 
-    public void OnPunchEnd() //cridat mitjan√ßant un event a la animacio de punch quan acaba l'animacio
+
+    public void OnPunchEnd() //cridat mitjanÁant un event a la animacio de punch quan acaba l'animacio
     {
         punchCounter++;
         animationFinished = true;
@@ -291,7 +279,7 @@ public class Gorila : EnemyBase
         RaycastHit2D shortHit = Physics2D.Raycast(origin, dir, 4f, LayerMask.GetMask("Player")); //raycast curt per detectar al jugador
         RaycastHit2D longHit = Physics2D.Raycast(origin, dir, 8f, confinerWallMask); //raycast llarg per detectar la paret
 
-        //si el shortcollider colisiona amb la layermask player i el longcollider colisiona amb la layermask de les parets del confiner, el jugador est√† acorralat
+        //si el shortcollider colisiona amb la layermask player i el longcollider colisiona amb la layermask de les parets del confiner, el jugador est‡ acorralat
         if (shortHit.collider != null && longHit.collider != null)
         {
             return true;
@@ -319,3 +307,4 @@ public class Gorila : EnemyBase
         throw new System.NotImplementedException();
     }
 }
+*/

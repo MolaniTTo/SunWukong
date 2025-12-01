@@ -40,6 +40,10 @@ public class GorilaIdle : IState
 
     public void Update()
     {
+        if (gorila.CheckIfPlayerIsDead())
+        {
+            return;
+        }
 
         //si ve de sleeping no fem res fins que acabi la sequencia de wake up
         if (!gorila.hasBeenAwaken) return;

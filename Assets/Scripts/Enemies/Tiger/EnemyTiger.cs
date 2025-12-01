@@ -27,6 +27,9 @@ public class EnemyTiger : EnemyBase
     public float attackCooldown = 1.5f; // Tiempo entre ataques
     private float lastAttackTime = 0f;
 
+    [Header("PlayerRef")]
+    public PlayerStateMachine playerRef;
+
     private Rigidbody2D rb;
     private Transform player;
 
@@ -70,7 +73,11 @@ public class EnemyTiger : EnemyBase
     }
     var idleState = new TigerIdle(this);
     StateMachine.Initialize(idleState);
-}
+        if(playerRef == null)
+        {
+            playerRef = FindAnyObjectByType<PlayerStateMachine>();
+        }
+    }
 
     private void Death()
     {
@@ -84,6 +91,11 @@ public class EnemyTiger : EnemyBase
     private void Damaged()
     {
         animator.SetTrigger("BeingHit");
+    }
+
+    public bool CheckIfPlayerIsDead()
+    {
+        return playerRef.isDead;
     }
 
     // MÉTODO PARA GIRAR EL TIGRE

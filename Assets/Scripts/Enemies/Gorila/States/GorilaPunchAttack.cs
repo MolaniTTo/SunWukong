@@ -22,8 +22,14 @@ public class GorilaPunchAttack : IState
     {
         
     }
-    void IState.Update()
+    public void Update()
     {
+        if(gorila.CheckIfPlayerIsDead())
+        {
+            gorila.StateMachine.ChangeState(gorila.IdleState); //Si el jugador està mort, canviem a l'estat d'idle
+            return;
+        }
+
         if (gorila.animationFinished)
         {
             gorila.StateMachine.ChangeState(gorila.IdleState);

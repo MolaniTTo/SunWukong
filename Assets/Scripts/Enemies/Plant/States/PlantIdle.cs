@@ -21,6 +21,10 @@ public class PlantIdle : IState
 
     public void Update()
     {
+        if(enemyPlant.CheckIfPlayerIsDead())
+        {
+            return; //No fem res si el jugador està mort
+        }
         if (enemyPlant.CanSeePlayer())
         {
             enemyPlant.StateMachine.ChangeState(new PlantAttack(enemyPlant)); //Canviem a l'estat d'atac si pot veure el jugador

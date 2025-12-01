@@ -23,6 +23,9 @@ public class EnemyPlant : EnemyBase
     private Stack<GameObject> bulletStack;
     public Transform spawnPoint;
 
+    [Header("PlayerRef")]
+    public PlayerStateMachine playerRef;
+
 
     protected override void Awake()
     {
@@ -57,11 +60,20 @@ public class EnemyPlant : EnemyBase
     {
         animator.SetTrigger("Damaged"); //Activem la animacio de mort
     }
-
+   
     private void Start()
     {
         var idleState = new PlantIdle(this); //Creem l'estat d'idle i li passem una referencia a l'enemic (mirar)
         StateMachine.Initialize(idleState); //Inicialitzem la maquina d'estats amb l'estat d'idle
+        if(playerRef == null)
+        {
+            playerRef = FindAnyObjectByType<PlayerStateMachine>();
+        }
+    }
+
+    public bool CheckIfPlayerIsDead()
+    {
+        return playerRef.isDead;
     }
 
     //METODE PER GIRAR LA PLANTA
