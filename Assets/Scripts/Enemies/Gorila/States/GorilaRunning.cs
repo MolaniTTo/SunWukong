@@ -24,6 +24,11 @@ public class GorilaRunning : IState
 
     public void Update()
     {
+        if (gorila.CheckIfPlayerIsDead())
+        {
+            gorila.StateMachine.ChangeState(gorila.IdleState); //Si el jugador està mort, canviem a l'estat d'idle
+            return;
+        }
 
         bool isMoving = gorila.Movement(); //Fem que el gorila es mogui cap al jugador i retornem si s'està movent o no
         gorila.Flip(); //Assegurem que el gorila miri cap al jugador mentre esta corrent

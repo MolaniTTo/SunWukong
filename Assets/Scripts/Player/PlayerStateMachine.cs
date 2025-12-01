@@ -52,6 +52,7 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField] private bool isGrounded = true;
     [SerializeField] private bool isHealing = false;
     public bool hasStaff = false;
+    public bool isDead = false; 
     public bool isBlocking => currentState == PlayerState.Block;
 
     [Header("Refs")]
@@ -565,6 +566,7 @@ private void HandleHealing()
     private void HandleDeath()
     {
         rb.linearVelocity = Vector2.zero;
+        isDead = true;
         //gameManager fa la resta per nosaltres
     }
 

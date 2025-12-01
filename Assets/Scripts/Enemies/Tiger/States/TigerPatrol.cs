@@ -15,6 +15,11 @@ public class TigerPatrol : IState
 
     public void Update()
     {
+        if (tiger.CheckIfPlayerIsDead())
+        {
+            tiger.StateMachine.ChangeState(new TigerIdle(tiger));
+            return;
+        }
         // Si detecta al jugador, perseguirlo
         if (tiger.CanSeePlayer())
         {

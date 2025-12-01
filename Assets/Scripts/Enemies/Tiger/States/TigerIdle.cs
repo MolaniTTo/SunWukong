@@ -20,6 +20,10 @@ public class TigerIdle : IState
 
     public void Update()
     {
+        if(tiger.CheckIfPlayerIsDead())
+        {
+            return; // No hacer nada si el jugador está muerto
+        }
         // Si detecta al jugador, perseguirlo
         if (tiger.CanSeePlayer())
         {

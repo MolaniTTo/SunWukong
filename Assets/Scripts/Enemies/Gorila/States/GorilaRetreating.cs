@@ -29,6 +29,11 @@ public class GorilaRetreating : IState
 
     public void Update()
     {
+        if (gorila.CheckIfPlayerIsDead())
+        {
+            gorila.StateMachine.ChangeState(gorila.IdleState);
+            return;
+        }
         retreatTimer += Time.deltaTime;
 
         Vector2 retreatDir = new Vector2(-gorila.facingDirection, 0);
