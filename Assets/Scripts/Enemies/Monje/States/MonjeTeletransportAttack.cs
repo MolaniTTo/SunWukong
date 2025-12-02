@@ -11,16 +11,18 @@ public class MonjeTeletransportAttack : IState
 
     public void Enter()
     {
-        throw new System.NotImplementedException();
+        monje.lockFacing = true;
     }
 
     public void Exit()
     {
-        throw new System.NotImplementedException();
+        monje.lockFacing = false;
     }
 
     public void Update()
     {
-        throw new System.NotImplementedException();
+        //nose si haig de mirar alguna cosa a part de si es mor.
+        //nose si haig de controlar desde aqui el verticalVelocity per per el blending de les animacions
+
     }
 }
