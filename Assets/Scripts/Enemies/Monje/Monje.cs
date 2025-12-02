@@ -107,6 +107,7 @@ public class Monje : EnemyBase
 
     private void Start()
     {
+        IdleState = new MonjeIdle(this);
         RunState = new MonjeFlee(this);
         DeathState = new MonjeDeath(this);
         RetreatState = new MonjeRetreating(this);
@@ -114,8 +115,7 @@ public class Monje : EnemyBase
         ThrowGasState = new MonjeThrowingGas(this);
         TeletransportState = new MonjeTeletransportAttack(this);
 
-        var idleState = new MonjeIdle(this);
-        StateMachine.Initialize(idleState); //Inicialitzem la maquina d'estats amb l'estat de idle
+        StateMachine.Initialize(IdleState); //Inicialitzem la maquina d'estats amb l'estat de idle
 
         if (playerRef == null && player != null)
         {
@@ -169,8 +169,70 @@ public class Monje : EnemyBase
 
     }
 
+    public bool HasToFlee()
+    {
+        if (player == null) return false;
+
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        //si esta molt a prop -> fugir
+        if (distance < minFleeDistance)
+            return true;
+
+        //si esta molt lluny -> no fugir
+        if (distance > maxFleeDistance)
+            return false;
+
+        //si no esta ni molt a prop ni molt lluny -> no fugir
+        return false;
+    }
+
+    //METODES PER EL TELETRANSPORT
+
+    public void Teletransport() //es crida desde un animation event al final de la animacio de iniciTeletranport
+    {
+        //fer que el monje desparegui i reaparegui a la posicio del player amb un offset de Y (spawnea a dalt del player)
+        //ha de caure cap avall (nose si amb la gravity ja cau)
+        //hem de controlar el verticalVelocity perque mentre caigui en el blend tree es posi la animacio de fallingidle i quan arribi a baix de tot faci la animacio de touchGroud (ajudam a fer els thresholds)
+    }
+    public void OnTeletransportAttackImpact()
+    {
+        //activar el collider de l'atac de teletransport
+        if (punchCollider != null)
+        {
+            punchCollider.SetActive(true);
+        }
+        //fer shake a la camara
+        if (cameraShake != null)
+        {
+            cameraShake.Shake(2f, 5f, 0.3f); //amplitud, frequencia, duracio
+        }
+    }
+
+    public void OnTeletransportAttackImpactEnd()
+    {
+        //desactivar el collider de l'atac de teletransport
+        if (punchCollider != null)
+        {
+            punchCollider.SetActive(false);
+        }
+    }
+
+    //METODES PER EL THROW GAS
+    public void ThrowGas() //es crida desde un animation event a la animacio de throw gas
+    {
+        //ha de instanciar la bola de gas a una posicio Transform del inspector
+        //ha de aplicar una força a la bola de gas perque vagi cap al player
+        //lo demes es controla desde el script de la bola de gas
+    }
 
 
+    //METODES PER EL THROW RAY
+
+    public void OnThrowRay() //es crida desde un animation event de la animacio de throwRay
+    {
+        //desde una referencia directa a un script que gestiona els raigs, li diem que faci l'atac
+    }
 
 
 
@@ -178,10 +240,33 @@ public class Monje : EnemyBase
 
     //METODES COMUNS DELS ENEMICS (HERETATS DE ENEMYBASE)
 
-    public override void Move() 
+    public override void Move()
     {
+        if (player == null || rb == null) { return; }
 
+
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        if (distance < minFleeDistance) //si esta massa a prop
+        {
+            Vector2 directionAway = (transform.position - player.position).normalized;
+            rb.linearVelocity = new Vector2(directionAway.x * fleeSpeed, rb.linearVelocity.y);
+            return;
+        }
+
+        //si esta a una distancia mitjana
+        if (distance < maxFleeDistance)
+        {
+            //s'allunya pero mes lentament
+            Vector2 directionAway = (transform.position - player.position).normalized;
+            rb.linearVelocity = new Vector2(directionAway.x * (fleeSpeed * 0.5f), rb.linearVelocity.y);
+            return;
+        }
+
+        //si esta massa lluny -> no es mou
+        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
+
 
     public override void Attack() { }
     public override bool CanSeePlayer()
