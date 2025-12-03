@@ -3,60 +3,58 @@ using UnityEngine;
 public class PlayerCameraBounds : MonoBehaviour
 {
     [Header("Configuración de Movimiento")]
-    [Tooltip("Velocidad de movimiento del jugador")]
     public float velocidadMovimiento = 5f;
-    
-    [Header("Referencias")]
-    [Tooltip("Cámara para calcular los límites")]
 
-    
-    // Rigidbody2D si lo usas
     private Rigidbody2D rb;
-    
+    private CharacterHealth health; // referencia a la vida
+
     void Start()
     {
-        // Si no se asigna cámara, usar la principal
-      
-        // Intentar obtener Rigidbody2D si existe
+        // Obtener Rigidbody
         rb = GetComponent<Rigidbody2D>();
-        
-        // Si tiene Rigidbody, configurarlo
+
+        // Obtener CharacterHealth
+        health = GetComponent<CharacterHealth>();
+
         if (rb != null)
         {
             rb.freezeRotation = true;
-            rb.gravityScale = 0f; // Gravedad en 0
+            rb.gravityScale = 0f;
         }
     }
-    
+
     void Update()
     {
-        // Obtener input del jugador
+        // Si no tiene vida, no se mueve
+        if (health != null && health.currentHealth <= 0)
+        {
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+            return;
+        }
+
+        // Input
         float movimientoH = Input.GetAxisRaw("Horizontal");
         float movimientoV = Input.GetAxisRaw("Vertical");
-        
-        // Calcular movimiento
+
         Vector3 movimiento = new Vector3(movimientoH, movimientoV, 0f);
-        
-        // Si el movimiento no está normalizado y hay input diagonal
+
         if (movimiento.magnitude > 1f)
         {
             movimiento.Normalize();
         }
-        
-        // Calcular nueva posición
+
         Vector3 velocidad = movimiento * velocidadMovimiento;
-        
+
         if (rb != null)
         {
-            // Si usa Rigidbody2D, usar velocidad
             rb.linearVelocity = new Vector2(velocidad.x, velocidad.y);
         }
         else
         {
-            // Sin Rigidbody, mover directamente
             transform.position += velocidad * Time.deltaTime;
         }
-     
     }
-      
 }
