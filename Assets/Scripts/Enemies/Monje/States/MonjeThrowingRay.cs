@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MonjeThrowingRay : MonoBehaviour
+public class MonjeThrowingRay : IState
 {
     private Monje monje;
 
@@ -9,15 +9,31 @@ public class MonjeThrowingRay : MonoBehaviour
         this.monje = monje;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Enter()
     {
-        
+        monje.lockFacing = true; //es innecesari de moment pq nomes crido a Flip() desde els estats que ho necessiten
+        monje.attackIndex = 0; //posem l'index d'atac a 0 (atac de raig)
+        monje.animationFinished = false;
+        monje.animator.SetTrigger("ThrowRay"); //activem el animator per tirar el raig
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Exit()
     {
-        
+        throw new System.NotImplementedException();
+    }
+
+    public void Update()
+    {
+        if (monje.CheckIfPlayerIsDead())
+        {
+            monje.StateMachine.ChangeState(monje.IdleState); //Si el jugador està mort, canviem a l'estat d'idle
+            return;
+        }
+        if (monje.animationFinished)
+        {
+            monje.StateMachine.ChangeState(monje.IdleState);
+            monje.animationFinished = false;
+            return;
+        }
     }
 }

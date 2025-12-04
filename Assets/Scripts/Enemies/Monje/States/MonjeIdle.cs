@@ -1,3 +1,4 @@
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
 public class MonjeIdle : IState
@@ -5,7 +6,7 @@ public class MonjeIdle : IState
     private Monje monje;
 
     private float idleTimer;
-    private float idleDuration = 1f; 
+    private float idleDuration = 1f;
 
     public MonjeIdle(Monje monje)
     {
@@ -25,34 +26,44 @@ public class MonjeIdle : IState
 
     public void Update()
     {
-        //si ha acabat el dialeg, encara amb el mono en idle quiet, li tira un atac de raig (el primer, per fer mal al jugador, es controlara per el codi a part del raig)
-
-        //si ja esta en mode normal i ha de posarse a una distancia prudent surt correns del jugador
-
-        //si esta en mode normal i esta a una distancia prudent del jugador, tira un atac segons el patro d'atacs
-
-
-        //si esta en mode 
-        if (monje.HasToFlee()) //si ha d'anar a fugir canvia a run
+        //HA ACABAT EL DIÀLEG I VE DEL IDLE INICIAL, CANVIA A TIRAR RAIG
+        if (monje.dialogueFinished && monje.StateMachine.PreviousState == null) //si ha acabat el diàleg i ve del idle inicial el previous state es null
         {
-            Debug.Log("Monje needs to flee, transitioning to Run State.");
+            monje.StateMachine.ChangeState(monje.ThrowRayState); //canvia a l'estat de tirar raig
+            return;
+        }
+
+        //SI NO HA DE FUGIR TIRA UN ATAC SEGONS EL PATRÓ
+        if (!monje.HasToFlee())
+        {
+            if (monje.attackIndex == 0) //SI VE DE LLENÇAR RAIG
+            {
+                Debug.Log("Monje switching to Teletransport State from Idle State");
+                monje.StateMachine.ChangeState(monje.TeletransportState); //es teletransporta
+                return;
+            }
+            else if (monje.attackIndex == 1) //SI VE DE LLENÇAR TELETRANSPORT
+            {
+                monje.StateMachine.ChangeState(monje.ThrowRayState); //llença raig
+                return;
+            }
+            else if (monje.attackIndex == 2) //SI VE DE LLENÇAR GAS
+            {
+                monje.StateMachine.ChangeState(monje.ThrowRayState); //canvia a l'estat de llençar raig
+                return;
+            }
+        }
+
+        //SI HA DE FUGIR CANVIA A L'ESTAT DE FUGIR
+        if (monje.HasToFlee())
+        {
             monje.StateMachine.ChangeState(monje.RunState);
             return;
         }
-        /*if (idleTimer >= idleDuration && monje.dialogueFinished) //si ha passat el temps d'idle i ha acabat el diàleg
-        {
-            Debug.Log("Idle duration passed and dialogue finished, transitioning to attack state.");
-            //passa a fer un atac segons el que toqui
-            return;
 
-        }*/
-        
+        //EM FALTA DEFINIR SI VULL QUE ESPERI UN TEMPS O NO (DE MOMENT NO)
+
 
         idleTimer += Time.deltaTime; //afegit per continuar comptant el temps d'idle
-
     }
-          
-
-  
-
 }

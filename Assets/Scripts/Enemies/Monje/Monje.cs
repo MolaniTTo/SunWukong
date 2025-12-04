@@ -23,12 +23,19 @@ public class Monje : EnemyBase
     public GameObject punchCollider; //collider que s'activa amb el atac de teletransport
     public CameraShake cameraShake; //referencia al component de camera shake
     public CharacterHealth characterHealth; //referencia al component de vida
+    public Transform throwingGasSpawnPoint; //punt des d'on es llença el gas
+    public GameObject gasPrefab; //prefab de la bola de gas
+    public RayManager rayManager; //referencia al gestor de raigs
+
 
     [Header("Stats")]
     public bool facingRight = false;
     public bool dialogueFinished = false;
     public bool playerIsOnConfiner = false; //si el player esta dins del confiner o no
     public bool lockFacing = true;
+    public bool lookAtPlayer = false;
+    public bool firstRayThrowed = false; //per controlar que el monje llanci el primer raig nomes un cop
+    public bool animationFinished = false;
 
     [Header("Flee")]
     public float fleeSpeed = 5f;
@@ -38,13 +45,19 @@ public class Monje : EnemyBase
     public float groundCheckRadius = 0.2f;
     public Transform groundCheckPoint;
     public LayerMask groundLayer;
+    public LayerMask playerLayer;
     public bool isGrounded = false;
 
 
     [Header("Attack settings")]
     [HideInInspector] public int facingDirection = -1;
-    public int[] attackPattern; //Patro d'atacs del monje
-    public int attackIndex = 0; //Index actual del patro d'atacs
+    public int attackIndex = 5; //Index actual del patro d'atacs
+
+    [Header("Teletransport settings")]
+    public float teleportYOffset = 3f; //altura sobre el player
+    public float fallImpactThreshold = -2f; //velocitat a la que cau per activar l'impacte
+    public bool isFallingFromTeleport = false;
+    public bool isInvisible = false;
 
     [Header("Confiner Awareness")]
     public LayerMask confinerWallMask; //Capa de les parets del confiner
@@ -131,34 +144,45 @@ public class Monje : EnemyBase
     protected override void Update()
     {
         StateMachine.Update();
+
+        if (isFallingFromTeleport)
+        {
+            if (IsGrounded())
+            {
+                animator.SetTrigger("TeletransportImpact");
+                isFallingFromTeleport = false;
+            }
+        }
     }
 
     public void Flip()
     {
-        if (!lockFacing)
-        {
-            if (player != null)
-            {
-                if (player.position.x > transform.position.x && !facingRight)
-                {
-                    facingRight = true;
-                    facingDirection = 1;
-                    Vector3 scale = transform.localScale;
-                    scale.x = -Mathf.Abs(scale.x); // -1 = dreta ja que default mira a l'esquerra
-                    transform.localScale = scale;
-                }
-                else if (player.position.x < transform.position.x && facingRight)
-                {
-                    facingRight = false;
-                    facingDirection = -1; //esquerra
-                    Vector3 scale = transform.localScale;
-                    scale.x = Mathf.Abs(scale.x); // +1 = esquerra ja que default mira a l'esquerra
-                    transform.localScale = scale;
-                }
+        if (lockFacing || player == null) { return; }
 
-            }
+        bool shouldFaceRight; //direccio que hauria de mirar
+
+        if (lookAtPlayer) //si ha de mirar al player
+        {
+            shouldFaceRight = player.position.x > transform.position.x; //Mirar sempre cap al jugador
         }
+        else
+        {
+            shouldFaceRight = player.position.x < transform.position.x; //Sempre a la direccio oposada del jugador
+        }
+
+        if (shouldFaceRight == facingRight) { return; } //si ja esta mirant a la direccio correcta, no fem res
+
+
+        facingRight = shouldFaceRight; //actualitzem la variable de direccio
+        facingDirection = facingRight ? 1 : -1; //actualitzem la variable numerica de direccio on 1 = dreta i -1 = esquerra (perque es un boss)
+
+        Vector3 scale = transform.localScale;
+
+        scale.x = facingRight ? 1f : -1f; //actualitzem l'escala en X segons la direccio
+
+        transform.localScale = scale;
     }
+
 
     public void StopMovement()
     {
@@ -167,6 +191,18 @@ public class Monje : EnemyBase
     public void OnDialogueEnd() //es crida desde un event al DialogueManager quan acaba el dialogo
     {
 
+    }
+
+    private bool IsGrounded()
+    {
+        RaycastHit2D hit1 = Physics2D.Raycast(groundCheckPoint.position, Vector2.down, groundCheckRadius, groundLayer);
+        RaycastHit2D hit2 = Physics2D.Raycast(groundCheckPoint.position, Vector2.down, groundCheckRadius, playerLayer);
+
+        //dibuuixar els rays per debug
+        Debug.DrawRay(groundCheckPoint.position, Vector2.down * groundCheckRadius, Color.red);
+        Debug.DrawRay(groundCheckPoint.position, Vector2.down * groundCheckRadius, Color.blue);
+
+        return hit1.collider != null || hit2.collider != null;
     }
 
     public bool HasToFlee()
@@ -191,9 +227,27 @@ public class Monje : EnemyBase
 
     public void Teletransport() //es crida desde un animation event al final de la animacio de iniciTeletranport
     {
-        //fer que el monje desparegui i reaparegui a la posicio del player amb un offset de Y (spawnea a dalt del player)
-        //ha de caure cap avall (nose si amb la gravity ja cau)
-        //hem de controlar el verticalVelocity perque mentre caigui en el blend tree es posi la animacio de fallingidle i quan arribi a baix de tot faci la animacio de touchGroud (ajudam a fer els thresholds)
+        HideMonje(true);
+
+        Vector3 newPosition = player.position;
+        newPosition.y += teleportYOffset; //afegim l'offset en Y perque spawnei a dalt del player
+        transform.position = newPosition;
+
+        isFallingFromTeleport = true; //indiquem que esta caient desde el teletransport
+
+        rb.linearVelocity = new Vector2(0, -20); //donem una velocitat cap avall perque caigui rapidament
+
+        HideMonje(false);
+    }
+
+    public void HideMonje(bool hide)
+    {
+        isInvisible = hide;
+        SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+        foreach (var sr in spriteRenderers)
+        {
+            sr.enabled = !hide;
+        }
     }
     public void OnTeletransportAttackImpact()
     {
@@ -201,6 +255,7 @@ public class Monje : EnemyBase
         if (punchCollider != null)
         {
             punchCollider.SetActive(true);
+            Debug.Log("Punch collider activated");
         }
         //fer shake a la camara
         if (cameraShake != null)
@@ -216,14 +271,20 @@ public class Monje : EnemyBase
         {
             punchCollider.SetActive(false);
         }
+        animationFinished = true; //indiquem que ha acabat l'animacio de l'atac de teletransport
     }
 
     //METODES PER EL THROW GAS
     public void ThrowGas() //es crida desde un animation event a la animacio de throw gas
     {
-        //ha de instanciar la bola de gas a una posicio Transform del inspector
-        //ha de aplicar una força a la bola de gas perque vagi cap al player
+        GameObject gasBall = Instantiate(gasPrefab, throwingGasSpawnPoint.position, Quaternion.identity);
+        Vector2 directionToPlayer = (player.position - throwingGasSpawnPoint.position).normalized;
         //lo demes es controla desde el script de la bola de gas
+    }
+
+    public void OnThrowGasEnd() //es crida desde un animation event al final de la animacio de throw gas
+    {
+        animationFinished = true; //indiquem que ha acabat l'animacio de llan?ament de gas
     }
 
 
@@ -231,7 +292,12 @@ public class Monje : EnemyBase
 
     public void OnThrowRay() //es crida desde un animation event de la animacio de throwRay
     {
-        //desde una referencia directa a un script que gestiona els raigs, li diem que faci l'atac
+        rayManager.ThrowRaysRoutine();
+    }
+
+    public void OnThrowRayEnd() //es crida desde un animation event al final de la animacio de throwRay
+    {
+        animationFinished = true; //indiquem que ha acabat l'animacio de llan?ament de raig
     }
 
 

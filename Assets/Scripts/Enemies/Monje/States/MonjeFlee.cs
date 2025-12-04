@@ -21,19 +21,16 @@ public class MonjeFlee : IState
 
     public void Update()
     {
+        monje.Flip(); //fa que el monje miri cap al jugador mentre fuig
         //si ha de fugir fugeix
-        if(monje.HasToFlee()) //mentre ha d'anar a fugir
+        if (monje.HasToFlee()) //mentre ha d'anar a fugir
         {
             monje.Move(); //crida al metode de fugir
             return;
         }
 
-        //si el player esta MOLT aprop, fa el atac de gas
+        //si el player esta MOLT aprop, es gira cap al player i li llança una bola de gas
 
         //si esta lluny del player, torna a idle
-
-        monje.StateMachine.ChangeState(monje.IdleState); //un cop ja no ha de fugir, torna a idle
-
-
     }
 }

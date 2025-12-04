@@ -5,6 +5,7 @@ using UnityEngine;
 public class BossTriggerZone2D : MonoBehaviour
 {
     public Gorila gorila;
+    public Monje monje;
     public GameObject playerObject;
 
     public CinemachineCamera camBoss;
