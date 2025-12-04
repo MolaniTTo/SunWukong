@@ -13,15 +13,23 @@ public class SerpienteDeath : IState
     {
         snake.StopMovement();
         snake.animator.SetTrigger("Die");
+
+        // Destruir después de 1 segundo
+        snake.Invoke(nameof(DestroySelf), 1f);
     }
 
     public void Exit()
     {
-        //no implementat ja que es l'ultim estat
+        // No se usa porque es el último estado
     }
 
     public void Update()
     {
-        //no implementat ja que es l'ultim estat
+        // No se usa
+    }
+
+    private void DestroySelf()
+    {
+        GameObject.Destroy(snake.gameObject);
     }
 }
