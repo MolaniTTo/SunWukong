@@ -16,13 +16,24 @@ public class KnockBack : MonoBehaviour
     {
         if (!isKnockedBack)
         {
-            Vector2 direction = transform.position - sender.transform.position; 
+            // Diferencia de posiciones
+            Vector2 rawDir = (transform.position - sender.transform.position);
+
+            // Solo queremos knockback horizontal ? eliminamos el eje Y
+            Vector2 horizontalDir = new Vector2(rawDir.x, 0f).normalized;
+
+            // Por si sender está EXACTAMENTE en la misma X (evitar NaN)
+            if (horizontalDir == Vector2.zero)
+                horizontalDir = new Vector2(transform.localScale.x, 0f);   // fallback
+
             isKnockedBack = true;
-            rb.AddForce(direction.normalized * force, ForceMode2D.Impulse);
+
+            rb.AddForce(horizontalDir * force, ForceMode2D.Impulse);
+
             StartCoroutine(EndKnockBack(duration));
         }
-
     }
+
 
     private IEnumerator EndKnockBack(float duration)
     {

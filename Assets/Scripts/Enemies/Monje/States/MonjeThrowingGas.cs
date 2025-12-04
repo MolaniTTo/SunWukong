@@ -1,6 +1,7 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class MonjeThrowingGas : MonoBehaviour
+public class MonjeThrowingGas : IState
 {
     private Monje monje;
 
@@ -9,15 +10,34 @@ public class MonjeThrowingGas : MonoBehaviour
         this.monje = monje;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Enter()
     {
-        
+        monje.lockFacing = true;
+        monje.attackIndex = 2; //posem l'index d'atac a 2 (atac de gas)
+        monje.animationFinished = false;
+        monje.animator.SetTrigger("ThrowGas"); //activem el animator per tirar gas
+        //desde la animacio de tirar gas es crida amb un animationEvent a un metode que esta al Monje que es diu "ThrowGasAttack"
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Exit()
     {
-        
+        throw new System.NotImplementedException();
+    }
+
+    public void Update()
+    {
+        if (monje.CheckIfPlayerIsDead())
+        {
+            monje.StateMachine.ChangeState(monje.IdleState); //Si el jugador està mort, canviem a l'estat d'idle
+            return;
+        }
+        if (monje.animationFinished)
+        {
+            monje.StateMachine.ChangeState(monje.IdleState);
+            monje.animationFinished = false;
+            return;
+        }
+
     }
 }
