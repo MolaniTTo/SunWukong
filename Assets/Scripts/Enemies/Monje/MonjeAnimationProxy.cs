@@ -14,6 +14,10 @@ public class MonjeAnimationProxy : MonoBehaviour
         monje?.Teletransport();
     }
 
+    public void TeletransportToFlee()
+    {
+        monje?.TeletransportToFlee();
+    }
     public void OnTeletransportAttackImpact()
     {
         monje?.OnTeletransportAttackImpact();
@@ -31,6 +35,11 @@ public class MonjeAnimationProxy : MonoBehaviour
     public void ThrowGasEnd()
     {
         monje?.OnThrowGasEnd();
+    }
+
+    public void OnThrowRayShakeCam()
+    {
+        monje?.OnThrowRayShakeCam();
     }
 
     public void OnThrowRay()

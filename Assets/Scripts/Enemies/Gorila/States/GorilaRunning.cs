@@ -30,6 +30,13 @@ public class GorilaRunning : IState
             return;
         }
 
+        if(!gorila.hasEnraged && gorila.characterHealth.currentHealth <= gorila.lowHealthThreshold) //si la vida es baixa i encara no esta enrage
+        {
+            gorila.hasEnraged = true;
+            gorila.StateMachine.ChangeState(gorila.EnrageState);
+            return;
+        }
+
         bool isMoving = gorila.Movement(); //Fem que el gorila es mogui cap al jugador i retornem si s'està movent o no
         gorila.Flip(); //Assegurem que el gorila miri cap al jugador mentre esta corrent
 

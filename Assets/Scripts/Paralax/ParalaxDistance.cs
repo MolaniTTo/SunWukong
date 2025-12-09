@@ -9,6 +9,7 @@ public class ParallaxStatic : MonoBehaviour
 
     private Vector3 startPos;
     private float startCamX;
+    public bool stopPararallax = false;
 
     void Start()
     {
@@ -21,6 +22,7 @@ public class ParallaxStatic : MonoBehaviour
 
     void LateUpdate()
     {
+        if (stopPararallax) return;
         float camDeltaX = cameraTarget.position.x - startCamX;
 
         // Parallax relativo (no mueve el objeto de su sitio real)

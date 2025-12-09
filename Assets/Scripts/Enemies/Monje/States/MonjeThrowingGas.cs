@@ -13,7 +13,7 @@ public class MonjeThrowingGas : IState
     public void Enter()
     {
         monje.lockFacing = true;
-        monje.attackIndex = 2; //posem l'index d'atac a 2 (atac de gas)
+        monje.attackIndex = 0; //posem l'index d'atac a 2 (atac de gas)
         monje.animationFinished = false;
         monje.animator.SetTrigger("ThrowGas"); //activem el animator per tirar gas
         //desde la animacio de tirar gas es crida amb un animationEvent a un metode que esta al Monje que es diu "ThrowGasAttack"
@@ -22,7 +22,7 @@ public class MonjeThrowingGas : IState
 
     public void Exit()
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void Update()

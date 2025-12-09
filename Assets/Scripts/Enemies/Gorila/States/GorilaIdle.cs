@@ -45,6 +45,13 @@ public class GorilaIdle : IState
             return;
         }
 
+        if(!gorila.hasEnraged && gorila.characterHealth.currentHealth <= gorila.lowHealthThreshold) //si la vida es baixa i encara no esta enrage
+        {
+            gorila.hasEnraged = true;
+            gorila.StateMachine.ChangeState(gorila.EnrageState);
+            return;
+        }
+
         //si ve de sleeping no fem res fins que acabi la sequencia de wake up
         if (!gorila.hasBeenAwaken) return;
 

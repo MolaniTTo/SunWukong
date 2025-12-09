@@ -70,6 +70,8 @@ public class DialogueUI : MonoBehaviour
 
         ShowNextLine();
         this.autoAdvance = autoAdvance;
+        Debug.Log("DialogueUI: Diàleg iniciat amb " + lines.Length + " línies.");
+        Debug.Log("DialogueUI: AutoAdvance està a " + autoAdvance);
     }
 
     public void ForceCloseUI()
@@ -210,16 +212,12 @@ public class DialogueUI : MonoBehaviour
 
     private void EndDialogue()
     {
-        if (dialoguePanel != null) { dialoguePanel.SetActive(false); } //Desactiva el panell de diàleg
-        if (vcam != null && originalFOV >= 0) //Torna a la mida original de la càmera si cal
-        {
-            if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
-            {
-                StartCoroutine(ZoomToFOV(originalFOV, zoomDuration));
-            }
-            
-        }
+        Debug.Log("DialogueUI: Diàleg acabat.");
+
+        dialoguePanel.SetActive(false); //Desactiva el panell de diàleg
+      
         onFinishCallback?.Invoke(); //Invoca el callback quan el diàleg acaba
+        
         lines = null;
         index = 0;
         currentTargetAnimator = null;

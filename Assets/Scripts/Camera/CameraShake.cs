@@ -7,42 +7,60 @@ public class CameraShake : MonoBehaviour
     private CinemachineCamera virtualCamera;
     private CinemachineBasicMultiChannelPerlin noise;
 
+    private float currentAmplitude = 0f;
+    private float currentFrequency = 0f;
+
+    private Coroutine shakeRoutine;
+
     private void Awake()
     {
         virtualCamera = GetComponent<CinemachineCamera>();
         if (virtualCamera != null)
         {
-            noise = virtualCamera.GetComponent<CinemachineBasicMultiChannelPerlin>(); //Agafem el component de soroll
+            noise = virtualCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
         }
     }
 
-
-    /// <summary>
-    /// Inicia el efecte shake a la càmera
-    /// </summary>
-    /// <param name="amplitude">Intensitat del shake</param>
-    /// <param name="frequency">Frequencia del shake</param>
-    /// <param name="duration">Duració en segons</param>
     public void Shake(float amplitude, float frequency, float duration)
     {
         if (noise == null) return;
-        StartCoroutine(ShakeCoroutine(amplitude, frequency, duration));
+
+        //acumulem els valors per a un efecte més intens
+        currentAmplitude = Mathf.Max(currentAmplitude, amplitude);
+        currentFrequency = Mathf.Max(currentFrequency, frequency);
+
+        noise.AmplitudeGain = currentAmplitude;
+        noise.FrequencyGain = currentFrequency;
+
+        //reiniciem la coroutine si ja n'hi ha una activa
+        if (shakeRoutine != null)
+            StopCoroutine(shakeRoutine);
+
+        shakeRoutine = StartCoroutine(ShakeDecay(duration));
     }
 
-    private IEnumerator ShakeCoroutine(float amplitude, float frequency, float duration)
+    private IEnumerator ShakeDecay(float duration)
     {
-        // Guardar valores originales
-        float originalAmplitude = noise.AmplitudeGain;
-        float originalFrequency = noise.FrequencyGain;
+        float timer = duration;
 
-        // Aplicar shake
-        noise.AmplitudeGain = amplitude;
-        noise.FrequencyGain = frequency;
+        while (timer > 0f)
+        {
+            timer -= Time.deltaTime;
 
-        yield return new WaitForSeconds(duration);
+            float t = timer / duration;
 
-        // Restaurar valores originales
-        noise.AmplitudeGain = originalAmplitude;
-        noise.FrequencyGain = originalFrequency;
+            //fem que decaigui cap a 0
+            noise.AmplitudeGain = currentAmplitude * t;
+            noise.FrequencyGain = currentFrequency * t;
+
+            yield return null;
+        }
+
+        //resetejem els valors
+        noise.AmplitudeGain = 0f;
+        noise.FrequencyGain = 0f;
+        currentAmplitude = 0f;
+        currentFrequency = 0f;
+        shakeRoutine = null;
     }
 }

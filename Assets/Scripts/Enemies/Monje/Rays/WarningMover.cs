@@ -27,7 +27,7 @@ public class WarningMover : MonoBehaviour
         }
         if(monje == null)
         {
-            monje = GameObject.FindGameObjectWithTag("Monje").transform;
+            monje = GameObject.FindGameObjectWithTag("Enemy").transform;
         }
     }
 
@@ -41,7 +41,7 @@ public class WarningMover : MonoBehaviour
         pos.x += Mathf.Sin(Time.time * 2f + Mathf.PerlinNoise(Time.time, transform.position.x) * 3f) * randomStrength * Time.deltaTime; 
 
         //seguir al jugador si esta assota
-        if (Mathf.Abs(player.position.x - pos.x) < 4f)
+        if (Mathf.Abs(player.position.x - pos.x) < 15f)
         {
             pos.x = Mathf.Lerp(pos.x, player.position.x, followStrength * Time.deltaTime);
         }
@@ -55,7 +55,10 @@ public class WarningMover : MonoBehaviour
         }
 
         //limit de moviment dins dels valors establerts
-        pos.x = Mathf.Clamp(pos.x, minX, maxX);
+        float globalMin = transform.parent.TransformPoint(new Vector3(minX, 0, 0)).x; //convertim a coordenades globals
+        float globalMax = transform.parent.TransformPoint(new Vector3(maxX, 0, 0)).x; //convertim a coordenades globals
+
+        pos.x = Mathf.Clamp(pos.x, globalMin, globalMax);
 
         transform.position = pos;
     }
@@ -66,6 +69,11 @@ public class WarningMover : MonoBehaviour
     }
 
     public void StopMoving()
+    {
+        canMove = false;
+    }
+
+    private void OnDestroy()
     {
         canMove = false;
     }
