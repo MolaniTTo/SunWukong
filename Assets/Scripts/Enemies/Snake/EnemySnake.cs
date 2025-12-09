@@ -119,9 +119,17 @@ public class EnemySnake : EnemyBase
     public void Flip()
     {
         facingRight = !facingRight;
+
+        // Guardar posición actual
+        Vector3 currentPosition = transform.position;
+
+        // Hacer el flip
         Vector3 scale = transform.localScale;
         scale.x *= -1f;
         transform.localScale = scale;
+
+        // Restaurar la posición (compensa el desplazamiento)
+        transform.position = currentPosition;
     }
 
     public override bool CanSeePlayer()
