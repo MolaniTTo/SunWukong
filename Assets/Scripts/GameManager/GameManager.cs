@@ -11,9 +11,8 @@ public class GameManager : MonoBehaviour
     [Header("Fade Settings")]
     [SerializeField] private ScreenFade screenFade;
 
-
-    //#############################################################
-
+    [Header("Paralax Settings")]
+    public ParallaxStatic[] parallaxLayers;
 
     [Header("CombatStatsTracker")]     //PARTE DE RECOPILACION DE STATS DE COMBATE DEL JUGADOR
     public int totalAttacks;
@@ -150,6 +149,15 @@ public class GameManager : MonoBehaviour
         }
         //esperem una mica per fer el fade out
         UnityEngine.SceneManagement.SceneManager.LoadScene("StatsScene");
+
+    }
+
+    public void CanMoveParalax(bool canMove) //activa o desactiva el paralax
+    {
+        foreach (ParallaxStatic layer in parallaxLayers)
+        {
+            layer.stopPararallax = !canMove; //Si canMove es true, stopPararallax es false i viceversa
+        }
 
     }
 

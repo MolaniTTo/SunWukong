@@ -11,16 +11,18 @@ public class MonjeDeath : IState
 
     public void Enter()
     {
-        throw new System.NotImplementedException();
+        monje.lockFacing = true;
+        monje.StopMovement();
+        monje.animator.SetTrigger("Die");
     }
 
     public void Exit()
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public void Update()
     {
-        throw new System.NotImplementedException();
+        
     }
 }

@@ -11,6 +11,7 @@ public class Gorila : EnemyBase
     public GorilaChargedJump ChargedJumpState { get; private set; }
     public GorilaDeath DeathState { get; private set; }
     public GorilaRetreating RetreatState { get; private set; }
+    public GorilaEnrage EnrageState { get; private set; }
 
     [Header("Refs")]
     public Transform player;
@@ -35,6 +36,7 @@ public class Gorila : EnemyBase
     public int punchCounter = 0; //contador de atacs normals
     public int punchsBeforeCharged = 2; //atacs a fer per carregar l'atac gran
     public bool lockFacing = true;
+    public bool hasEnraged = false;
 
     [Header("Chase")]
     private Vector2 currentDir = Vector2.zero; //Direccio actual cap al jugador
@@ -118,6 +120,7 @@ public class Gorila : EnemyBase
         ChargedJumpState = new GorilaChargedJump(this);
         DeathState = new GorilaDeath(this);
         RetreatState = new GorilaRetreating(this);
+        EnrageState = new GorilaEnrage(this);
 
         var sleepingState = new GorilaSleeping(this); //Creem l'estat de sleeping i li passem una referencia a l'enemic (mirar)
         StateMachine.Initialize(sleepingState); //Inicialitzem la maquina d'estats amb l'estat de sleeping
@@ -224,9 +227,10 @@ public class Gorila : EnemyBase
         var playerCtrl = player.GetComponent<PlayerStateMachine>(); //bloquejem el control del player mentre s'executa la animació de wakeUp
         if (playerCtrl != null) 
         {
-            playerCtrl.rb.linearVelocity = Vector2.zero; //aturrem el moviment del player
-            playerCtrl.ForceNewState(PlayerStateMachine.PlayerState.Idle); //forcem al player a l'estat d'idle perque no es mogui
-            playerCtrl.enabled = false; //desactivem el control del player
+            playerCtrl.dialogueLocked = true; 
+            playerCtrl.animator.SetFloat("speed", 0f); //ens assegurem que l'animacio del jugador es de idle
+            playerCtrl.rb.linearVelocity = Vector2.zero; //aturar moviment del jugador
+            playerCtrl.EnterDialogueMode();
         }
         if (animator != null) animator.SetTrigger("WakeUp"); //activem l'animacio de despertar
     }
@@ -234,7 +238,7 @@ public class Gorila : EnemyBase
     public void OnWakeUpEnd() //es crida mitjançant un event a la animacio de wakeUp quan acaba l'animacio
     {
         var playerCtrl = player.GetComponent<PlayerStateMachine>();
-        if (playerCtrl != null) playerCtrl.enabled = true; //donem control al player una altra vegada
+        if (playerCtrl != null) playerCtrl.ExitDialogueMode(); //desbloquejem el control del jugador un cop ha acabat l'animacio de wakeUp
         hasBeenAwaken = true;
     }
 
@@ -278,6 +282,10 @@ public class Gorila : EnemyBase
     {
         punchCounter++;
         animationFinished = true;
+    }
+    public void OnEnrageAnimationFinished()
+    {
+        EnrageState.OnEnrageAnimationFinished();
     }
 
 

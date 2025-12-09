@@ -27,14 +27,15 @@ public class DialogueManager : MonoBehaviour
             player.EnterDialogueMode(); //a implementar a PlayerStateMachine per bloquejar moviment
         }
 
-        dialogueUI.StartDialogue(data, targetAnimator, () =>
+        dialogueUI.StartDialogue(data, targetAnimator, () => 
         {
-            if (player != null)
+            if (!data.exitDialogueModeByScripting && player != null) //Si el diàleg no gestiona l'script el mode diàleg, el desactiva automàticament
             {
-                player.ExitDialogueMode(); //a implementar a PlayerStateMachine per desbloquejar moviment
+                player.ExitDialogueMode();
             }
             DialogueActive = false; //marca que el diàleg ha acabat
             onFinish?.Invoke(); //Crida el callback quan el diàleg acaba
+            Debug.Log("Diàleg acabat desde DialogueManager");
         });
     }
 

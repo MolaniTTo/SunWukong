@@ -11,6 +11,7 @@ public class CharacterHealth : MonoBehaviour
     public string characterName = "Unnamed";
     public bool isPlayer = false;
 
+
     //Events
     public event Action<float> OnHealthChanged; //event per notificar canvis en la vida (passa la vida actual)
     public event Action OnDeath; //event per notificar la mort del personatge
@@ -108,7 +109,5 @@ public class CharacterHealth : MonoBehaviour
 
         OnHealthChanged?.Invoke(currentHealth);
     }
-
-
 
 }

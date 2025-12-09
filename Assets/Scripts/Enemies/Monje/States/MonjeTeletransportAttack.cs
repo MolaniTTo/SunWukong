@@ -12,15 +12,27 @@ public class MonjeTeletransportAttack : IState
     public void Enter()
     {
         monje.lockFacing = true;
-        monje.attackIndex = 1; //posem l'index d'atac a 1 (atac de teletransport)
         monje.animationFinished = false;
-        monje.animator.SetTrigger("Teletransport"); //activem el animator per teletransportar-se i atacar
+
+        if (monje.isTeletransportingToFlee)
+        {
+            monje.animator.SetTrigger("TeletransportToFlee"); //activem el animator per entrar al teletransport des de fugir
+        }
+        else
+        {
+            monje.attackIndex = 2; //posem l'index d'atac a 2 (atac de teletransport)
+            monje.animator.SetTrigger("Teletransport"); //activem el animator per entrar al teletransport
+        }
     }
 
     public void Exit()
     {
+        if(!monje.isTeletransportingToFlee) //si no s'esta teletransportant per fugir (vol dir que es per atacar) resetejem l'animator
+        {
+            monje.animator.SetTrigger("ExitTeletransport"); //activem el animator per sortir del teletransport
+        }
+        monje.isTeletransportingToFlee = false;
         monje.lockFacing = false;
-        monje.animator.SetTrigger("ExitTeletransport"); //activem el animator per sortir del teletransport
     }
 
     public void Update()

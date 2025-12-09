@@ -19,6 +19,7 @@ public class Monje : EnemyBase
     public Rigidbody2D rb;
     public Animator animator;
     public CinemachineCamera confinerCamera; //la cam
+    public Collider2D bossZone; //collider del confiner de la zona del boss
     public BossTriggerZone2D bossTriggerZone; //referencia a la zona de trigger del boss
     public GameObject punchCollider; //collider que s'activa amb el atac de teletransport
     public CameraShake cameraShake; //referencia al component de camera shake
@@ -26,6 +27,9 @@ public class Monje : EnemyBase
     public Transform throwingGasSpawnPoint; //punt des d'on es llença el gas
     public GameObject gasPrefab; //prefab de la bola de gas
     public RayManager rayManager; //referencia al gestor de raigs
+    public NPCDialogue npcDialogue;
+    public GameObject teletransportParticle;
+    public GameObject teletransportSpawnPoint;
 
 
     [Header("Stats")]
@@ -36,17 +40,27 @@ public class Monje : EnemyBase
     public bool lookAtPlayer = false;
     public bool firstRayThrowed = false; //per controlar que el monje llanci el primer raig nomes un cop
     public bool animationFinished = false;
+    public bool raysFinished = false; //si ha acabat de llen?ar tots els raigs
 
     [Header("Flee")]
-    public float fleeSpeed = 5f;
-    public float minFleeDistance = 3f; //distancia minima al jugador per fugir
-    public float maxFleeDistance = 7f; //distancia maxima al jugador per fugir
-    public float jumpForce = 10f;
+
     public float groundCheckRadius = 0.2f;
     public Transform groundCheckPoint;
     public LayerMask groundLayer;
     public LayerMask playerLayer;
     public bool isGrounded = false;
+
+    public float fleeSpeed = 5f;
+    public float minDistanceToFlee = 2f; //distancia que si la traspasa, el monje fuig
+    public float maxDistanceToStopFlee = 5f; //distancia que si la traspasa, el monje para de fugir
+    public float criticalDistanceToPlayer = 1.5f; //distancia critica al player per activar l'estat de fuga critica
+    public float optimalDistanceToPlayer = 4f; //distancia optima al player per sortir de l'estat de fuga critica
+    public bool isFleeing = false;
+    public bool criticalFleeState = false;
+    public bool isTrapped = false; //si el monje esta acorralat i no pot fugir
+    public bool isInOptimalDistance = false; //si el monje esta a la distancia optima al player per atacar
+    public bool isTeletransportingToFlee = false; //si el monje esta teletransportant-se per fugir
+
 
 
     [Header("Attack settings")]
@@ -88,6 +102,10 @@ public class Monje : EnemyBase
         {
             // Subscrivim al event OnDeath per reaccionar a la mort (CharacterHealth no crida Gorila.Die per nosaltres)
             characterHealth.OnDeath += HandleCharacterDeath;
+        }
+        if (!dialogueFinished)
+        {
+            rb.bodyType = RigidbodyType2D.Static; //si no ha acabat el diàleg, el monje no es mou
         }
     }
 
@@ -157,31 +175,38 @@ public class Monje : EnemyBase
 
     public void Flip()
     {
-        if (lockFacing || player == null) { return; }
+        if (lockFacing || player == null) return;
 
-        bool shouldFaceRight; //direccio que hauria de mirar
+        bool shouldFaceRight;
 
-        if (lookAtPlayer) //si ha de mirar al player
-        {
-            shouldFaceRight = player.position.x > transform.position.x; //Mirar sempre cap al jugador
-        }
+        if (lookAtPlayer)
+            shouldFaceRight = player.position.x > transform.position.x;
         else
-        {
-            shouldFaceRight = player.position.x < transform.position.x; //Sempre a la direccio oposada del jugador
-        }
+            shouldFaceRight = player.position.x < transform.position.x;
 
-        if (shouldFaceRight == facingRight) { return; } //si ja esta mirant a la direccio correcta, no fem res
+        if (shouldFaceRight == facingRight) return;
 
+        SetFacing(shouldFaceRight);
+    }
 
-        facingRight = shouldFaceRight; //actualitzem la variable de direccio
-        facingDirection = facingRight ? 1 : -1; //actualitzem la variable numerica de direccio on 1 = dreta i -1 = esquerra (perque es un boss)
+    public void SetFacing(bool faceRight)
+    {
+        facingRight = faceRight;
+        facingDirection = facingRight ? 1 : -1;
 
         Vector3 scale = transform.localScale;
-
-        scale.x = facingRight ? 1f : -1f; //actualitzem l'escala en X segons la direccio
-
+        scale.x = facingRight ? 1f : -1f;
         transform.localScale = scale;
     }
+
+    public void FacePlayer()
+    {
+        if (player == null) return;
+        bool shouldFaceRight = player.position.x > transform.position.x;
+        SetFacing(shouldFaceRight);
+    }
+
+
 
 
     public void StopMovement()
@@ -207,26 +232,49 @@ public class Monje : EnemyBase
 
     public bool HasToFlee()
     {
-        if (player == null) return false;
+        //tirar un raycast para que sea visual
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, (player.position - transform.position).normalized, maxDistanceToStopFlee);
+        Debug.DrawRay(transform.position, (player.position - transform.position).normalized * maxDistanceToStopFlee, Color.green);
 
-        float distance = Vector2.Distance(transform.position, player.position);
+        RaycastHit2D hit2 = Physics2D.Raycast(transform.position, (player.position - transform.position).normalized, minDistanceToFlee);
+        Debug.DrawRay(transform.position, (player.position - transform.position).normalized * minDistanceToFlee, Color.yellow);
 
-        //si esta molt a prop -> fugir
-        if (distance < minFleeDistance)
+        float horizontalDistance = Mathf.Abs(transform.position.x - player.position.x);
+        if (horizontalDistance < minDistanceToFlee) //si la distancia es menor que la minima distancia per fugir
+        {
+            isFleeing = true;
+            return isFleeing;
+        }
+        else if (horizontalDistance < maxDistanceToStopFlee && isFleeing) //si la distancia es menor que la maxima distancia per deixar de fugir i ja estava fugint
+        {
+            isFleeing = true;
+            return isFleeing;
+        }
+        else //si la distancia es major que la maxima distancia per deixar de fugir
+        {
+            isFleeing = false;
+            return isFleeing;
+        }
+    }
+
+    public bool CriticalFleeState()
+    {
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+
+        if (distanceToPlayer < criticalDistanceToPlayer) //si la distancia es menor que la distancia critica
+        {
+            criticalFleeState = true;
             return true;
+        }
 
-        //si esta molt lluny -> no fugir
-        if (distance > maxFleeDistance)
-            return false;
-
-        //si no esta ni molt a prop ni molt lluny -> no fugir
+        criticalFleeState = false;
         return false;
     }
 
-    //METODES PER EL TELETRANSPORT
-
+    //METODES PER EL TELETRANSPORT --> FINALITZAT
     public void Teletransport() //es crida desde un animation event al final de la animacio de iniciTeletranport
     {
+        Instantiate(teletransportParticle, teletransportSpawnPoint.transform.position, Quaternion.identity); //particules de teletransport a la posicio del monje
         HideMonje(true);
 
         Vector3 newPosition = player.position;
@@ -237,16 +285,61 @@ public class Monje : EnemyBase
 
         rb.linearVelocity = new Vector2(0, -20); //donem una velocitat cap avall perque caigui rapidament
 
+        Instantiate(teletransportParticle, teletransportSpawnPoint.transform.position, Quaternion.identity);
         HideMonje(false);
     }
+
+    public void TeletransportToFlee()
+    {
+        HideMonje(true);
+
+        float fleeDirection;
+
+        //si te una pared davant
+        if (IsNearWall())
+        {
+            fleeDirection = transform.localScale.x > 0 ? -1f : 1f; //fugeux en la direccio oposada a la que mira
+        }
+        else
+        {
+            //si no hi ha paret, fugeux en la direccio oposada al player
+            fleeDirection = player.position.x > transform.position.x ? -1f : 1f;
+        }
+
+        //nova posicio per teletransportar-se
+        Vector3 newPosition = new Vector3(transform.position.x + fleeDirection * maxDistanceToStopFlee, transform.position.y, transform.position.z);
+
+        // Limitar dentro de los bordes de la boss zone si quieres
+        if (bossZone != null)
+        {
+            newPosition.x = Mathf.Clamp(newPosition.x, bossZone.bounds.min.x, bossZone.bounds.max.x);
+        }
+
+
+        rb.linearVelocity = Vector2.zero;
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        transform.position = newPosition;
+        isTeletransportingToFlee = true;
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        HideMonje(false);
+    }
+
 
     public void HideMonje(bool hide)
     {
         isInvisible = hide;
-        SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
-        foreach (var sr in spriteRenderers)
+        //busca un gameObject hijo de manera recursiva con un nmbre especifico
+        foreach (Transform child in transform)
         {
-            sr.enabled = !hide;
+            if (child.name == "Mesh")
+            {
+                //agafem tots els sprite renderers dels fills del mesh i els desactivem/activem
+                SpriteRenderer[] spriteRenderers = child.GetComponentsInChildren<SpriteRenderer>();
+                foreach (var sr in spriteRenderers)
+                {
+                    sr.enabled = !hide;
+                }
+            }
         }
     }
     public void OnTeletransportAttackImpact()
@@ -260,7 +353,7 @@ public class Monje : EnemyBase
         //fer shake a la camara
         if (cameraShake != null)
         {
-            cameraShake.Shake(2f, 5f, 0.3f); //amplitud, frequencia, duracio
+            cameraShake.Shake(8f, 5f, 1f); //amplitud, frequencia, duracio
         }
     }
 
@@ -272,14 +365,22 @@ public class Monje : EnemyBase
             punchCollider.SetActive(false);
         }
         animationFinished = true; //indiquem que ha acabat l'animacio de l'atac de teletransport
+        isTeletransportingToFlee = false;
     }
 
-    //METODES PER EL THROW GAS
+    //METODES PER EL THROW GAS --> FINALITZAT
     public void ThrowGas() //es crida desde un animation event a la animacio de throw gas
     {
         GameObject gasBall = Instantiate(gasPrefab, throwingGasSpawnPoint.position, Quaternion.identity);
-        Vector2 directionToPlayer = (player.position - throwingGasSpawnPoint.position).normalized;
-        //lo demes es controla desde el script de la bola de gas
+        //aqui quiero hacer que la bola (que tiene rigidbody2D) se mueva hacia alante ya que el monje la lanza hacia adelante.
+        Rigidbody2D gasRb = gasBall.GetComponent<Rigidbody2D>();
+        if (gasRb != null)
+        {
+            float throwForce = 25f; //fuerza con la que se lanza la bola de gas
+            Vector2 throwDirection = facingRight ? Vector2.right : Vector2.left; //direccion del lanzamiento segun la direccion del monje
+            gasRb.linearVelocity = throwDirection * throwForce; //asignamos la velocidad al rigidbody2D de la bola de gas
+        }
+
     }
 
     public void OnThrowGasEnd() //es crida desde un animation event al final de la animacio de throw gas
@@ -288,21 +389,31 @@ public class Monje : EnemyBase
     }
 
 
-    //METODES PER EL THROW RAY
-
+    //METODES PER EL THROW RAY --> FINALITZAT
+    public void OnThrowRayShakeCam() //es crida desde event de animator durant la animacio de throwRay
+    {
+        cameraShake.Shake(8f, 5f, 0.5f); //amplitud, frequencia, duracio
+    }
+    public void OnRayImpactShakeCam() //es crida desde event de animator durant la animacio de throwRay
+    {
+        cameraShake.Shake(8f, 8f, 2f); //amplitud, frequencia, duracio
+    }
     public void OnThrowRay() //es crida desde un animation event de la animacio de throwRay
     {
         rayManager.ThrowRaysRoutine();
     }
-
     public void OnThrowRayEnd() //es crida desde un animation event al final de la animacio de throwRay
     {
         animationFinished = true; //indiquem que ha acabat l'animacio de llan?ament de raig
     }
 
-
-
-
+    public bool IsNearWall()
+    {
+        Vector2 forward = facingRight ? Vector2.right : Vector2.left;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, forward, 1f, confinerWallMask);
+        Debug.DrawRay(transform.position, forward * 2f, Color.cyan);
+        return hit.collider != null;
+    }
 
     //METODES COMUNS DELS ENEMICS (HERETATS DE ENEMYBASE)
 
@@ -310,28 +421,11 @@ public class Monje : EnemyBase
     {
         if (player == null || rb == null) { return; }
 
+        float directionX = player.position.x > transform.position.x ? -1f : 1f;
+        rb.linearVelocity = new Vector2(directionX * fleeSpeed, rb.linearVelocityY);
 
-        float distance = Vector2.Distance(transform.position, player.position);
-
-        if (distance < minFleeDistance) //si esta massa a prop
-        {
-            Vector2 directionAway = (transform.position - player.position).normalized;
-            rb.linearVelocity = new Vector2(directionAway.x * fleeSpeed, rb.linearVelocity.y);
-            return;
-        }
-
-        //si esta a una distancia mitjana
-        if (distance < maxFleeDistance)
-        {
-            //s'allunya pero mes lentament
-            Vector2 directionAway = (transform.position - player.position).normalized;
-            rb.linearVelocity = new Vector2(directionAway.x * (fleeSpeed * 0.5f), rb.linearVelocity.y);
-            return;
-        }
-
-        //si esta massa lluny -> no es mou
-        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
+
 
 
     public override void Attack() { }

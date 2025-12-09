@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections;
+using System.Collections.Specialized;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -31,6 +32,9 @@ public class PlayerStateMachine : MonoBehaviour
     private float groundCheckDelay = 0.1f;
     private float lastJumpTime = 0f;
     private bool facingRight = true; //esta mirant a la dreta (default)
+
+    [Header("Control Modifiers")]
+    public bool invertedControls = false;
 
 
     [Header("Ki System")]
@@ -81,7 +85,7 @@ public class PlayerStateMachine : MonoBehaviour
     private HingeJoint2D currentVineJoint;
 
     [Header("Dialogue")]
-    [SerializeField] private bool dialogueLocked = false; //true mentre el diàleg està actiu
+    [SerializeField] public bool dialogueLocked = false; //true mentre el diàleg està actiu
 
     [Header("Slope Handling")]
     [SerializeField] private float maxSlopeAngle = 45f;
@@ -103,6 +107,8 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("Particles")]
     [SerializeField] private GameObject touchGroundParticlePrefab;
     private Vector2 lastGroundPoint;
+
+
 
     private float defaultGravity = 2f;
     private float currentGravity = 2f;
@@ -171,7 +177,6 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void Update()
     {
-
         if (!dialogueLocked) { HandleInputs(); } 
 
         animator.SetBool("isGrounded", isGrounded); //important per les transicions cap a OnAir i Idle/Running
@@ -253,7 +258,9 @@ public class PlayerStateMachine : MonoBehaviour
         {
             return;
         }
-        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), 0); //Agafem input horitzontal per moure'ns
+        float h = Input.GetAxisRaw("Horizontal");
+        h = invertedControls ? -h : h;
+        moveInput = new Vector2(h, 0); //nomes ens interessa l'eix horitzontal per moure'ns
 
         HandleFlip(); //el posem aqui ja que ho mirem just despres del moveInput
         CheckIfGrounded();
@@ -283,7 +290,8 @@ public class PlayerStateMachine : MonoBehaviour
             return;
         }
         //Horizontal
-        input.horizontal = Input.GetAxisRaw("Horizontal");
+        float h = Input.GetAxisRaw("Horizontal");
+        input.horizontal = invertedControls ? -h : h; //invertem els controls si cal
 
         //SALT
         input.jumpDown = Input.GetKeyDown(KeyCode.Space); //tecla de espai baixada
@@ -304,16 +312,20 @@ public class PlayerStateMachine : MonoBehaviour
         input.swingDown = Input.GetKeyDown(KeyCode.Space);
         input.swingUp = Input.GetKeyUp(KeyCode.Space);
 
-        //BLOQUEIG
-        input.blockDown = Input.GetKeyDown(KeyCode.Q);
-        input.blockUp = Input.GetKeyUp(KeyCode.Q);
+        if (hasStaff)
+        {
+            //BLOQUEIG
+            input.blockDown = Input.GetKeyDown(KeyCode.Q);
+            input.blockUp = Input.GetKeyUp(KeyCode.Q);
 
-        //BASTO
-        input.staffClimbDown = Input.GetMouseButtonDown(1);
-        input.staffClimbUp = Input.GetMouseButtonUp(1);
+            //BASTO
+            input.staffClimbDown = Input.GetMouseButtonDown(1);
+            input.staffClimbUp = Input.GetMouseButtonUp(1);
 
-        //ATAC ESPECIAL BASTO
-        input.specialAttackStaffDown = Input.GetKeyDown(KeyCode.V); //revisar perque ha de ser combinacio de tecles
+            //ATAC ESPECIAL BASTO
+            input.specialAttackStaffDown = Input.GetKeyDown(KeyCode.V); //revisar perque ha de ser combinacio de tecles
+
+        } 
 
         ProcessInputActions();
     }
@@ -457,6 +469,12 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void HandleIdle() 
     {
+        if(dialogueLocked) 
+        { 
+            animator.SetFloat("speed", 0);
+            animator.SetBool("isGrounded", true);
+            return; 
+        }
         if (Mathf.Abs(moveInput.x) > 0.1f) //Si es mou
         {
             ChangeState(PlayerState.Running);
@@ -835,6 +853,7 @@ private void HandleHealing()
 
     private void ReturnToDefaultState()
     {
+        Debug.Log("Returning to default state.");
         if (!isGrounded) { ChangeState(PlayerState.OnAir); } //si encara no estem a terra anem a OnAir
 
         else if (Mathf.Abs(moveInput.x) > 0.1f) { ChangeState(PlayerState.Running); } //si estem a terra i ens movem anem a Running
@@ -859,6 +878,7 @@ private void HandleHealing()
     public void ForceNewState(PlayerState newState)
     {
         currentState = newState;
+        Debug.Log($"Player state forcibly changed to: {newState}");
     }
 
     private void Move()
@@ -988,11 +1008,30 @@ private void HandleHealing()
 
     public void EnterDialogueMode()
     {
+        Debug.Log("Entering dialogue mode from player controller.");
         dialogueLocked = true;
 
-        ForceNewState(PlayerState.Idle); //posem l'estat a Idle per evitar problemes
         input = new InputFlags();
 
+        animator.SetBool("HealButton", false);
+        animator.SetBool("Blocking", false);
+
+        animator.ResetTrigger("AttackPunch");
+        animator.ResetTrigger("AttackTail");
+        animator.ResetTrigger("SpecialAttackPunch");
+        animator.ResetTrigger("StaffClimbing");
+        animator.SetFloat("speed", 0f);
+        animator.SetBool("isGrounded", true);
+
+        ForceNewState(PlayerState.Idle);
+        animator.SetTrigger("ForceIdle");
+
+    }
+
+    public void ExitDialogueMode()
+    {
+        dialogueLocked = false;
+        input = new InputFlags(); //reset input flags
         animator.SetBool("HealButton", false);
         animator.SetBool("Blocking", false);
 
@@ -1003,13 +1042,8 @@ private void HandleHealing()
 
         ForceNewState(PlayerState.Idle);
         animator.SetTrigger("ForceIdle");
-
-
-    }
-
-    public void ExitDialogueMode()
-    {
-        dialogueLocked = false;
+        animator.SetFloat("speed", 0f);
+        animator.SetBool("isGrounded", true);
         ReturnToDefaultState(); //torna a l'estat per defecte segons si estem a terra o en l'aire
     }
 
@@ -1022,6 +1056,19 @@ private void HandleHealing()
     private void RestoreDefaultGravity()
     {
         SetGravity(defaultGravity);
+    }
+
+    public void InvertControlsForSeconds(float duration)
+    {
+        StartCoroutine(InvertControlsCoroutine(duration));
+    }
+
+    private IEnumerator InvertControlsCoroutine(float duration)
+    {
+        //aqui falta posar el so o efecte visual que indica que els controls estan invertits
+        invertedControls = true;
+        yield return new WaitForSeconds(duration);
+        invertedControls = false;
     }
 
 
