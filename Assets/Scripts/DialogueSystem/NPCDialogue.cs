@@ -145,7 +145,9 @@ public class NPCDialogue : MonoBehaviour
         }
 
         StartCoroutine(PreventImmediateRestart());
-       
+
+        DialogueManager.Instance.EndDialogueMusic();
+
 
     }
 

@@ -17,11 +17,13 @@ public class MonjeTeletransportAttack : IState
         if (monje.isTeletransportingToFlee)
         {
             monje.animator.SetTrigger("TeletransportToFlee"); //activem el animator per entrar al teletransport des de fugir
+            monje.monjeAudioSource.PlayOneShot(monje.TeletransportToFleeSound); //reproduim el so de teletransport
         }
         else
         {
             monje.attackIndex = 2; //posem l'index d'atac a 2 (atac de teletransport)
             monje.animator.SetTrigger("Teletransport"); //activem el animator per entrar al teletransport
+            monje.monjeAudioSource.PlayOneShot(monje.TeletransportSound); //reproduim el so de teletransport
         }
     }
 

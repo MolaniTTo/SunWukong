@@ -23,6 +23,7 @@ public class Gorila : EnemyBase
     public CameraShake cameraShake; //referencia al component de camera shake
     public CharacterHealth characterHealth; //referencia al component de vida
     public MonjeBueno monjeBueno; //referencia al monje que canvia el seu diàleg un cop es derrota el gorila
+    public BossMusicController gorilaMusicController; //referencia al controlador de musica del boss
 
 
     [Header("Stats")]
@@ -253,6 +254,7 @@ public class Gorila : EnemyBase
         var playerCtrl = player.GetComponent<PlayerStateMachine>();
         if (playerCtrl != null) playerCtrl.ExitDialogueMode(); //desbloquejem el control del jugador un cop ha acabat l'animacio de wakeUp
         hasBeenAwaken = true;
+        gorilaMusicController.StartBossMusic(); //iniciem la musica del boss un cop s'ha despertat
     }
 
     public void OnChargedImpact()

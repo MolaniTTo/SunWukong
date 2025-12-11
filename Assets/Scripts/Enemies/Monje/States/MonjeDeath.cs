@@ -14,6 +14,10 @@ public class MonjeDeath : IState
         monje.lockFacing = true;
         monje.StopMovement();
         monje.animator.SetTrigger("Die");
+        if(monje.monjeAudioSource != null)
+        {
+            monje.monjeAudioSource.PlayOneShot(monje.DeathSound);
+        }
     }
 
     public void Exit()

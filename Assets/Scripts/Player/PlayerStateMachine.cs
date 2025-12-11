@@ -31,7 +31,7 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     private float groundCheckDelay = 0.1f;
     private float lastJumpTime = 0f;
-    private bool facingRight = true; //esta mirant a la dreta (default)
+    public bool facingRight = true; //esta mirant a la dreta (default)
 
     [Header("Control Modifiers")]
     public bool invertedControls = false;
@@ -59,6 +59,7 @@ public class PlayerStateMachine : MonoBehaviour
     public bool isDead = false; 
     public bool isBlocking => currentState == PlayerState.Block;
     public bool isComingFromClimbing = false;
+    public bool wakeUpFromSleep = false;
 
     [Header("Refs")]
     public Animator animator;
@@ -71,6 +72,7 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField] private Transform earthquakeSpawnPoint;
     public CharacterHealth characterHealth;
     public Transform lastCheckPoint;
+    public FirstSequence firstSequence;
 
 
     [Header("Jump tuning")]
@@ -197,7 +199,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void Update()
     {
-        if(isDead) { return; } //si estem morts, no fem res
+        if (isDead) { return; } //si estem morts, no fem res
 
         if (!dialogueLocked) { HandleInputs(); } 
 
@@ -1128,12 +1130,16 @@ private void HandleHealing()
         animator.SetBool("isGrounded", true);
 
         ForceNewState(PlayerState.Idle);
-        animator.SetTrigger("ForceIdle");
+        if (wakeUpFromSleep)
+        {
+            animator.SetTrigger("ForceIdle");
+        }
 
     }
 
     public void ExitDialogueMode()
     {
+        Debug.Log("Exiting dialogue mode from player controller.");
         dialogueLocked = false;
         input = new InputFlags(); //reset input flags
         animator.SetBool("HealButton", false);
@@ -1149,6 +1155,14 @@ private void HandleHealing()
         animator.SetFloat("speed", 0f);
         animator.SetBool("isGrounded", true);
         ReturnToDefaultState(); //torna a l'estat per defecte segons si estem a terra o en l'aire
+    }
+
+    public void EndFirstSequence()
+    {
+        if (firstSequence != null)
+        {
+            firstSequence.EndSequence();
+        }
     }
 
     private void SetGravity(float value)

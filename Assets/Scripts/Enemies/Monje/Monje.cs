@@ -30,6 +30,7 @@ public class Monje : EnemyBase
     public NPCDialogue npcDialogue;
     public GameObject teletransportParticle;
     public GameObject teletransportSpawnPoint;
+    public BossMusicController monjeMusicController; //referencia al controlador de musica del boss
 
 
     [Header("Stats")]
@@ -78,6 +79,16 @@ public class Monje : EnemyBase
 
     [Header("PlayerRef")]
     public PlayerStateMachine playerRef;
+
+    [Header("Audio")]
+    public AudioSource monjeAudioSource;
+    public AudioClip DeathSound;
+    public AudioClip RunSound;
+    public AudioClip TeletransportImpactSound;
+    public AudioClip TeletransportSound;
+    public AudioClip TeletransportToFleeSound;
+    public AudioClip ThrowLightningSound;
+    public AudioClip ThrowToxicGasSound;
 
 
 
@@ -354,6 +365,10 @@ public class Monje : EnemyBase
         if (cameraShake != null)
         {
             cameraShake.Shake(8f, 5f, 1f); //amplitud, frequencia, duracio
+        }
+        if (monjeAudioSource != null && TeletransportImpactSound != null)
+        {
+            monjeAudioSource.PlayOneShot(TeletransportImpactSound);
         }
     }
 

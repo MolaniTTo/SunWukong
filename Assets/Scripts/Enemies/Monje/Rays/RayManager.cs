@@ -26,6 +26,11 @@ public class RayManager : MonoBehaviour
     public float[] leftBoundaries = { -5, 10, 26 };
     public float[] rightBoundaries = { 8, 24, 40 };
 
+    [Header("Audio")]
+    public AudioSource rayAudioSource;
+    public AudioClip StormSound;
+    public AudioClip WarningSound;
+
 
     public void ThrowRaysRoutine()
     {
@@ -49,6 +54,7 @@ public class RayManager : MonoBehaviour
         monje.dialogueFinished = true; //marquem que ha acabat el diàleg després del primer raig
         monje.raysFinished = true; //marquem que ha acabat de tirar els raigs
         monje.playerRef.ExitDialogueMode(); //sortim del mode diàleg després del primer raig
+        monje.monjeMusicController.StartBossMusic(); //iniciem la música de boss després del primer raig
 
     }
 

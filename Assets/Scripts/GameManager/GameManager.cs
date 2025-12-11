@@ -9,7 +9,10 @@ public class GameManager : MonoBehaviour
     public bool isOneHitMode = false; //Mode onetap per al jugador
 
     [Header("Fade Settings")]
-    [SerializeField] private ScreenFade screenFade;
+    public ScreenFade screenFade;
+
+    [Header("First Sequence")]
+    public FirstSequence firstSequence;
 
     [Header("Paralax Settings")]
     public ParallaxStatic[] parallaxLayers;

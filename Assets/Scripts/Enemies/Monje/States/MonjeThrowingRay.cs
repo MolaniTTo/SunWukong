@@ -16,6 +16,7 @@ public class MonjeThrowingRay : IState
         monje.animationFinished = false;
         monje.raysFinished = false;
         monje.animator.SetTrigger("ThrowRay"); //activem el animator per tirar el raig
+        monje.monjeAudioSource.PlayOneShot(monje.ThrowLightningSound); //reproduim el so de tirar el raig
     }
 
     public void Exit()

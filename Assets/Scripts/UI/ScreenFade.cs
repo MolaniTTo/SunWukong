@@ -9,12 +9,7 @@ public class ScreenFade : MonoBehaviour
 
     private IEnumerator fadeRoutine;
 
-    private void Awake()
-    {
-        fadeImage = GetComponent<Image>();
-    }
-
-    public void FadeOut()
+    public void FadeOut() //fa la pantalla negra
     {
         if (fadeRoutine != null)
         {
@@ -25,7 +20,7 @@ public class ScreenFade : MonoBehaviour
         StartCoroutine(fadeRoutine);
     }
 
-    public void FadeIn()
+    public void FadeIn() //fa la pantalla transparent
     {
         if (fadeRoutine != null)
         {

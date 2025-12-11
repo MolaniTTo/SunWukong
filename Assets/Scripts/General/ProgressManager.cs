@@ -135,11 +135,14 @@ public class ProgressManager : MonoBehaviour
             currentProgress = new GameProgress(); //inicialitza nou progrés
             currentProgress.isOneHitMode = PlayerPrefs.GetInt($"Slot{currentSlot}_NoHit", 0) == 1; //carrega la configuració de NoHit
             Debug.Log("?? Nueva partida iniciada");
+            gameManager.firstSequence.StartSequence(); //nomes comença la sequència si es nova partida
+
         }
         else
         {
             currentProgress = JsonUtility.FromJson<GameProgress>(json); //deserialitza el JSON a l'objecte GameProgress
             Debug.Log($"?? Progreso cargado: {currentProgress.defeatedEnemies.Count} enemigos derrotados");
+            gameManager.screenFade.FadeIn(); //fa un fade in suau al carregar
         }
     }
 
