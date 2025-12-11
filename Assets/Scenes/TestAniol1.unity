@@ -3160,6 +3160,7 @@ MonoBehaviour:
   player: {fileID: 0}
   isOneHitMode: 0
   screenFade: {fileID: 0}
+  parallaxLayers: []
   totalAttacks: 0
   totalHits: 0
   totalDamageDealt: 0
@@ -15484,7 +15485,7 @@ Transform:
   m_GameObject: {fileID: 842045386}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 10.33, y: -1.08, z: -4}
+  m_LocalPosition: {x: 0.12, y: -4.35, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -21242,6 +21243,7 @@ MonoBehaviour:
   forceCameraZoomOnStart: 1
   objectToHide: {fileID: 575099178}
   monjeBueno: {fileID: 6128471314649666560}
+  monjeBoss: {fileID: 0}
 --- !u!61 &6128471314649666551
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -21541,6 +21543,10 @@ PrefabInstance:
       value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 2507620661425746904, guid: 121cd8f3f487b1e41b762ad226c8c551, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2507620661425746904, guid: 121cd8f3f487b1e41b762ad226c8c551, type: 3}
       propertyPath: m_LocalPosition.x
       value: 14.37
       objectReference: {fileID: 0}
@@ -21579,6 +21585,10 @@ PrefabInstance:
     - target: {fileID: 2507620661425746904, guid: 121cd8f3f487b1e41b762ad226c8c551, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2507620661425746904, guid: 121cd8f3f487b1e41b762ad226c8c551, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3604219321376402363, guid: 121cd8f3f487b1e41b762ad226c8c551, type: 3}
       propertyPath: m_Name
