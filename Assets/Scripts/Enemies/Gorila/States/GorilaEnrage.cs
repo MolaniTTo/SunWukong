@@ -16,11 +16,16 @@ public class GorilaEnrage : IState
         gorila.StopMovement();
         gorila.lockFacing = true;
         gorila.animator.SetTrigger("Enrage"); 
+        if(gorila.gorilaAudioSource != null)
+        {
+            gorila.gorilaAudioSource.PlayOneShot(gorila.LowHealth);
+        }
     }
 
     public void Exit()
     {
         gorila.lockFacing = false;
+        gorila.gorilaAudioSource.Stop();
     }
 
     public void Update()

@@ -58,6 +58,14 @@ public class Gorila : EnemyBase
     [Header("PlayerRef")]
     public PlayerStateMachine playerRef;
 
+    [Header("Audio")]
+    public AudioSource gorilaAudioSource;
+    public AudioClip WakeUp;
+    public AudioClip Walk;
+    public AudioClip LowHealth;
+    public AudioClip Death;
+    public AudioClip AttackOnda;
+    public AudioClip AttackCuffs;
 
 
     protected override void Awake()
@@ -233,6 +241,11 @@ public class Gorila : EnemyBase
             playerCtrl.EnterDialogueMode();
         }
         if (animator != null) animator.SetTrigger("WakeUp"); //activem l'animacio de despertar
+        if( gorilaAudioSource != null && WakeUp != null)
+        {
+            gorilaAudioSource.PlayOneShot(WakeUp);
+        }
+
     }
 
     public void OnWakeUpEnd() //es crida mitjançant un event a la animacio de wakeUp quan acaba l'animacio

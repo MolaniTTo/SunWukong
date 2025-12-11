@@ -17,6 +17,12 @@ public class GorilaRetreating : IState
         gorila.animator.speed = 0.8f;
         gorila.lockFacing = true; //revisar ya que quiero que para el retroceso gire dejando el player atras
         gorila.animator.SetBool("isRunning", true); // Usa la misma animación de correr
+        if (gorila.gorilaAudioSource != null)
+        {
+            gorila.gorilaAudioSource.clip = gorila.Walk;
+            gorila.gorilaAudioSource.loop = true;
+            gorila.gorilaAudioSource.Play();
+        }
     }
 
     public void Exit()
@@ -24,6 +30,7 @@ public class GorilaRetreating : IState
         gorila.animator.SetBool("isRunning", false);
         gorila.StopMovement();
         gorila.lockFacing = false;
+        gorila.gorilaAudioSource.Stop();
     }
 
 

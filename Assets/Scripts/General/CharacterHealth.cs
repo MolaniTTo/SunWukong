@@ -64,6 +64,7 @@ public class CharacterHealth : MonoBehaviour
         if (isPlayer && playerStateMachine != null)
         {
             playerStateMachine.animator.SetTrigger("BeingHit"); //activem la animacio de ser colpejat
+            playerStateMachine.audioSource.PlayOneShot(playerStateMachine.hurtSound); //reproduim el so de ser colpejat
             playerStateMachine.ForceNewState(PlayerStateMachine.PlayerState.BeingHit); //canviem l'estat del jugador a BeingHit
         }
     }
@@ -71,8 +72,12 @@ public class CharacterHealth : MonoBehaviour
     public void Heal(float amount) //funcio en cas de que el personatge es curi
     {
         if (isDead) return;
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth); //Assegurem que la vida no superi la vida maxima
+        OnHealthChanged?.Invoke(currentHealth);
+    }
 
-        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+    public void ForceHealthUpdate()
+    {
         OnHealthChanged?.Invoke(currentHealth);
     }
 
@@ -85,6 +90,10 @@ public class CharacterHealth : MonoBehaviour
 
         if (!isPlayer) //si no es el jugador, notifiquem que un enemic ha mort
         {
+            if(ProgressManager.Instance != null)
+            {
+                ProgressManager.Instance.RegisterEnemyDefeated(gameObject);
+            }
             CombatEvents.EnemyKilled(gameObject);
             return;
         }
@@ -94,6 +103,9 @@ public class CharacterHealth : MonoBehaviour
             if (playerStateMachine != null)
             {
                 playerStateMachine.animator.SetTrigger("Death");
+                playerStateMachine.audioSource.Stop();
+                playerStateMachine.audioSource.PlayOneShot(playerStateMachine.deathSound);
+
                 playerStateMachine.ForceNewState(PlayerStateMachine.PlayerState.Death);
             }
 
