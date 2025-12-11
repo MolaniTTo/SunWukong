@@ -11,11 +11,14 @@ public class EnemySnake : EnemyBase
 
     [Header("Snake Settings")]
     public float detectionRange = 8f;
-    public float attackRange = 2.5f;
+    public float attackRange = 0.8f; // Ajusta según el alcance real de la mordida
     public LayerMask playerLayer;
     public bool facingRight = false;
     public Animator animator;
     public CharacterHealth characterHealth;
+    
+    [Header("Bone Reference")]
+    public Transform bone_1; // Referencia al bone_1 para rotar
 
     [Header("Movement Settings")]
     public float patrolSpeed = 2f;
@@ -28,7 +31,7 @@ public class EnemySnake : EnemyBase
 
     [Header("Combat Settings")]
     public float attackDamage = 15f;
-    public float attackCooldown = 0f;
+    public float attackCooldown = 1.5f; // Tiempo entre ataques
     public float contactDamage = 10f;
     public float contactDamageCooldown = 1f;
     private float lastContactDamageTime = -999f;
@@ -52,6 +55,12 @@ public class EnemySnake : EnemyBase
 
         if (animator == null) animator = GetComponent<Animator>();
         if (characterHealth == null) characterHealth = GetComponent<CharacterHealth>();
+
+        // Si bone_1 no está asignado, intentar encontrarlo
+        if (bone_1 == null)
+        {
+            bone_1 = transform.Find("SERPIENTE/bone_1");
+        }
 
         if (characterHealth != null)
         {
@@ -120,15 +129,15 @@ public class EnemySnake : EnemyBase
     {
         facingRight = !facingRight;
 
-        // Guardar posici�n actual
+        // Guardar posición actual
         Vector3 currentPosition = transform.position;
 
         // Hacer el flip
-        Vector3 scale = transform.localScale;
-        scale.x *= -1f;
-        transform.localScale = scale;
+        Vector3 scale = bone_1.localScale;
+        scale.y *= -1f;
+        bone_1.localScale = scale;
 
-        // Restaurar la posici�n (compensa el desplazamiento)
+        // Restaurar la posición (compensa el desplazamiento)
         transform.position = currentPosition;
     }
 
