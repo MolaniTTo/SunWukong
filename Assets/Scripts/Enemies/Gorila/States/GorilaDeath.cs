@@ -14,6 +14,10 @@ public class GorilaDeath : IState
         gorila.lockFacing = true;
         gorila.StopMovement();
         gorila.animator.SetTrigger("Die");
+        if (gorila.gorilaAudioSource != null)
+        {
+            gorila.gorilaAudioSource.PlayOneShot(gorila.Death);
+        }
 
     }
 

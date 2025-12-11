@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class StatsRevealUI : MonoBehaviour
@@ -13,95 +12,66 @@ public class StatsRevealUI : MonoBehaviour
     public TMP_Text damageTakenText;
 
     [Header("Reveal Settings")]
-    public float randomDuration = 1.2f; //temps que dura la fase de random final
-    public float randomSpeed = 0.05f; //rapidesa del random durant la fase de random
-    public float transitionSpeed = 1.8f; //rapidesa de la transició cap al valor final
+    public float revealDelay = 0.3f;   // tiempo entre stats
+    public float revealDuration = 3f;  // duración del count-up
 
     private bool revealing = false;
 
-
-    public void StartReveal(GameManager stats) //la cridem des del GameManager quan canviem a l'escena de stats
+    private void Start()
     {
-        if (revealing) return;
-
-        revealing = true;
-
-        StartCoroutine(RevealStats(stats));
+        StartReveal();
     }
 
-    IEnumerator RevealStats(GameManager stats)
+    public void StartReveal()
     {
+        if (revealing) return;
+        revealing = true;
+        StartCoroutine(RevealStats());
+    }
 
+    IEnumerator RevealStats()
+    {
         TMP_Text[] fields = {
-            attacksText, hitsText, damageDealtText, killsText, damageTakenText //crea un array amb totes les referencies als texts
+            attacksText, hitsText, damageDealtText, killsText, damageTakenText
         };
 
-
-        float[] finalValues = { //crea un array amb els valors finals obtinguts del GameManager
-            stats.totalAttacks,
-            stats.totalHits,
-            stats.totalDamageDealt,
-            stats.totalKills,
-            stats.totalDamageTaken
+        float[] finalValues = {
+            CombatStatsResult.totalAttacks,
+            CombatStatsResult.totalHits,
+            CombatStatsResult.totalDamageDealt,
+            CombatStatsResult.totalKills,
+            CombatStatsResult.totalDamageTaken,
 
         };
 
-        //comencen tots a fer el random
-        bool[] revealed = new bool[fields.Length];
-        Coroutine[] randomizers = new Coroutine[fields.Length];
-
-        for (int i = 0; i < fields.Length; i++)
-        {
-            randomizers[i] = StartCoroutine(RandomizeField(fields[i], revealed, i)); //inicia el random per a cada camp
-        }
-
-        //va revelant un per un cada stat per ordre
         for (int i = 0; i < fields.Length; i++)
         {
             yield return StartCoroutine(RevealOneStat(fields[i], finalValues[i]));
-
-            // marcar como revelado → ese ya no sigue randomizando
-            revealed[i] = true;
-
-            yield return new WaitForSeconds(0.3f); // pequeño delay entre stats
+            yield return new WaitForSeconds(revealDelay);
         }
 
         revealing = false;
     }
 
-
-    IEnumerator RandomizeField(TMP_Text field, bool[] revealed, int index) //random que mante a els demes stats abans de ser revelats
+    IEnumerator RevealOneStat(TMP_Text field, float finalValue)
     {
-        while (!revealed[index]) //mentre no estigui revelat aquest stat
-        {
-            field.text = Random.Range(0, 999).ToString(); //assigna un valor random
-            yield return new WaitForSeconds(randomSpeed); //espera un temps abans de canviar-lo de nou
-        }
-    }
+        float timer = 0f;
+        float duration = revealDuration;
 
-    IEnumerator RevealOneStat(TMP_Text field, float finalValue) //revela un stat concret
-    {
-        float timer = 0;
-
-        while (timer < randomDuration) //FASE DE RANDOM FINAL
+        while (timer < duration)
         {
-            field.text = Random.Range(0, 999).ToString();
             timer += Time.deltaTime;
-            yield return null;
-        }
 
+            // Ease-out cubic (rápido → lento)
+            float t = timer / duration;
+            t = 1f - Mathf.Pow(1f - t, 3f);
 
-        float current = Random.Range(0, 999);
-
-        while (Mathf.Abs(current - finalValue) > 0.1f) //TRANSICIÓ CAP AL VALOR FINAL
-        {
-            current = Mathf.Lerp(current, finalValue, Time.deltaTime * transitionSpeed); //interpola cap al valor final
+            float current = Mathf.Lerp(0f, finalValue, t);
             field.text = Mathf.FloorToInt(current).ToString();
+
             yield return null;
         }
 
-        //dona el valor final exacte
-        field.text = finalValue.ToString();
-
+        field.text = ((int)finalValue).ToString();
     }
 }

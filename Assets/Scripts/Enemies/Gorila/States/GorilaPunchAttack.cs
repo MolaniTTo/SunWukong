@@ -15,12 +15,17 @@ public class GorilaPunchAttack : IState
         gorila.lockFacing = true; //Bloquejem la direccio del gorila
         gorila.StopMovement(); //Aturem el moviment del gorila
         gorila.animator.SetTrigger("Punch"); //Activem la variable de l'animator perque entri a l'estat de punch attack
+        if (gorila.gorilaAudioSource != null)
+        {
+            gorila.gorilaAudioSource.PlayOneShot(gorila.AttackCuffs);
+        }
         gorila.animationFinished = false;
     }
 
     public void Exit()
     {
-        
+        gorila.gorilaAudioSource.Stop(); //Aturem l'audio de l'atac en sortir de l'estat de punch attack
+
     }
     public void Update()
     {

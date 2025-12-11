@@ -20,6 +20,7 @@ public class GorilaRunning : IState
         gorila.animator.SetBool("isRunning", false);//Desactivem la variable de l'animator perque surti de l'estat de run
         gorila.StopMovement(); //Aturem el moviment del gorila en sortir de l'estat de run
         gorila.lockFacing = true; //Bloquejem la direccio del gorila
+        gorila.gorilaAudioSource.Stop(); //Aturem l'audio de caminar en sortir de l'estat de run
     }
 
     public void Update()
@@ -38,7 +39,16 @@ public class GorilaRunning : IState
         }
 
         bool isMoving = gorila.Movement(); //Fem que el gorila es mogui cap al jugador i retornem si s'està movent o no
+        
+        if(gorila.gorilaAudioSource != null && !gorila.gorilaAudioSource.isPlaying)
+        {
+            gorila.gorilaAudioSource.clip = gorila.Walk;
+            gorila.gorilaAudioSource.loop = true;
+            gorila.gorilaAudioSource.Play();
+        }
+
         gorila.Flip(); //Assegurem que el gorila miri cap al jugador mentre esta corrent
+
 
         if (!isMoving) //si no s'està movent perque esta massa aprop del jugador, canviem a l'estat d'idle
         {

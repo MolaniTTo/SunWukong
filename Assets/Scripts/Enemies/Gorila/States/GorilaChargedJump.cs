@@ -14,11 +14,16 @@ public class GorilaChargedJump : IState
         gorila.lockFacing = true;
         gorila.StopMovement();
         gorila.animator.SetTrigger("ChargedJump");
+        if (gorila.gorilaAudioSource != null)
+        {
+            gorila.gorilaAudioSource.PlayOneShot(gorila.AttackOnda);
+        }
         gorila.animationFinished = false;
     }
    
     public void Exit()
     {
+        gorila.gorilaAudioSource.Stop();
 
     }
 

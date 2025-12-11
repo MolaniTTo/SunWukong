@@ -21,6 +21,10 @@ public class PlayerStaffController : MonoBehaviour
     public bool reachedTop = false;
     public Vector3 groundPoint;
 
+    [Header("Audio Source")]
+    public AudioSource staffAudioSource;
+    public AudioClip growingSound;
+
     private Vector3 topBoneDefaultPos;
     private Vector3 tipBoneDefaultPos;
 
@@ -42,11 +46,16 @@ public class PlayerStaffController : MonoBehaviour
 
     public void ExtendDown()
     {
-
         if (currentDownLength >= maxDownLength) return;
         Debug.Log("Extending Down");
         currentDownLength += extendSpeedDown * Time.deltaTime;
         ApplyTransform();
+        //aplicar el soroll
+        if (!staffAudioSource.isPlaying)
+        {
+            staffAudioSource.clip = growingSound;
+            staffAudioSource.Play();
+        }
 
         Collider2D hit = Physics2D.OverlapCircle(tipBone.position, tipRadius, groundLayer);
         if (hit != null)
@@ -55,7 +64,6 @@ public class PlayerStaffController : MonoBehaviour
             touchingGround = true;
             groundPoint = tipBone.position;
         }
-
 
     }
 

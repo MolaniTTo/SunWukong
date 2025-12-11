@@ -43,7 +43,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     [Header("Ki Costs")]
     public float specialAttackPunchCost = 50f;
-    public float specialAttackStaffCost = 50f;
+    public float specialAttackStaffCost = 1f;
     public float healingKiCostPerSecond = 10f;
 
 
@@ -58,6 +58,7 @@ public class PlayerStateMachine : MonoBehaviour
     public bool hasStaff = false;
     public bool isDead = false; 
     public bool isBlocking => currentState == PlayerState.Block;
+    public bool isComingFromClimbing = false;
 
     [Header("Refs")]
     public Animator animator;
@@ -108,10 +109,29 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField] private GameObject touchGroundParticlePrefab;
     private Vector2 lastGroundPoint;
 
-
-
     private float defaultGravity = 2f;
     private float currentGravity = 2f;
+
+    private bool wasRTPressed = false;
+    private bool wasLTPressed = false;
+    private bool wasLTAndRTPressed = false;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip runSound;  
+    public AudioClip jumpSound;
+    public AudioClip landSound;
+    public AudioClip healSound;
+    public AudioClip punchAttackSound;
+    public AudioClip tailAttackSound;
+    public AudioClip specialAttackSound;
+    public AudioClip staffClimbSound;
+    public AudioClip blockSound;
+    public AudioClip deathSound;
+    public AudioClip hurtSound;
+    public AudioClip specialAttackStaff;
+    public AudioClip swingSound;
+
 
 
 
@@ -177,6 +197,8 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void Update()
     {
+        if(isDead) { return; } //si estem morts, no fem res
+
         if (!dialogueLocked) { HandleInputs(); } 
 
         animator.SetBool("isGrounded", isGrounded); //important per les transicions cap a OnAir i Idle/Running
@@ -294,38 +316,48 @@ public class PlayerStateMachine : MonoBehaviour
         input.horizontal = invertedControls ? -h : h; //invertem els controls si cal
 
         //SALT
-        input.jumpDown = Input.GetKeyDown(KeyCode.Space); //tecla de espai baixada
-        input.jumpUp = Input.GetKeyUp(KeyCode.Space); //tecla de espai aixecada
+        input.jumpDown = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0); //tecla de espai baixada o botó A del joystick
+        input.jumpUp = Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.JoystickButton0); ; //tecla de espai aixecada o botó A del joystick
 
         //CURAR
-        input.healDown = Input.GetKeyDown(KeyCode.E);
-        input.healUp = Input.GetKeyUp(KeyCode.E);
+        input.healDown = Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3);
+        input.healUp = Input.GetKeyUp(KeyCode.E) || Input.GetKeyUp(KeyCode.JoystickButton3);
 
         //ATACS
-        input.attackPunchDown = Input.GetKeyDown(KeyCode.F);
-        input.attackTailDown = Input.GetKeyDown(KeyCode.C);
+        input.attackPunchDown = Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.JoystickButton2);
+        input.attackTailDown = Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.JoystickButton1);
 
         //SPECIAL ATTACK PUNCH
-        input.specialAttackPunch = Input.GetKeyDown(KeyCode.G); //revisar perque ha de ser doble click
+        bool rtPressed = Input.GetAxis("RightTrigger") > 0.5f; //detecta si el gatell dret esta premut
+        input.specialAttackPunch = Input.GetKeyDown(KeyCode.G) || (rtPressed && !wasRTPressed); 
 
         //LIANA
-        input.swingDown = Input.GetKeyDown(KeyCode.Space);
-        input.swingUp = Input.GetKeyUp(KeyCode.Space);
+        input.swingDown = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0);
+        input.swingUp = Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.JoystickButton0);
+
+        bool ltPressed = false;
+        bool ltAndRtPressed = false;
 
         if (hasStaff)
         {
             //BLOQUEIG
-            input.blockDown = Input.GetKeyDown(KeyCode.Q);
-            input.blockUp = Input.GetKeyUp(KeyCode.Q);
+            input.blockDown = Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.JoystickButton4);
+            input.blockUp = Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.JoystickButton4);
 
             //BASTO
-            input.staffClimbDown = Input.GetMouseButtonDown(1);
-            input.staffClimbUp = Input.GetMouseButtonUp(1);
+            ltPressed = Input.GetAxis("LeftTrigger") > 0.5f; //detecta si el gatell esquerre esta premut
+            input.staffClimbDown = Input.GetMouseButtonDown(1) || (ltPressed && !wasLTPressed);
+            input.staffClimbUp = Input.GetMouseButtonUp(1) || (!ltPressed && wasLTPressed);
 
             //ATAC ESPECIAL BASTO
-            input.specialAttackStaffDown = Input.GetKeyDown(KeyCode.V); //revisar perque ha de ser combinacio de tecles
+            rtPressed = Input.GetAxis("RightTrigger") > 0.5f; //detecta si el gatell dret esta premut
+            input.specialAttackStaffDown = Input.GetKeyDown(KeyCode.V) || (rtPressed && !wasRTPressed); //si premem V o si premem el gatell dret
 
-        } 
+        }
+
+        wasRTPressed = rtPressed;
+        wasLTPressed = ltPressed;
+        wasLTAndRTPressed = ltAndRtPressed;
 
         ProcessInputActions();
     }
@@ -386,6 +418,11 @@ public class PlayerStateMachine : MonoBehaviour
             {
                 ChangeState(PlayerState.Block);
                 animator.SetBool("Blocking", true);
+                if (blockSound != null)
+                {
+                    audioSource.Stop();
+                    audioSource.PlayOneShot(blockSound);
+                }
             }
         }
         if (input.blockUp) //si deixem de prémer el botó de bloqueig
@@ -429,6 +466,10 @@ public class PlayerStateMachine : MonoBehaviour
             {
                 ChangeState(PlayerState.AttackPunch);
                 animator.SetTrigger("AttackPunch");
+                if (punchAttackSound != null)
+                {
+                    audioSource.PlayOneShot(punchAttackSound);
+                }
             }
         }
 
@@ -440,6 +481,10 @@ public class PlayerStateMachine : MonoBehaviour
             {
                 ChangeState(PlayerState.AttackTail);
                 animator.SetTrigger("AttackTail");
+                if (tailAttackSound != null)
+                {
+                    audioSource.PlayOneShot(tailAttackSound);
+                }
             }
         }
 
@@ -451,6 +496,7 @@ public class PlayerStateMachine : MonoBehaviour
                 {
                     ChangeState(PlayerState.SpecialAttackPunch);
                     animator.SetTrigger("SpecialAttackPunch");
+
                 }
                 else
                 {
@@ -490,13 +536,22 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void HandleRunning()
     {
+        if(runSound != null && !audioSource.isPlaying) //Si hi ha so de correr i no s'està reproduint
+        {
+            audioSource.clip = runSound;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+
         if (Mathf.Abs(moveInput.x) < 0.1f) //Si no es mou
         {
+            audioSource.Stop();
             ChangeState(PlayerState.Idle); //Canviem a estat Idle
             return;
         }
         if (input.jumpDown && isGrounded) //Si premem saltar i esta a terra
         {
+            audioSource.Stop();
             Jump();
             isGrounded = false;
             ChangeState(PlayerState.OnAir);
@@ -508,8 +563,25 @@ public class PlayerStateMachine : MonoBehaviour
         if (isGrounded)
         {
             SpawnTouchGroundParticle();
+            if(landSound != null)
+            {
+                audioSource.PlayOneShot(landSound);
+            }
             animator.SetTrigger("TouchGround"); //animacio d'aterrar
             ChangeState(Mathf.Abs(moveInput.x) > 0.1f ? PlayerState.Running : PlayerState.Idle); //Si es mou, a Running, si no a Idle
+        }
+        if(isComingFromClimbing && input.specialAttackStaffDown && !isGrounded) //si ve de escalar i premem el atac especial del basto
+        {
+            if (TryConsumeKi(specialAttackStaffCost))
+            {
+                animator.SetTrigger("SpecialAttackStaff");
+                audioSource.PlayOneShot(specialAttackStaff);
+                rb.gravityScale = 2f;
+                ChangeState(PlayerState.SpecialAttackStaff);
+            }
+
+            isComingFromClimbing = false;
+            
         }
     }
 
@@ -517,18 +589,25 @@ private void HandleHealing()
 {
     if (isHealing)
     {
-        if (currentKi > 0)
-        {
-            characterHealth.Heal(1f * Time.deltaTime);
-            ConsumeKiOverTime(healingKiCostPerSecond);
-        }
-        else
-        {
-            // Si se acaba el Ki, detener curación
-            isHealing = false;
-            animator.SetBool("HealButton", false);
-            Debug.Log("¡Ki agotado! No puedes seguir curándote.");
-        }
+            if (currentKi > 0)
+            {
+                characterHealth.Heal(1f * Time.deltaTime);
+                ConsumeKiOverTime(healingKiCostPerSecond);
+                if (healSound != null && !audioSource.isPlaying)
+                {
+                    audioSource.clip = healSound;
+                    audioSource.loop = true;
+                    audioSource.Play();
+                }
+            }
+            else
+            {
+                // Si se acaba el Ki, detener curación
+                isHealing = false;
+                animator.SetBool("HealButton", false);
+                Debug.Log("¡Ki agotado! No puedes seguir curándote.");
+                audioSource.Stop();
+            }
     }
 
     if (!isHealing)
@@ -583,6 +662,7 @@ private void HandleHealing()
 
     private void HandleDeath()
     {
+        Debug.Log("Player has died.");
         rb.linearVelocity = Vector2.zero;
         isDead = true;
         //gameManager fa la resta per nosaltres
@@ -591,6 +671,13 @@ private void HandleHealing()
     private void HandleSwinging()
     {
         if (currentVineJoint == null) return;
+
+        if(swingSound != null && !audioSource.isPlaying)
+        {
+            audioSource.clip = swingSound;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
 
         float swingInput = Input.GetAxisRaw("Horizontal"); //agafa el input horitzontal per balancejar-se
 
@@ -606,6 +693,7 @@ private void HandleHealing()
 
     private void HandleClimbing()
     {
+        isComingFromClimbing = false;
         if (!staffController.touchingGround) //si no toca a terra el pal
         {
             staffController.ExtendDown(); //estirem la part del pal que va cap avall
@@ -624,7 +712,7 @@ private void HandleHealing()
         {
             staffController.ResetStaff(); //reiniciem el pal
             animator.SetTrigger("StopStaffClimbing"); //fa la animacio de treure el pal del terra
-            RestoreDefaultGravity();  
+            RestoreDefaultGravity();
             ChangeState(PlayerState.OnAir); //anem a estat OnAir
         }
 
@@ -634,6 +722,7 @@ private void HandleHealing()
             animator.SetTrigger("StopStaffClimbing");
             RestoreDefaultGravity();
             Jump();
+            isComingFromClimbing = true; //indiquem que venim de escalar per poder fer l'atac especial del basto en l'aire
             ChangeState(PlayerState.OnAir); //anem a estat OnAir
         }
 
@@ -642,7 +731,7 @@ private void HandleHealing()
             if (TryConsumeKi(specialAttackStaffCost))
             {
                 staffController.ResetStaff();
-                animator.SetTrigger("SpecialAttackStaff");
+                animator.SetTrigger("SpecialAttackStaff"); 
                 rb.gravityScale = 2f;
                 ChangeState(PlayerState.SpecialAttackStaff);
             }
@@ -671,8 +760,8 @@ private void HandleHealing()
 
     private void HandleSpecialAttackStaff()
     {
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (!stateInfo.IsName("SpecialAttackStaff"))
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0); //agafa la info de l'animacio actual
+        if (!stateInfo.IsName("SpecialAttackStaff")) //si estem a l'animacio d'atac especial del basto i ha acabat
         {
             if (Mathf.Abs(moveInput.x) > 0.1f && isGrounded) { ChangeState(PlayerState.Running); } //si estem a terra i ens movem anem a Running
             else if (isGrounded) { ChangeState(PlayerState.Idle); } //sino anem a Idle
@@ -707,7 +796,7 @@ private void HandleHealing()
     public void OnSpecialPunchImpact() //Cridat des de l'animacio mitjancant un Animation Event
     {
         CombatEvents.PlayerAttack(); //notifiquem als subscrits que el jugador ha atacat
-
+        audioSource.PlayOneShot(specialAttackSound);
         if (earthquakePrefab != null && earthquakeSpawnPoint != null)
         {
             GameObject wave = Object.Instantiate(
@@ -790,10 +879,9 @@ private void HandleHealing()
     {
         if (currentVineJoint != null) //si ja tenim un HingeJoint2D creat
         {
-            Destroy(currentVineJoint); //eliminem el HingeJoint2D
+            DestroyImmediate(currentVineJoint); //eliminem el HingeJoint2D
             currentVineJoint = null;
         }
-
         cachedVineCollider = null;
         nearVine = false;
         RestoreDefaultGravity();
@@ -829,6 +917,16 @@ private void HandleHealing()
             Debug.DrawRay(transform.position, jumpDir * 2f, Color.yellow, 2f);
 
             DetachFromVine();
+
+
+            //tallem el so de la liana i reproduim el so de saltar
+            audioSource.Stop();
+            if (jumpSound != null)
+            {
+                audioSource.PlayOneShot(jumpSound); //reproduim el so de saltar sense que es talli el que s'estigui reproduint
+            }
+
+
 
             rb.linearVelocity = (currentSwungVelocity * 0.8f) + (jumpDir * (jumpForce * 1.6f));
         }
@@ -896,6 +994,11 @@ private void HandleHealing()
 
     private void Jump()
     {
+        //hem de posar el soroll de saltar aqui
+        if (jumpSound != null)
+        {
+            audioSource.PlayOneShot(jumpSound); //reproduim el so de saltar sense que es talli el que s'estigui reproduint
+        }
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         isGrounded = false;
         lastJumpTime = Time.time;
@@ -1008,6 +1111,7 @@ private void HandleHealing()
 
     public void EnterDialogueMode()
     {
+        audioSource.Stop();
         Debug.Log("Entering dialogue mode from player controller.");
         dialogueLocked = true;
 

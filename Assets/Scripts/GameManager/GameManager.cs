@@ -60,7 +60,9 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                RespawnPlayer();
+
+                //fa una corrutina de Fade i despres fa el respawn
+                //RespawnPlayer();
             }
         }
 
