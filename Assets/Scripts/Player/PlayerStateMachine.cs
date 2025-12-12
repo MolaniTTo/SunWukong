@@ -905,14 +905,12 @@ private void HandleHealing()
             if (currentVineJoint == null) return;
 
             Transform anchor = currentVineJoint.connectedBody.transform;
+            Vector2 anchorPos = anchor.position;
+            Vector2 currentSwungVelocity = rb.linearVelocity;
 
             Vector2 ropeDir = (transform.position - anchor.position).normalized;
-
             Vector2 tangent = new Vector2(ropeDir.y, -ropeDir.x); // (puedes invertir signos si se invierte el lado)
-
             Vector2 jumpDir = (tangent * 1.0f + Vector2.up * 0.8f).normalized;
-
-            Vector2 currentSwungVelocity = rb.linearVelocity;
 
             Debug.DrawRay(transform.position, ropeDir * 2f, Color.red, 2f);
             Debug.DrawRay(transform.position, tangent * 2f, Color.cyan, 2f);
@@ -920,8 +918,8 @@ private void HandleHealing()
 
             DetachFromVine();
 
+            rb.linearVelocity = (currentSwungVelocity * 0.8f) + (jumpDir * (jumpForce * 1.6f));
 
-            //tallem el so de la liana i reproduim el so de saltar
             audioSource.Stop();
             if (jumpSound != null)
             {
@@ -930,7 +928,7 @@ private void HandleHealing()
 
 
 
-            rb.linearVelocity = (currentSwungVelocity * 0.8f) + (jumpDir * (jumpForce * 1.6f));
+
         }
     }
 

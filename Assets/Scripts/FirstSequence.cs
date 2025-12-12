@@ -14,7 +14,7 @@ public class FirstSequence : MonoBehaviour
     private IEnumerator FirstSequenceRoutine()
     {
         yield return new WaitForSeconds(0.5f); //esperem que faci el fade out
-        player.animator.SetTrigger("WakeUp"); //bloquejem input del jugador
+        player.animator.SetTrigger("WakeUp"); 
         player.EnterDialogueMode(); //posem el jugador en mode diàleg (bloqueja moviments i ataca)
         screenFader.FadeIn();
         AudioManager.Instance.PlayMusic("StartSequence", 1f); //posem musica de la sequencia d'inici

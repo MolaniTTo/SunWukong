@@ -64,8 +64,9 @@ public class GameManager : MonoBehaviour
             else
             {
 
-                //fa una corrutina de Fade i despres fa el respawn
-                //RespawnPlayer();
+                screenFade.FadeOut(); //fem fade out
+                RespawnPlayer();
+                
             }
         }
 
@@ -94,6 +95,7 @@ public class GameManager : MonoBehaviour
             playerRb.simulated = true;
             player.ForceNewState(PlayerStateMachine.PlayerState.Idle);
             CombatEvents.PlayerDeath(false); // notificar que ya no está muerto
+            screenFade.FadeIn();
         }
     }
 
