@@ -11,12 +11,14 @@ public class PlantAttack : IState
 
     public void Enter()
     {
+        enemyPlant.audioSource.PlayOneShot(enemyPlant.InRangeSound); //Reproduim el so de detectar el jugador
         //no cal fer res en aquest metode per ara ja que l'animator ja esta en estat d'atac per defecte
     }
 
     public void Exit()
     {
         enemyPlant.animator.SetBool("CanSeePlayer", false); //Quan sortim de l'estat d'atac, indiquem a l'animator que no pot veure el jugador
+        enemyPlant.audioSource.PlayOneShot(enemyPlant.OutOfRangeSound); //Reproduim el so de perdre el jugador
     }
 
     public void Update()
