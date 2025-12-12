@@ -9,6 +9,8 @@ public class DialogueManager : MonoBehaviour
     public PlayerStateMachine player; //player per bloquejar moviment si cal
     public bool DialogueActive { get; private set; } = false;
 
+    private string musicBeforeDialogue = "";
+
     private void Awake()
     {
         if (Instance == null) { Instance = this; } //Singleton
@@ -37,6 +39,26 @@ public class DialogueManager : MonoBehaviour
             onFinish?.Invoke(); //Crida el callback quan el diàleg acaba
             Debug.Log("Diàleg acabat desde DialogueManager");
         });
+
+        if (AudioManager.Instance != null && data.changeMusic)
+        {
+            musicBeforeDialogue = AudioManager.Instance.GetCurrentMusic(); //guarda la música actual abans de canviar-la
+
+            AudioManager.Instance.PlayMusic(data.dialogueMusicKey, 1f); //canvia la música a la del diàleg
+
+            Debug.Log($"Música de diálogo: {data.dialogueMusicKey}");
+        }
+    }
+
+    public void EndDialogueMusic()
+    {
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(musicBeforeDialogue))
+        {
+            AudioManager.Instance.PlayMusic(musicBeforeDialogue, 1f);
+
+            Debug.Log($"Restaurando música: {musicBeforeDialogue}");
+            musicBeforeDialogue = "";
+        }
     }
 
     public void StartTriggerDialogue(DialogueData data, bool blockPlayerDuringDialogue = false, System.Action onFinish = null, bool autoAdvance = false) //Inicia un diàleg des de trigger sense animator d'NPC

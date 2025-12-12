@@ -6,6 +6,8 @@ public class DialogueData : ScriptableObject
     public bool exitDialogueModeByScripting = false;
     public bool onlyOnce = false;
     public bool hasBeenUsed = false;
+    public bool changeMusic = true;
+    public string dialogueMusicKey = "Dialogue1"; //nom de la musica de dialogo
 
     public DialogueLine[] lines;
 

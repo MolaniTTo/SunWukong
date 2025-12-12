@@ -31,7 +31,7 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     private float groundCheckDelay = 0.1f;
     private float lastJumpTime = 0f;
-    private bool facingRight = true; //esta mirant a la dreta (default)
+    public bool facingRight = true; //esta mirant a la dreta (default)
 
     [Header("Control Modifiers")]
     public bool invertedControls = false;
@@ -59,6 +59,7 @@ public class PlayerStateMachine : MonoBehaviour
     public bool isDead = false; 
     public bool isBlocking => currentState == PlayerState.Block;
     public bool isComingFromClimbing = false;
+    public bool wakeUpFromSleep = false;
 
     [Header("Refs")]
     public Animator animator;
@@ -71,6 +72,7 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField] private Transform earthquakeSpawnPoint;
     public CharacterHealth characterHealth;
     public Transform lastCheckPoint;
+    public FirstSequence firstSequence;
 
 
     [Header("Jump tuning")]
@@ -197,7 +199,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void Update()
     {
-        if(isDead) { return; } //si estem morts, no fem res
+        if (isDead) { return; } //si estem morts, no fem res
 
         if (!dialogueLocked) { HandleInputs(); } 
 
@@ -903,14 +905,12 @@ private void HandleHealing()
             if (currentVineJoint == null) return;
 
             Transform anchor = currentVineJoint.connectedBody.transform;
+            Vector2 anchorPos = anchor.position;
+            Vector2 currentSwungVelocity = rb.linearVelocity;
 
             Vector2 ropeDir = (transform.position - anchor.position).normalized;
-
             Vector2 tangent = new Vector2(ropeDir.y, -ropeDir.x); // (puedes invertir signos si se invierte el lado)
-
             Vector2 jumpDir = (tangent * 1.0f + Vector2.up * 0.8f).normalized;
-
-            Vector2 currentSwungVelocity = rb.linearVelocity;
 
             Debug.DrawRay(transform.position, ropeDir * 2f, Color.red, 2f);
             Debug.DrawRay(transform.position, tangent * 2f, Color.cyan, 2f);
@@ -918,8 +918,8 @@ private void HandleHealing()
 
             DetachFromVine();
 
+            rb.linearVelocity = (currentSwungVelocity * 0.8f) + (jumpDir * (jumpForce * 1.6f));
 
-            //tallem el so de la liana i reproduim el so de saltar
             audioSource.Stop();
             if (jumpSound != null)
             {
@@ -928,7 +928,7 @@ private void HandleHealing()
 
 
 
-            rb.linearVelocity = (currentSwungVelocity * 0.8f) + (jumpDir * (jumpForce * 1.6f));
+
         }
     }
 
@@ -1128,12 +1128,16 @@ private void HandleHealing()
         animator.SetBool("isGrounded", true);
 
         ForceNewState(PlayerState.Idle);
-        animator.SetTrigger("ForceIdle");
+        if (wakeUpFromSleep)
+        {
+            animator.SetTrigger("ForceIdle");
+        }
 
     }
 
     public void ExitDialogueMode()
     {
+        Debug.Log("Exiting dialogue mode from player controller.");
         dialogueLocked = false;
         input = new InputFlags(); //reset input flags
         animator.SetBool("HealButton", false);
@@ -1149,6 +1153,14 @@ private void HandleHealing()
         animator.SetFloat("speed", 0f);
         animator.SetBool("isGrounded", true);
         ReturnToDefaultState(); //torna a l'estat per defecte segons si estem a terra o en l'aire
+    }
+
+    public void EndFirstSequence()
+    {
+        if (firstSequence != null)
+        {
+            firstSequence.EndSequence();
+        }
     }
 
     private void SetGravity(float value)

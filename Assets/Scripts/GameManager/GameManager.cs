@@ -9,7 +9,10 @@ public class GameManager : MonoBehaviour
     public bool isOneHitMode = false; //Mode onetap per al jugador
 
     [Header("Fade Settings")]
-    [SerializeField] private ScreenFade screenFade;
+    public ScreenFade screenFade;
+
+    [Header("First Sequence")]
+    public FirstSequence firstSequence;
 
     [Header("Paralax Settings")]
     public ParallaxStatic[] parallaxLayers;
@@ -61,8 +64,9 @@ public class GameManager : MonoBehaviour
             else
             {
 
-                //fa una corrutina de Fade i despres fa el respawn
-                //RespawnPlayer();
+                screenFade.FadeOut(); //fem fade out
+                RespawnPlayer();
+                
             }
         }
 
@@ -91,6 +95,7 @@ public class GameManager : MonoBehaviour
             playerRb.simulated = true;
             player.ForceNewState(PlayerStateMachine.PlayerState.Idle);
             CombatEvents.PlayerDeath(false); // notificar que ya no está muerto
+            screenFade.FadeIn();
         }
     }
 

@@ -12,12 +12,21 @@ public class MonjeFlee : IState
     public void Enter()
     {
         monje.animator.SetBool("HasToFlee", true);
+        if(monje.monjeAudioSource != null)
+        {
+            //pone en bucle el so de fugida
+            monje.monjeAudioSource.clip = monje.RunSound;
+            monje.monjeAudioSource.loop = true;
+            monje.monjeAudioSource.Play();
+
+        }
     }
 
     public void Exit()
     {
         monje.animator.SetBool("HasToFlee", false);
         monje.StopMovement();
+        monje.monjeAudioSource.Stop();
     }
 
     public void Update()

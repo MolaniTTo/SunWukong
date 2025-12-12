@@ -135,11 +135,15 @@ public class ProgressManager : MonoBehaviour
             currentProgress = new GameProgress(); //inicialitza nou progrés
             currentProgress.isOneHitMode = PlayerPrefs.GetInt($"Slot{currentSlot}_NoHit", 0) == 1; //carrega la configuració de NoHit
             Debug.Log("?? Nueva partida iniciada");
+            gameManager.firstSequence.StartSequence(); //nomes comença la sequència si es nova partida
+
         }
         else
         {
             currentProgress = JsonUtility.FromJson<GameProgress>(json); //deserialitza el JSON a l'objecte GameProgress
             Debug.Log($"?? Progreso cargado: {currentProgress.defeatedEnemies.Count} enemigos derrotados");
+            gameManager.screenFade.FadeIn(); //fa un fade in suau al carregar
+            AudioManager.Instance.PlayMusic("Base", 1f); //posem musica base
         }
     }
 
@@ -214,7 +218,7 @@ public class ProgressManager : MonoBehaviour
     private float CalculateProgressPercentage() //calcula el percentatge de progrés basat en els enemics derrotats, checkpoints i habilitats
     {
         //Exemple simple: cada enemic derrotat = 1 punt, bastó = 10 punts, cada checkpoint = 5 punts
-        int totalPossibleItems = 50; // Ajusta según tu juego
+        int totalPossibleItems = 104; // Ajusta según tu juego
         int completedItems = currentProgress.defeatedEnemies.Count +
                             (currentProgress.hasStaff ? 10 : 0) +
                             currentProgress.unlockedCheckpoints.Count * 5;
