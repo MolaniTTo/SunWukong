@@ -26,6 +26,15 @@ public class EnemyPlant : EnemyBase
     [Header("PlayerRef")]
     public PlayerStateMachine playerRef;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip InRangeSound;
+    public AudioClip OutOfRangeSound;
+    public AudioClip ShootSound;
+    public AudioClip DeathSound;
+    public AudioClip HurtSound;
+
+
 
     protected override void Awake()
     {
@@ -54,11 +63,13 @@ public class EnemyPlant : EnemyBase
     private void Death()
     {
         animator.SetTrigger("Death"); //Activem la animacio de mort
+        audioSource.PlayOneShot(DeathSound); //Reproduim el so de mort
     }
 
     private void Damaged()
     {
         animator.SetTrigger("Damaged"); //Activem la animacio de mort
+        audioSource.PlayOneShot(HurtSound); //Reproduim el so de ser colpejat
     }
    
     private void Start()
@@ -148,6 +159,7 @@ public class EnemyPlant : EnemyBase
             Bullet bulletScript = bullet.GetComponent<Bullet>();
             bulletScript.SetEnemyPlant(this); //assignem la planta que ha disparat la bala
             bulletScript.Launch(facingRight); //disparem la bala en la direccio que toca
+            audioSource.PlayOneShot(ShootSound); //reproduim el so de disparar
         }
     }
 
