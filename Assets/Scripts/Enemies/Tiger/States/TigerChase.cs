@@ -11,6 +11,9 @@ public class TigerChase : IState
     {
         tiger.animator.SetBool("isRunning", true);
         tiger.animator.SetBool("isWalking", false);
+        
+        // Reproducir sonido al empezar a perseguir
+        tiger.PlayInRangeSound();
     }
 
     public void Update()
@@ -30,6 +33,7 @@ public class TigerChase : IState
         // Si pierde de vista al jugador, volver a idle
         if (!tiger.CanSeePlayer())
         {
+            tiger.PlayOutOfRangeSound(); // Reproducir sonido al perder al jugador
             tiger.StateMachine.ChangeState(new TigerIdle(tiger));
             return;
         }

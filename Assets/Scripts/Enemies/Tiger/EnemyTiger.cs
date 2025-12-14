@@ -30,31 +30,44 @@ public class EnemyTiger : EnemyBase
     [Header("PlayerRef")]
     public PlayerStateMachine playerRef;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip InRangeSound; // Sonido cuando detecta al jugador
+    public AudioClip OutOfRangeSound; // Sonido cuando pierde al jugador
+    public AudioClip AttackSound; // Sonido de ataque
+    public AudioClip DeathSound; // Sonido de muerte
+    public AudioClip HurtSound; // Sonido al recibir daño
+    public AudioClip WalkSound; // Sonido de caminar (opcional)
+    public AudioClip RunSound; // Sonido de correr (opcional)
+
     private Rigidbody2D rb;
     private Transform player;
 
     protected override void Awake()
-{
-    base.Awake();
-
-    rb = GetComponent<Rigidbody2D>();
-
-    if (animator == null)
-        animator = GetComponentInChildren<Animator>();
-
-    if (characterHealth == null)
-        characterHealth = GetComponent<CharacterHealth>();
-
-    if (characterHealth != null)
     {
-        characterHealth.OnDeath += Death;
-        characterHealth.OnTakeDamage += (currentHealth, attacker) => Damaged();
-    }
+        base.Awake();
 
-    GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-    if (playerObj != null)
-        player = playerObj.transform;
-}
+        rb = GetComponent<Rigidbody2D>();
+
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
+        if (characterHealth == null)
+            characterHealth = GetComponent<CharacterHealth>();
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
+        if (characterHealth != null)
+        {
+            characterHealth.OnDeath += Death;
+            characterHealth.OnTakeDamage += (currentHealth, attacker) => Damaged();
+        }
+
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+            player = playerObj.transform;
+    }
 
     private void OnDestroy()
     {
@@ -65,14 +78,14 @@ public class EnemyTiger : EnemyBase
         }
     }
 
-   private void Start()
-{
-    startPosition = transform.position; // Guardar posición inicial
-    if (facingRight == false) {
-        Flip();  // Asegura que el tigre empiece mirando hacia la derecha
-    }
-    var idleState = new TigerIdle(this);
-    StateMachine.Initialize(idleState);
+    private void Start()
+    {
+        startPosition = transform.position; // Guardar posición inicial
+        if (facingRight == false) {
+            Flip();  // Asegura que el tigre empiece mirando hacia la derecha
+        }
+        var idleState = new TigerIdle(this);
+        StateMachine.Initialize(idleState);
         if(playerRef == null)
         {
             playerRef = FindAnyObjectByType<PlayerStateMachine>();
@@ -82,6 +95,10 @@ public class EnemyTiger : EnemyBase
     private void Death()
     {
         animator.SetTrigger("Death");
+        if (audioSource != null && DeathSound != null)
+        {
+            audioSource.PlayOneShot(DeathSound);
+        }
         if (rb != null)
         {
             rb.linearVelocity = Vector2.zero; // Detener movimiento
@@ -91,11 +108,33 @@ public class EnemyTiger : EnemyBase
     private void Damaged()
     {
         animator.SetTrigger("BeingHit");
+        if (audioSource != null && HurtSound != null)
+        {
+            audioSource.PlayOneShot(HurtSound);
+        }
     }
 
     public bool CheckIfPlayerIsDead()
     {
         return playerRef.isDead;
+    }
+
+    // Método para reproducir sonido cuando detecta al jugador
+    public void PlayInRangeSound()
+    {
+        if (audioSource != null && InRangeSound != null)
+        {
+            audioSource.PlayOneShot(InRangeSound);
+        }
+    }
+
+    // Método para reproducir sonido cuando pierde al jugador
+    public void PlayOutOfRangeSound()
+    {
+        if (audioSource != null && OutOfRangeSound != null)
+        {
+            audioSource.PlayOneShot(OutOfRangeSound);
+        }
     }
 
     // MÉTODO PARA GIRAR EL TIGRE
@@ -222,6 +261,12 @@ public class EnemyTiger : EnemyBase
             {
                 playerHealth.TakeDamage(attackDamage, gameObject);
             }
+        }
+
+        // Reproducir sonido de ataque
+        if (audioSource != null && AttackSound != null)
+        {
+            audioSource.PlayOneShot(AttackSound);
         }
     }
 
