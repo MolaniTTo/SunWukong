@@ -15,6 +15,8 @@ MonoBehaviour:
   exitDialogueModeByScripting: 0
   onlyOnce: 1
   hasBeenUsed: 0
+  changeMusic: 1
+  dialogueMusicKey: Dialogue1
   lines:
   - text: "\xBFQu\xE9\u2026? \xBFQu\xE9 has dicho? \xBFQue lo has derrotado? \xBFAl
       gorila? \xA1No, no, no, no! \xA1Eso no me lo creo ni aunque me lo jure un dios
@@ -30,7 +32,7 @@ MonoBehaviour:
     blockPlayerDuringLine: 1
     deactivateObjects: 0
   - text: "Hmph\u2026 supongo que a mi edad ya no tengo fuerzas ni para levantarme
-      sin que me crujan los huesos. solo porque intent\xE9 saludarlo\u2026 \xA1Imag\xEDnate
+      sin que me crujan los huesos. Solo porque intent\xE9 saludarlo\u2026 \xA1Imag\xEDnate
       si hubiera luchado de verdad!"
     animatorTrigger: 
     requestCameraZoom: 0
@@ -49,9 +51,31 @@ MonoBehaviour:
     requestCameraZoom: 0
     blockPlayerDuringLine: 1
     deactivateObjects: 0
-  - text: "Ve. Ve en busca de la inmortalidad. Mi viaje termina aqu\xED, entre rezos
-      y silencios\u2026 pero el tuyo apenas comienza."
+  - text: "Toma mi bast\xF3n. Ya no lo necesito."
     animatorTrigger: 
     requestCameraZoom: 0
     blockPlayerDuringLine: 1
     deactivateObjects: 1
+  - text: "Cuenta la leyenda\u2026 que hace muchos a\xF1os hubo un monje que tambi\xE9n
+      busc\xF3 la inmortalidad."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+  - text: "Dicen que era poderoso, que su esp\xEDritu nunca se rindi\xF3\u2026"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+  - text: "Y que a\xFAn hoy se le ve acechando entre las pagodas de los montes, caminando
+      entre la niebla, ni vivo ni muerto del todo."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+  - text: "Quiz\xE1 la leyenda solo sea eso\u2026 o quiz\xE1 a\xFAn no haya terminado
+      de escribirse."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0

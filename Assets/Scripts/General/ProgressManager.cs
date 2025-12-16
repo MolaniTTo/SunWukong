@@ -51,7 +51,7 @@ public class ProgressManager : MonoBehaviour
         FindReferences();
 
         
-        if (scene.name != "MainMenu" && scene.name != "StatsScene") //només carrega el progrés en escenes de joc
+        if (scene.name != "MainMenu" && scene.name != "StatsScene" && scene.name != "Options" && scene.name != "PlayMenu") //només carrega el progrés en escenes de joc
         {
             LoadProgress();
             ApplyProgressToWorld();
