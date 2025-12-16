@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -65,27 +66,27 @@ public class GameManager : MonoBehaviour
             {
 
                 screenFade.FadeOut(); //fem fade out
-                RespawnPlayer();
-                
+                StartCoroutine(RespawnPlayer()); //respawnejem el jugador
+
             }
         }
 
     }
 
-    private void RespawnPlayer()
+    private IEnumerator RespawnPlayer()
     {
-        if (player == null)
-        {
-            return;
-        }
+        Debug.Log("Respawning player...");
+        yield return new WaitForSeconds(3.5f); //esperem 1 segon abans de respawnejar
 
         Transform checkPoint = player.lastCheckPoint;
         if (checkPoint != null)
         {
+            Debug.Log("Player respawned at checkpoint: " + checkPoint.position);
             Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
             playerRb.simulated = false; 
             playerRb.linearVelocity = Vector2.zero;
-            transform.position = checkPoint.position;
+            player.transform.position = checkPoint.position;
+
 
             if (player.characterHealth != null)
             {
@@ -94,6 +95,8 @@ public class GameManager : MonoBehaviour
 
             playerRb.simulated = true;
             player.ForceNewState(PlayerStateMachine.PlayerState.Idle);
+            player.animator.SetTrigger("Respawn");
+            player.isDead = false;
             CombatEvents.PlayerDeath(false); // notificar que ya no está muerto
             screenFade.FadeIn();
         }

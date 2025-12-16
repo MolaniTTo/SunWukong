@@ -289,11 +289,10 @@ public class PlayerStateMachine : MonoBehaviour
         HandleFlip(); //el posem aqui ja que ho mirem just despres del moveInput
         CheckIfGrounded();
         CheckWallCollision();
-        if(onSlope && input.horizontal == 0) //si estem en una pendent i no hi ha input horitzontal, parem el moviment
+        if (onSlope && input.horizontal == 0 && isGrounded)
         {
-            rb.linearVelocity = Vector2.zero;
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); 
             SetGravity(0f);
-            return;
         }
         else if (onSlope && input.horizontal != 0)
         {
@@ -881,7 +880,7 @@ private void HandleHealing()
     {
         if (currentVineJoint != null) //si ja tenim un HingeJoint2D creat
         {
-            DestroyImmediate(currentVineJoint); //eliminem el HingeJoint2D
+            Destroy(currentVineJoint); //eliminem el HingeJoint2D
             currentVineJoint = null;
         }
         cachedVineCollider = null;
@@ -994,6 +993,7 @@ private void HandleHealing()
 
     private void Jump()
     {
+        RestoreDefaultGravity();
         //hem de posar el soroll de saltar aqui
         if (jumpSound != null)
         {

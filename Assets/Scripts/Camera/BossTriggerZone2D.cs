@@ -31,11 +31,11 @@ public class BossTriggerZone2D : MonoBehaviour
 
         if (collision.gameObject == playerObject)
         {
-            if(bossType == BossType.Gorila) //Si es el monje
+            if(bossType == BossType.Gorila) //Si es el gorila
             {
                 gorila.playerIsOnConfiner = true; //indiquem al monje que el jugador esta dins del confiner
             }
-            else if(bossType == BossType.Monje) //Si es el gorila
+            else if(bossType == BossType.Monje) //Si es el monje
             {
                 monje.playerIsOnConfiner = true; //indiquem al monje que el jugador esta dins del confiner
             }
@@ -43,7 +43,6 @@ public class BossTriggerZone2D : MonoBehaviour
             triggered = true;
             camBoss.Priority = 2; //Augmentem la prioritat de la camara del boss perque s'activi
             invisibleWalls.SetActive(true); //activem les parets invisibles
-            gorila.playerIsOnConfiner = true; //indiquem al gorila que el jugador esta dins del confiner
             gameManager.CanMoveParalax(false); //desactivem el paralax
         }
     }
@@ -51,11 +50,11 @@ public class BossTriggerZone2D : MonoBehaviour
 
     public void OnBossDefeated() //s'ha de cridar quan mori el gorila
     {
-        if(bossType == BossType.Gorila) //Si es el monje
+        if(bossType == BossType.Gorila) //Si es el gorila
         {
             gorila.playerIsOnConfiner = false; //indiquem al monje que el jugador ja no esta dins del confiner
         }
-        else if(bossType == BossType.Monje) //Si es el gorila
+        else if(bossType == BossType.Monje) //Si es el monje
         {
             monje.playerIsOnConfiner = false; //indiquem al monje que el jugador ja no esta dins del confiner
             //aqui activem booleano perque aparegui una llum i activi el dialag amb el buda de pedra
