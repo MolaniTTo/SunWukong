@@ -22,6 +22,12 @@ public class EnemyTiger : EnemyBase
     public Transform rayOrigin; // Origen del raycast (para detección)
     public float rayLength = 8f; // Longitud del raycast
 
+    [Header("Ground & Wall Detection")]
+    public Transform groundCheck; // Punto para detectar suelo
+    public Transform wallCheck; // Punto para detectar paredes
+    public float wallCheckDistance = 0.5f;
+    public LayerMask groundLayer; // Capa del suelo/paredes
+
     [Header("Combat Settings")]
     public float attackDamage = 15f; // Daño del ataque
     public float attackCooldown = 1.5f; // Tiempo entre ataques
@@ -146,6 +152,12 @@ public class EnemyTiger : EnemyBase
         transform.localScale = scale;
     }
 
+    // Sincronizar dirección de movimiento con la dirección visual
+    public void SyncMovementDirection()
+    {
+        movingRight = facingRight;
+    }
+
     // MÉTODOS COMUNES DE LOS ENEMIGOS
     public override bool CanSeePlayer()
     {
@@ -206,9 +218,25 @@ public class EnemyTiger : EnemyBase
             Flip();
         }
 
-        rb.linearVelocity = new Vector2(direction.x * runSpeed, rb.linearVelocity.y);
-        animator.SetBool("isRunning", true);
-        animator.SetBool("isWalking", false);
+        // IMPORTANTE: Detectar si hay suelo delante antes de moverse
+        Vector2 frontDirection = facingRight ? Vector2.right : Vector2.left;
+        Vector2 frontGroundCheck = (Vector2)groundCheck.position + (frontDirection * 0.5f);
+        RaycastHit2D groundHit = Physics2D.Raycast(frontGroundCheck, Vector2.down, 1f, groundLayer);
+
+        // Solo moverse si hay suelo delante, sino detenerse
+        if (groundHit.collider != null)
+        {
+            rb.linearVelocity = new Vector2(direction.x * runSpeed, rb.linearVelocity.y);
+            animator.SetBool("isRunning", true);
+            animator.SetBool("isWalking", false);
+        }
+        else
+        {
+            // No hay suelo delante, detenerse en el borde
+            StopMovement();
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isWalking", false);
+        }
     }
 
     public void Patrol()
@@ -217,16 +245,39 @@ public class EnemyTiger : EnemyBase
         float leftLimit = startPosition.x - patrolDistance;
         float rightLimit = startPosition.x + patrolDistance;
 
-        // Cambiar dirección si llega a los límites
-        if (transform.position.x <= leftLimit)
+        // Detectar pared delante del tigre
+        Vector2 wallDirection = facingRight ? Vector2.right : Vector2.left;
+        RaycastHit2D wallHit = Physics2D.Raycast(wallCheck.position, wallDirection, wallCheckDistance, groundLayer);
+        
+        // Detectar si hay suelo delante (para evitar caer)
+        Vector2 frontGroundCheck = (Vector2)groundCheck.position + (wallDirection * 0.5f);
+        RaycastHit2D groundHit = Physics2D.Raycast(frontGroundCheck, Vector2.down, 1f, groundLayer);
+
+        // Cambiar dirección si:
+        // 1. Llega a los límites de patrulla
+        // 2. Detecta una pared
+        // 3. No hay suelo delante (borde de plataforma)
+        if (transform.position.x <= leftLimit || (wallHit.collider != null && !movingRight))
         {
             movingRight = true;
             if (!facingRight) Flip();
         }
-        else if (transform.position.x >= rightLimit)
+        else if (transform.position.x >= rightLimit || (wallHit.collider != null && movingRight))
         {
             movingRight = false;
             if (facingRight) Flip();
+        }
+
+        // Cambiar dirección si no hay suelo delante
+        if (movingRight && groundHit.collider == null)
+        {
+            movingRight = false;
+            if (facingRight) Flip();
+        }
+        else if (!movingRight && groundHit.collider == null)
+        {
+            movingRight = true;
+            if (!facingRight) Flip();
         }
 
         // Moverse en la dirección actual
@@ -298,5 +349,23 @@ public class EnemyTiger : EnemyBase
         // Rango de ataque
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (wallCheck != null)
+        {
+            Vector2 wallDirection = facingRight ? Vector2.right : Vector2.left;
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3)(wallDirection * wallCheckDistance));
+        }
+        
+        if (groundCheck != null)
+        {
+            Vector2 frontCheck = facingRight ? Vector2.right : Vector2.left;
+            Vector3 checkPos = groundCheck.position + (Vector3)(frontCheck * 0.5f);
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(checkPos, checkPos + Vector3.down);
+        }
     }
 }

@@ -2426,6 +2426,12 @@ MonoBehaviour:
   patrolDistance: 5
   rayOrigin: {fileID: 3473514535460853026}
   rayLength: 8
+  groundCheck: {fileID: 0}
+  wallCheck: {fileID: 0}
+  wallCheckDistance: 0.5
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
   attackDamage: 15
   attackCooldown: 0
   playerRef: {fileID: 0}

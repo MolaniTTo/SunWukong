@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class TigerAttack : IState
 {
     private EnemyTiger tiger;
@@ -22,6 +23,7 @@ public class TigerAttack : IState
             tiger.StateMachine.ChangeState(new TigerIdle(tiger));
             return;
         }
+        
         // Esperar a que termine la animación de ataque
         AnimatorStateInfo stateInfo = tiger.animator.GetCurrentAnimatorStateInfo(0);
         

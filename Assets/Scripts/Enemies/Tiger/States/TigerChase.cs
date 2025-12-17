@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class TigerChase : IState
 {
     private EnemyTiger tiger;
@@ -23,6 +25,7 @@ public class TigerChase : IState
             tiger.StateMachine.ChangeState(new TigerIdle(tiger));
             return;
         }
+        
         // Si está en rango de ataque y puede atacar, atacar
         if (tiger.IsPlayerInAttackRange() && tiger.CanAttack())
         {
