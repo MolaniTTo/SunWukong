@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class TigerIdle : IState
 {
     private EnemyTiger tiger;
@@ -24,6 +25,7 @@ public class TigerIdle : IState
         {
             return; // No hacer nada si el jugador está muerto
         }
+        
         // Si detecta al jugador, perseguirlo
         if (tiger.CanSeePlayer())
         {
