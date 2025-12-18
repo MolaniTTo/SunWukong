@@ -8524,7 +8524,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -10448,6 +10448,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tigre 7 Def (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 7727942836551285428, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8761491204098803432, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.000006735323
@@ -11345,6 +11349,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2136161258}
     m_Modifications:
+    - target: {fileID: 33736265392469749, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 123506421075743052, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
       propertyPath: HurtSound
       value: 
@@ -11440,6 +11448,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2136161258}
     m_Modifications:
+    - target: {fileID: 33736265392469749, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 123506421075743052, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
       propertyPath: HurtSound
       value: 
@@ -11953,6 +11965,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2136161258}
     m_Modifications:
+    - target: {fileID: 33736265392469749, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 123506421075743052, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
       propertyPath: HurtSound
       value: 
@@ -68085,6 +68101,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2136161258}
     m_Modifications:
+    - target: {fileID: 33736265392469749, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 123506421075743052, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
       propertyPath: poolSize
       value: 20
@@ -70258,6 +70278,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2136161258}
     m_Modifications:
+    - target: {fileID: 33736265392469749, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 123506421075743052, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
       propertyPath: HurtSound
       value: 
@@ -70551,6 +70575,10 @@ PrefabInstance:
     - target: {fileID: 7727942836551285428, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
       propertyPath: m_Name
       value: Tigre 7 Def (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7727942836551285428, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8761491204098803432, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
       propertyPath: m_LocalRotation.z
@@ -85101,7 +85129,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -87142,6 +87170,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tigre 7 Def (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7727942836551285428, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8761491204098803432, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0.000005125998
@@ -88290,6 +88322,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2136161258}
     m_Modifications:
+    - target: {fileID: 33736265392469749, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 123506421075743052, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
       propertyPath: HurtSound
       value: 
@@ -88943,6 +88979,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tigre 7 Def (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7727942836551285428, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8761491204098803432, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0.0000045597544
@@ -89015,7 +89055,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -95599,6 +95639,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2136161258}
     m_Modifications:
+    - target: {fileID: 33736265392469749, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 123506421075743052, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
       propertyPath: HurtSound
       value: 
@@ -98367,6 +98411,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2136161258}
     m_Modifications:
+    - target: {fileID: 33736265392469749, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 123506421075743052, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
       propertyPath: poolSize
       value: 20
@@ -101168,6 +101216,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2136161258}
     m_Modifications:
+    - target: {fileID: 33736265392469749, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 123506421075743052, guid: 6d0f67b2f363a4a4393f01dd330b9e3f, type: 3}
       propertyPath: poolSize
       value: 20
@@ -102636,7 +102688,7 @@ AudioSource:
   m_GameObject: {fileID: 3169877313426296028}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
@@ -102908,6 +102960,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.38610524
       objectReference: {fileID: 0}
+    - target: {fileID: 8007017577401420012, guid: 350f6166dae741647a1b7a6f1e64094b, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 8182067724705134737, guid: 350f6166dae741647a1b7a6f1e64094b, type: 3}
       propertyPath: maxHealth
       value: 200
@@ -103004,6 +103060,10 @@ PrefabInstance:
       propertyPath: confinerCamera
       value: 
       objectReference: {fileID: 1128569026}
+    - target: {fileID: 7729806842405905176, guid: db1bc2c42093fe942bcc9bc9ff809098, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 36ee9c3a9cff3e141a72d8a48166d37f, type: 2}
     - target: {fileID: 7938143018173024510, guid: db1bc2c42093fe942bcc9bc9ff809098, type: 3}
       propertyPath: playerTransform
       value: 
@@ -103820,6 +103880,10 @@ PrefabInstance:
     - target: {fileID: 7727942836551285428, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
       propertyPath: m_Name
       value: Tigre 7 Def
+      objectReference: {fileID: 0}
+    - target: {fileID: 7727942836551285428, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8761491204098803432, guid: 9dc293f486f9c5b429081cb29495e6a6, type: 3}
       propertyPath: m_LocalRotation.z
