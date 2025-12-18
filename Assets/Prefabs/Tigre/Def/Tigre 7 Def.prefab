@@ -2324,7 +2324,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 99
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
@@ -2426,8 +2426,14 @@ MonoBehaviour:
   patrolDistance: 5
   rayOrigin: {fileID: 3473514535460853026}
   rayLength: 8
+  groundCheck: {fileID: 0}
+  wallCheck: {fileID: 0}
+  wallCheckDistance: 0.5
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
   attackDamage: 15
-  attackCooldown: 1.5
+  attackCooldown: 0
   playerRef: {fileID: 0}
   audioSource: {fileID: 5905687591289899678}
   InRangeSound: {fileID: 8300000, guid: 30258cbd430ca1e4c8d697a7bbe50e40, type: 3}
