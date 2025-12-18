@@ -410,6 +410,37 @@ MonoBehaviour:
     m_Extent: {x: 2.4443095, y: 2.3971791, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
+--- !u!1 &2875208340220604398
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1210564170350863324}
+  m_Layer: 0
+  m_Name: GroundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1210564170350863324
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2875208340220604398}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -44.9, y: 0.2, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2507620661425746904}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3020011516741261993
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,6 +627,8 @@ Transform:
   - {fileID: 2182422136829578965}
   - {fileID: 2698694091708198394}
   - {fileID: 1078252369336871955}
+  - {fileID: 1530634402561665528}
+  - {fileID: 1210564170350863324}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1992013763133737635
@@ -713,9 +746,13 @@ MonoBehaviour:
   facingRight: 1
   animator: {fileID: 1992013763133737635}
   characterHealth: {fileID: 9149856462708674256}
-  bone_1: {fileID: 0}
+  bone_1: {fileID: 1078252369336871955}
+  rayOrigin: {fileID: 1530634402561665528}
+  rayLength: 8
+  groundCheck: {fileID: 1210564170350863324}
   patrolSpeed: 2
   chaseSpeed: 3.5
+  patrolDistance: 5
   pointA: {fileID: 0}
   pointB: {fileID: 0}
   attackDamage: 8
@@ -723,6 +760,12 @@ MonoBehaviour:
   contactDamage: 10
   contactDamageCooldown: 1
   biteCollider: {fileID: 0}
+  audioSource: {fileID: 0}
+  InRangeSound: {fileID: 0}
+  OutOfRangeSound: {fileID: 0}
+  AttackSound: {fileID: 0}
+  DeathSound: {fileID: 0}
+  HurtSound: {fileID: 0}
 --- !u!114 &9149856462708674256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -926,6 +969,37 @@ MonoBehaviour:
     m_Extent: {x: 20.497179, y: 10.401302, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
+--- !u!1 &3954026508535053777
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1530634402561665528}
+  m_Layer: 0
+  m_Name: RaycastOrigenSerpiente
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1530634402561665528
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3954026508535053777}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -40, y: 16.9, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2507620661425746904}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4418767152769025481
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,7 +18,7 @@ public class SerpienteAttack : IState
 
     public void Update()
     {
-        // Seguir la dirección del jugador durante el ataque
+        // Seguir la direcciï¿½n del jugador durante el ataque
         TrackPlayer();
 
         AnimatorStateInfo stateInfo = snake.animator.GetCurrentAnimatorStateInfo(0);
@@ -40,24 +40,26 @@ public class SerpienteAttack : IState
     {
         if (snake.Player == null) return;
 
-        // Calcular la dirección hacia el jugador
+        // Calcular la direcciï¿½n hacia el jugador
         float directionToPlayer = snake.Player.position.x - snake.transform.position.x;
 
-        // Si el jugador está a la derecha y la serpiente mira a la izquierda, voltear
+        /* Si el jugador estï¿½ a la derecha y la serpiente mira a la izquierda, voltear
         if (directionToPlayer > 0 && !snake.facingRight)
         {
             snake.Flip();
         }
-        // Si el jugador está a la izquierda y la serpiente mira a la derecha, voltear
+        // Si el jugador estï¿½ a la izquierda y la serpiente mira a la derecha, voltear
         else if (directionToPlayer < 0 && snake.facingRight)
         {
             snake.Flip();
-        }
+        }*/
     }
 
     public void Exit()
-    {
-        snake.animator.SetBool("isMoving", false);
-        snake.animator.SetBool("isChasing", false);
-    }
+{
+    // Evitar que la animaciÃ³n de walk se reproduzca al salir del ataque
+    snake.animator.SetBool("isMoving", false);
+    snake.animator.SetBool("isChasing", false);
+}
+
 }
