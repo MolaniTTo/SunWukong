@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class NPCDialogue : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class NPCDialogue : MonoBehaviour
     public KeyCode talkKey = KeyCode.E;         //la tecla per parlar amb l'NPC
     public bool forceCameraZoomOnStart = false; //si volem forçar el zoom de càmera en començar el diàleg
     private bool recentlyFinished = false;
+
+    [Header("Input Actions")]
+    [SerializeField] private InputActionReference interactAction;
 
     [Header("Monje Bueno Ref")]
     public GameObject objectToHide;
@@ -39,6 +43,22 @@ public class NPCDialogue : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player")?.transform; //referència al jugador
     }
 
+    private void OnEnable()
+    {
+        if (interactAction != null)
+        {
+            interactAction.action.Enable();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (interactAction != null)
+        { 
+             interactAction.action.Disable();
+        }
+    }
+
     private void Update()
     {
         if (recentlyFinished) { return; } //si acabem de finalitzar un diàleg, no fem res aquest frame
@@ -59,7 +79,7 @@ public class NPCDialogue : MonoBehaviour
 
         if (requireButton) //si es requereix prémer un botó per parlar
         {
-            if (Input.GetKeyDown(talkKey))
+            if (interactAction != null && interactAction.action.WasPerformedThisFrame())
             {
                 bubbleSprite.SetActive(false);
                 OpenDialogue();

@@ -2476,6 +2476,7 @@ MonoBehaviour:
   zoomDuration: 0.35
   vcam: {fileID: 0}
   zoomedFOV: 30
+  continueAction: {fileID: 0}
 --- !u!1 &153193011
 GameObject:
   m_ObjectHideFlags: 0
@@ -9825,6 +9826,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pausePanel: {fileID: 701981146}
   player: {fileID: 4446543604039772432}
+  pauseAction: {fileID: -3973564212452087163, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!1 &608257318
 GameObject:
   m_ObjectHideFlags: 0
@@ -102954,6 +102956,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1164887340100983937, guid: db1bc2c42093fe942bcc9bc9ff809098, type: 3}
+      propertyPath: interactAction
+      value: 
+      objectReference: {fileID: -8528871165261320381, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
     - target: {fileID: 1600001509795573325, guid: db1bc2c42093fe942bcc9bc9ff809098, type: 3}
       propertyPath: dialogueText
       value: 
@@ -102962,6 +102968,10 @@ PrefabInstance:
       propertyPath: dialoguePanel
       value: 
       objectReference: {fileID: 2040266972}
+    - target: {fileID: 1600001509795573325, guid: db1bc2c42093fe942bcc9bc9ff809098, type: 3}
+      propertyPath: continueAction
+      value: 
+      objectReference: {fileID: -8528871165261320381, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
     - target: {fileID: 1852470959786577938, guid: db1bc2c42093fe942bcc9bc9ff809098, type: 3}
       propertyPath: gorila
       value: 
@@ -103565,6 +103575,7 @@ MonoBehaviour:
   requireButton: 1
   talkKey: 101
   forceCameraZoomOnStart: 0
+  interactAction: {fileID: -8528871165261320381, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   objectToHide: {fileID: 575099178}
   monjeBueno: {fileID: 6128471314649666560}
   monjeBoss: {fileID: 0}
@@ -103634,6 +103645,7 @@ MonoBehaviour:
   zoomDuration: 0.35
   vcam: {fileID: 1128569026}
   zoomedFOV: 30
+  continueAction: {fileID: -8528871165261320381, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!95 &6128471314649666557 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5404538145988229733, guid: 0d5cb733c9dfff144896d063330afa6a, type: 3}

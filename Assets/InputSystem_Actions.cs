@@ -97,7 +97,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""type"": ""Value"",
                     ""id"": ""351f2ccd-1f9f-44bf-9bec-d62ac5c5f408"",
                     ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
+                    ""processors"": ""StickDeadzone(min=0.25,max=0.925)"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
                 },
@@ -105,15 +105,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""69837c2b-0a3d-47b3-8943-4363988585e0"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Heal"",
-                    ""type"": ""Button"",
-                    ""id"": ""2d048a93-51fe-4d40-aee2-b6035ff3946a"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -138,9 +129,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""SpecialAttackPunch"",
+                    ""name"": ""Heal"",
                     ""type"": ""Button"",
-                    ""id"": ""4fe67905-5b0c-4e82-8679-c62d90c17a11"",
+                    ""id"": ""2d048a93-51fe-4d40-aee2-b6035ff3946a"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -156,9 +147,45 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""SpecialAttackPunch"",
+                    ""type"": ""Button"",
+                    ""id"": ""4fe67905-5b0c-4e82-8679-c62d90c17a11"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Climbing"",
                     ""type"": ""Button"",
                     ""id"": ""aad2cf61-3cef-48c0-babe-f67d98583c39"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Swing"",
+                    ""type"": ""Button"",
+                    ""id"": ""473feac3-cb88-444e-8d81-75644c69d0c0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Climb"",
+                    ""type"": ""Button"",
+                    ""id"": ""0650cecc-74cb-4fec-b5ed-7f7dc73c5ae8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SpecialAttackStaff"",
+                    ""type"": ""Button"",
+                    ""id"": ""b971cec8-ab49-4465-847e-be0662bc7527"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -311,19 +338,19 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""52f20753-b655-48c8-9789-8910e852404d"",
-                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""id"": ""fe100d20-a62f-470b-a92c-7a9fab738f2b"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Heal"",
+                    ""action"": ""Climbing"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""cbfc4fe9-11e0-42db-93e5-c82d50d814f0"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""id"": ""9d56721a-3067-4474-a5cf-67699ab5c792"",
+                    ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -333,8 +360,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""7a1753a8-84ed-42e8-9a4f-f76e5dff50db"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""id"": ""10133271-cf91-478d-819b-248faffb353a"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -344,19 +371,19 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""8767d455-22c8-4a97-b876-48bf77b5b1c2"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": ""MultiTap"",
+                    ""id"": ""9ac24dd4-6da1-46ad-964d-85646004a01f"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SpecialAttackPunch"",
+                    ""action"": ""Heal"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""61eaae14-6e0a-40b3-82e8-313e60f32d88"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""id"": ""48413d49-1dbb-4ed2-bb67-ee8f075af5fe"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -366,12 +393,45 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""fe100d20-a62f-470b-a92c-7a9fab738f2b"",
+                    ""id"": ""10712754-0b53-49c6-8a67-3a2b49b3e917"",
                     ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Climbing"",
+                    ""action"": ""SpecialAttackPunch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""274b9c71-7553-40f0-9751-53145978757f"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Swing"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""64eb6126-b477-40dd-94ae-821bcdefc063"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Climb"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7748178b-a4b2-4b61-a51c-4946c3ad2561"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpecialAttackStaff"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -403,7 +463,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""name"": ""Cancel"",
                     ""type"": ""Button"",
                     ""id"": ""15cef263-9014-4fd5-94d9-4e4a6234a6ef"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -467,6 +527,24 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""type"": ""PassThrough"",
                     ""id"": ""9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be"",
                     ""expectedControlType"": ""Quaternion"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""0f256e75-066d-4ee1-a893-88d80c15fb06"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Continue"",
+                    ""type"": ""Button"",
+                    ""id"": ""dd0e5c28-1f7d-4042-8059-bd1eedc34bbb"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -740,7 +818,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9e92bb26-7e3b-4ec4-b06b-3c8f8e498ddc"",
-                    ""path"": ""*/{Submit}"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse;Gamepad;Touch;Joystick;XR"",
@@ -751,7 +829,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""82627dcc-3b13-4ba9-841d-e4b746d6553e"",
-                    ""path"": ""*/{Cancel}"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse;Gamepad;Touch;Joystick;XR"",
@@ -890,6 +968,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""TrackedDeviceOrientation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f7c8897a-087f-4312-8762-9292dd34a24c"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7cb57127-5745-4fea-9f6a-720a09193b09"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Continue"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -961,12 +1061,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
-        m_Player_Heal = m_Player.FindAction("Heal", throwIfNotFound: true);
         m_Player_AttackPunch = m_Player.FindAction("AttackPunch", throwIfNotFound: true);
         m_Player_AttackTail = m_Player.FindAction("AttackTail", throwIfNotFound: true);
-        m_Player_SpecialAttackPunch = m_Player.FindAction("SpecialAttackPunch", throwIfNotFound: true);
+        m_Player_Heal = m_Player.FindAction("Heal", throwIfNotFound: true);
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
+        m_Player_SpecialAttackPunch = m_Player.FindAction("SpecialAttackPunch", throwIfNotFound: true);
         m_Player_Climbing = m_Player.FindAction("Climbing", throwIfNotFound: true);
+        m_Player_Swing = m_Player.FindAction("Swing", throwIfNotFound: true);
+        m_Player_Climb = m_Player.FindAction("Climb", throwIfNotFound: true);
+        m_Player_SpecialAttackStaff = m_Player.FindAction("SpecialAttackStaff", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -979,6 +1082,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
+        m_UI_Continue = m_UI.FindAction("Continue", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1062,12 +1167,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Jump;
-    private readonly InputAction m_Player_Heal;
     private readonly InputAction m_Player_AttackPunch;
     private readonly InputAction m_Player_AttackTail;
-    private readonly InputAction m_Player_SpecialAttackPunch;
+    private readonly InputAction m_Player_Heal;
     private readonly InputAction m_Player_Block;
+    private readonly InputAction m_Player_SpecialAttackPunch;
     private readonly InputAction m_Player_Climbing;
+    private readonly InputAction m_Player_Swing;
+    private readonly InputAction m_Player_Climb;
+    private readonly InputAction m_Player_SpecialAttackStaff;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1088,10 +1196,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         /// <summary>
-        /// Provides access to the underlying input action "Player/Heal".
-        /// </summary>
-        public InputAction @Heal => m_Wrapper.m_Player_Heal;
-        /// <summary>
         /// Provides access to the underlying input action "Player/AttackPunch".
         /// </summary>
         public InputAction @AttackPunch => m_Wrapper.m_Player_AttackPunch;
@@ -1100,17 +1204,33 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @AttackTail => m_Wrapper.m_Player_AttackTail;
         /// <summary>
-        /// Provides access to the underlying input action "Player/SpecialAttackPunch".
+        /// Provides access to the underlying input action "Player/Heal".
         /// </summary>
-        public InputAction @SpecialAttackPunch => m_Wrapper.m_Player_SpecialAttackPunch;
+        public InputAction @Heal => m_Wrapper.m_Player_Heal;
         /// <summary>
         /// Provides access to the underlying input action "Player/Block".
         /// </summary>
         public InputAction @Block => m_Wrapper.m_Player_Block;
         /// <summary>
+        /// Provides access to the underlying input action "Player/SpecialAttackPunch".
+        /// </summary>
+        public InputAction @SpecialAttackPunch => m_Wrapper.m_Player_SpecialAttackPunch;
+        /// <summary>
         /// Provides access to the underlying input action "Player/Climbing".
         /// </summary>
         public InputAction @Climbing => m_Wrapper.m_Player_Climbing;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Swing".
+        /// </summary>
+        public InputAction @Swing => m_Wrapper.m_Player_Swing;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Climb".
+        /// </summary>
+        public InputAction @Climb => m_Wrapper.m_Player_Climb;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SpecialAttackStaff".
+        /// </summary>
+        public InputAction @SpecialAttackStaff => m_Wrapper.m_Player_SpecialAttackStaff;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1143,24 +1263,33 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Heal.started += instance.OnHeal;
-            @Heal.performed += instance.OnHeal;
-            @Heal.canceled += instance.OnHeal;
             @AttackPunch.started += instance.OnAttackPunch;
             @AttackPunch.performed += instance.OnAttackPunch;
             @AttackPunch.canceled += instance.OnAttackPunch;
             @AttackTail.started += instance.OnAttackTail;
             @AttackTail.performed += instance.OnAttackTail;
             @AttackTail.canceled += instance.OnAttackTail;
-            @SpecialAttackPunch.started += instance.OnSpecialAttackPunch;
-            @SpecialAttackPunch.performed += instance.OnSpecialAttackPunch;
-            @SpecialAttackPunch.canceled += instance.OnSpecialAttackPunch;
+            @Heal.started += instance.OnHeal;
+            @Heal.performed += instance.OnHeal;
+            @Heal.canceled += instance.OnHeal;
             @Block.started += instance.OnBlock;
             @Block.performed += instance.OnBlock;
             @Block.canceled += instance.OnBlock;
+            @SpecialAttackPunch.started += instance.OnSpecialAttackPunch;
+            @SpecialAttackPunch.performed += instance.OnSpecialAttackPunch;
+            @SpecialAttackPunch.canceled += instance.OnSpecialAttackPunch;
             @Climbing.started += instance.OnClimbing;
             @Climbing.performed += instance.OnClimbing;
             @Climbing.canceled += instance.OnClimbing;
+            @Swing.started += instance.OnSwing;
+            @Swing.performed += instance.OnSwing;
+            @Swing.canceled += instance.OnSwing;
+            @Climb.started += instance.OnClimb;
+            @Climb.performed += instance.OnClimb;
+            @Climb.canceled += instance.OnClimb;
+            @SpecialAttackStaff.started += instance.OnSpecialAttackStaff;
+            @SpecialAttackStaff.performed += instance.OnSpecialAttackStaff;
+            @SpecialAttackStaff.canceled += instance.OnSpecialAttackStaff;
         }
 
         /// <summary>
@@ -1178,24 +1307,33 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Heal.started -= instance.OnHeal;
-            @Heal.performed -= instance.OnHeal;
-            @Heal.canceled -= instance.OnHeal;
             @AttackPunch.started -= instance.OnAttackPunch;
             @AttackPunch.performed -= instance.OnAttackPunch;
             @AttackPunch.canceled -= instance.OnAttackPunch;
             @AttackTail.started -= instance.OnAttackTail;
             @AttackTail.performed -= instance.OnAttackTail;
             @AttackTail.canceled -= instance.OnAttackTail;
-            @SpecialAttackPunch.started -= instance.OnSpecialAttackPunch;
-            @SpecialAttackPunch.performed -= instance.OnSpecialAttackPunch;
-            @SpecialAttackPunch.canceled -= instance.OnSpecialAttackPunch;
+            @Heal.started -= instance.OnHeal;
+            @Heal.performed -= instance.OnHeal;
+            @Heal.canceled -= instance.OnHeal;
             @Block.started -= instance.OnBlock;
             @Block.performed -= instance.OnBlock;
             @Block.canceled -= instance.OnBlock;
+            @SpecialAttackPunch.started -= instance.OnSpecialAttackPunch;
+            @SpecialAttackPunch.performed -= instance.OnSpecialAttackPunch;
+            @SpecialAttackPunch.canceled -= instance.OnSpecialAttackPunch;
             @Climbing.started -= instance.OnClimbing;
             @Climbing.performed -= instance.OnClimbing;
             @Climbing.canceled -= instance.OnClimbing;
+            @Swing.started -= instance.OnSwing;
+            @Swing.performed -= instance.OnSwing;
+            @Swing.canceled -= instance.OnSwing;
+            @Climb.started -= instance.OnClimb;
+            @Climb.performed -= instance.OnClimb;
+            @Climb.canceled -= instance.OnClimb;
+            @SpecialAttackStaff.started -= instance.OnSpecialAttackStaff;
+            @SpecialAttackStaff.performed -= instance.OnSpecialAttackStaff;
+            @SpecialAttackStaff.canceled -= instance.OnSpecialAttackStaff;
         }
 
         /// <summary>
@@ -1243,6 +1381,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_ScrollWheel;
     private readonly InputAction m_UI_TrackedDevicePosition;
     private readonly InputAction m_UI_TrackedDeviceOrientation;
+    private readonly InputAction m_UI_Pause;
+    private readonly InputAction m_UI_Continue;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -1294,6 +1434,14 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/TrackedDeviceOrientation".
         /// </summary>
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_UI_Pause;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/Continue".
+        /// </summary>
+        public InputAction @Continue => m_Wrapper.m_UI_Continue;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1350,6 +1498,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @TrackedDeviceOrientation.started += instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.performed += instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.canceled += instance.OnTrackedDeviceOrientation;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
+            @Continue.started += instance.OnContinue;
+            @Continue.performed += instance.OnContinue;
+            @Continue.canceled += instance.OnContinue;
         }
 
         /// <summary>
@@ -1391,6 +1545,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @TrackedDeviceOrientation.started -= instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.performed -= instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.canceled -= instance.OnTrackedDeviceOrientation;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
+            @Continue.started -= instance.OnContinue;
+            @Continue.performed -= instance.OnContinue;
+            @Continue.canceled -= instance.OnContinue;
         }
 
         /// <summary>
@@ -1511,13 +1671,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Heal" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnHeal(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "AttackPunch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -1532,12 +1685,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnAttackTail(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "SpecialAttackPunch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Heal" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSpecialAttackPunch(InputAction.CallbackContext context);
+        void OnHeal(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Block" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1546,12 +1699,40 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnBlock(InputAction.CallbackContext context);
         /// <summary>
+        /// Method invoked when associated input action "SpecialAttackPunch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSpecialAttackPunch(InputAction.CallbackContext context);
+        /// <summary>
         /// Method invoked when associated input action "Climbing" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnClimbing(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Swing" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwing(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Climb" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnClimb(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SpecialAttackStaff" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSpecialAttackStaff(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
@@ -1630,5 +1811,19 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Continue" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnContinue(InputAction.CallbackContext context);
     }
 }

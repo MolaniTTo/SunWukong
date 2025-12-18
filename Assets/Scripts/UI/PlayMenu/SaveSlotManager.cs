@@ -2,9 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro; 
+using UnityEngine.InputSystem; //Si usas el nuevo sistema de Input
 
 public class SaveSlotManager : MonoBehaviour
-{
+{ 
     [Header("Panels")]
     [SerializeField] private GameObject slotsPanel;
     [SerializeField] private GameObject playDeletePanel;
@@ -33,6 +34,9 @@ public class SaveSlotManager : MonoBehaviour
     [SerializeField] private Button firstPlayDeleteToSelect; // Normalmente playButton
     [SerializeField] private Button firstNoHitToSelect; // Normalmente noHitNoButton
 
+    [Header("Input Actions")] 
+    [SerializeField] private InputActionReference cancelAction;
+
     // Estado interno
     private int selectedSlot = -1; // -1 = ninguno, 0 = slot1, 1 = slot2, 2 = slot3
     private SaveData[] saveData = new SaveData[3]; // Datos de las 3 partidas
@@ -41,6 +45,23 @@ public class SaveSlotManager : MonoBehaviour
     private enum MenuPanel { Slots, PlayDelete, NoHit }
     private MenuPanel currentPanel = MenuPanel.Slots;
 
+    private void OnEnable()
+    {
+        LoadAllSaveData();
+
+        if(cancelAction != null )
+        {
+            cancelAction.action.Enable();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (cancelAction != null)
+        {
+            cancelAction.action.Disable();
+        }
+    }
     void Start()
     {
         // Cargar datos de partidas (simulado por ahora)
@@ -60,20 +81,13 @@ public class SaveSlotManager : MonoBehaviour
         // Inicializar
         ShowSlotsPanel();
     }
-
-    private void OnEnable() //Actualizar les dades quan es torna al menu
-    {
-        LoadAllSaveData();
-    }
-
     void Update()
     {
-        // Detectar botón B (JoystickButton1) para volver atrás
-        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton1))
+        // Detectar botón B (o equivalente) para volver atrás
+        if (cancelAction != null && cancelAction.action.WasPerformedThisFrame())
         {
             GoBack();
         }
-
         // Mantener navegación activa si se pierde
         if (EventSystem.current.currentSelectedGameObject == null)
         {
