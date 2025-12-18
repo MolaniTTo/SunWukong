@@ -11,7 +11,7 @@
                     "type": "Value",
                     "id": "351f2ccd-1f9f-44bf-9bec-d62ac5c5f408",
                     "expectedControlType": "Vector2",
-                    "processors": "",
+                    "processors": "StickDeadzone(min=0.25,max=0.925)",
                     "interactions": "",
                     "initialStateCheck": true
                 },
@@ -19,15 +19,6 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "69837c2b-0a3d-47b3-8943-4363988585e0",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Heal",
-                    "type": "Button",
-                    "id": "2d048a93-51fe-4d40-aee2-b6035ff3946a",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -52,9 +43,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SpecialAttackPunch",
+                    "name": "Heal",
                     "type": "Button",
-                    "id": "4fe67905-5b0c-4e82-8679-c62d90c17a11",
+                    "id": "2d048a93-51fe-4d40-aee2-b6035ff3946a",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -70,9 +61,45 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "SpecialAttackPunch",
+                    "type": "Button",
+                    "id": "4fe67905-5b0c-4e82-8679-c62d90c17a11",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Climbing",
                     "type": "Button",
                     "id": "aad2cf61-3cef-48c0-babe-f67d98583c39",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Swing",
+                    "type": "Button",
+                    "id": "473feac3-cb88-444e-8d81-75644c69d0c0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Climb",
+                    "type": "Button",
+                    "id": "0650cecc-74cb-4fec-b5ed-7f7dc73c5ae8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SpecialAttackStaff",
+                    "type": "Button",
+                    "id": "b971cec8-ab49-4465-847e-be0662bc7527",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -225,19 +252,19 @@
                 },
                 {
                     "name": "",
-                    "id": "52f20753-b655-48c8-9789-8910e852404d",
-                    "path": "<Gamepad>/dpad/down",
+                    "id": "fe100d20-a62f-470b-a92c-7a9fab738f2b",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Heal",
+                    "action": "Climbing",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "cbfc4fe9-11e0-42db-93e5-c82d50d814f0",
-                    "path": "<Gamepad>/buttonEast",
+                    "id": "9d56721a-3067-4474-a5cf-67699ab5c792",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -247,8 +274,8 @@
                 },
                 {
                     "name": "",
-                    "id": "7a1753a8-84ed-42e8-9a4f-f76e5dff50db",
-                    "path": "<Gamepad>/buttonWest",
+                    "id": "10133271-cf91-478d-819b-248faffb353a",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -258,19 +285,19 @@
                 },
                 {
                     "name": "",
-                    "id": "8767d455-22c8-4a97-b876-48bf77b5b1c2",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "MultiTap",
+                    "id": "9ac24dd4-6da1-46ad-964d-85646004a01f",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SpecialAttackPunch",
+                    "action": "Heal",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "61eaae14-6e0a-40b3-82e8-313e60f32d88",
-                    "path": "<Gamepad>/rightShoulder",
+                    "id": "48413d49-1dbb-4ed2-bb67-ee8f075af5fe",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -280,12 +307,45 @@
                 },
                 {
                     "name": "",
-                    "id": "fe100d20-a62f-470b-a92c-7a9fab738f2b",
+                    "id": "10712754-0b53-49c6-8a67-3a2b49b3e917",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Climbing",
+                    "action": "SpecialAttackPunch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "274b9c71-7553-40f0-9751-53145978757f",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Swing",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "64eb6126-b477-40dd-94ae-821bcdefc063",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Climb",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7748178b-a4b2-4b61-a51c-4946c3ad2561",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SpecialAttackStaff",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -317,7 +377,7 @@
                     "name": "Cancel",
                     "type": "Button",
                     "id": "15cef263-9014-4fd5-94d9-4e4a6234a6ef",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -381,6 +441,24 @@
                     "type": "PassThrough",
                     "id": "9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be",
                     "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "0f256e75-066d-4ee1-a893-88d80c15fb06",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Continue",
+                    "type": "Button",
+                    "id": "dd0e5c28-1f7d-4042-8059-bd1eedc34bbb",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -654,7 +732,7 @@
                 {
                     "name": "",
                     "id": "9e92bb26-7e3b-4ec4-b06b-3c8f8e498ddc",
-                    "path": "*/{Submit}",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
@@ -665,7 +743,7 @@
                 {
                     "name": "",
                     "id": "82627dcc-3b13-4ba9-841d-e4b746d6553e",
-                    "path": "*/{Cancel}",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
@@ -802,6 +880,28 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "TrackedDeviceOrientation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f7c8897a-087f-4312-8762-9292dd34a24c",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7cb57127-5745-4fea-9f6a-720a09193b09",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Continue",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

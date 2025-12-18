@@ -1,9 +1,10 @@
-using Unity.Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class DialogueUI : MonoBehaviour
@@ -15,13 +16,15 @@ public class DialogueUI : MonoBehaviour
     public float typingSpeed = 0.03f;
     private bool autoAdvance = false;
 
-
     [Header("Camera Zoom (optional)")]
     public bool useCameraZoom = true; // si quieres usar zoom via Camera.main
     public float zoomDuration = 0.35f;
     public CinemachineCamera vcam;
     public float zoomedFOV = 30f;
     private float originalFOV = -1f;
+
+    [Header("Input Actions")]
+    [SerializeField] private InputActionReference continueAction;
 
     //ESTAT DEL DIÀLEG
     private DialogueData.DialogueLine[] lines; //Línies del diàleg actuals
@@ -33,7 +36,6 @@ public class DialogueUI : MonoBehaviour
     private NPCDialogue currentNPCDialogue; //Referència al NPCDialogue actual
 
     private Coroutine zoomCoroutine;
-
     private Coroutine typingCoroutine;
 
     private void Awake()
@@ -42,9 +44,26 @@ public class DialogueUI : MonoBehaviour
         if (continueButton != null) { continueButton.onClick.AddListener(OnContinuePressed); } //Assigna el botó de continuar
     }
 
+    private void OnEnable()
+    {
+        if(continueAction != null)
+        {
+            continueAction.action.Enable();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (continueAction != null)
+        {
+            continueAction.action.Disable();
+        }
+    }
+
+
     private void Update()
     {
-        if (!autoAdvance && Input.GetKeyDown(KeyCode.E) && canContinue)
+        if (!autoAdvance && continueAction != null && continueAction.action.WasPerformedThisFrame() && canContinue)
         {
             OnContinuePressed();
         }

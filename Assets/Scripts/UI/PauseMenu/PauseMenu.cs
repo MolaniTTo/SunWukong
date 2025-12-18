@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 public class PauseMenu : MonoBehaviour
 {
@@ -8,6 +9,9 @@ public class PauseMenu : MonoBehaviour
     [Header("Ref")]
     [SerializeField] private PlayerStateMachine player; //ref del player per bloquejar controls
 
+    [Header("Input Actions")]
+    [SerializeField] private InputActionReference pauseAction; 
+
     private bool isPaused = false;
 
     private void Awake()
@@ -16,12 +20,25 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
         pausePanel.SetActive(false);
     }
-
+    private void OnEnable()
+    {
+        if (pauseAction != null)
+        {
+            pauseAction.action.Enable();
+        }
+    }
+    private void OnDisable()
+    {
+        if (pauseAction != null)
+        {
+            pauseAction.action.Disable();
+        }
+    }
 
     void Update()
     {
         //Detectar tecla ESC o el boto de pausa del mando
-        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton7))
+        if (pauseAction != null && pauseAction.action.WasPerformedThisFrame())
         {
             if (isPaused)
             {
