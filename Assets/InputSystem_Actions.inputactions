@@ -70,15 +70,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Climbing",
-                    "type": "Button",
-                    "id": "aad2cf61-3cef-48c0-babe-f67d98583c39",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Swing",
                     "type": "Button",
                     "id": "473feac3-cb88-444e-8d81-75644c69d0c0",
@@ -247,17 +238,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "fe100d20-a62f-470b-a92c-7a9fab738f2b",
-                    "path": "<Gamepad>/rightTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Climbing",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
