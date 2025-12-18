@@ -184,7 +184,7 @@ public class PlayerStateMachine : MonoBehaviour
         tailDamageCollider.SetActive(false); //desactivem el collider de dany al iniciar
         if (!hasStaff) { staffObj.SetActive(false); }
 
-         currentKi = maxKi;
+        currentKi = maxKi;
         OnKiChanged?.Invoke(currentKi);
     }
 
@@ -209,12 +209,9 @@ public class PlayerStateMachine : MonoBehaviour
         swingAction.performed += OnSwingPerformed;
         swingAction.canceled += OnSwingCanceled;
 
-        if (hasStaff)
-        {
-            staffClimbAction.performed += OnStaffClimbPerformed;
-            staffClimbAction.canceled += OnStaffClimbCanceled;
-            specialAttackStaffAction.performed += OnSpecialAttackStaffPerformed;
-        }
+        staffClimbAction.performed += OnStaffClimbPerformed;
+        staffClimbAction.canceled += OnStaffClimbCanceled;
+        specialAttackStaffAction.performed += OnSpecialAttackStaffPerformed;
 
         CombatEvents.OnEnemyKilled += OnEnemyKilled;
     }
@@ -463,6 +460,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void OnStaffClimbPerformed(InputAction.CallbackContext context)
     {
+        Debug.Log("Staff Climb Performed");
         if (dialogueLocked || !hasStaff) return;
         staffClimbPressed = true;
     }

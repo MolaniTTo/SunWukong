@@ -156,15 +156,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Climbing"",
-                    ""type"": ""Button"",
-                    ""id"": ""aad2cf61-3cef-48c0-babe-f67d98583c39"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Swing"",
                     ""type"": ""Button"",
                     ""id"": ""473feac3-cb88-444e-8d81-75644c69d0c0"",
@@ -333,17 +324,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""fe100d20-a62f-470b-a92c-7a9fab738f2b"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Climbing"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1066,7 +1046,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Heal = m_Player.FindAction("Heal", throwIfNotFound: true);
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
         m_Player_SpecialAttackPunch = m_Player.FindAction("SpecialAttackPunch", throwIfNotFound: true);
-        m_Player_Climbing = m_Player.FindAction("Climbing", throwIfNotFound: true);
         m_Player_Swing = m_Player.FindAction("Swing", throwIfNotFound: true);
         m_Player_Climb = m_Player.FindAction("Climb", throwIfNotFound: true);
         m_Player_SpecialAttackStaff = m_Player.FindAction("SpecialAttackStaff", throwIfNotFound: true);
@@ -1172,7 +1151,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Heal;
     private readonly InputAction m_Player_Block;
     private readonly InputAction m_Player_SpecialAttackPunch;
-    private readonly InputAction m_Player_Climbing;
     private readonly InputAction m_Player_Swing;
     private readonly InputAction m_Player_Climb;
     private readonly InputAction m_Player_SpecialAttackStaff;
@@ -1215,10 +1193,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/SpecialAttackPunch".
         /// </summary>
         public InputAction @SpecialAttackPunch => m_Wrapper.m_Player_SpecialAttackPunch;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/Climbing".
-        /// </summary>
-        public InputAction @Climbing => m_Wrapper.m_Player_Climbing;
         /// <summary>
         /// Provides access to the underlying input action "Player/Swing".
         /// </summary>
@@ -1278,9 +1252,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @SpecialAttackPunch.started += instance.OnSpecialAttackPunch;
             @SpecialAttackPunch.performed += instance.OnSpecialAttackPunch;
             @SpecialAttackPunch.canceled += instance.OnSpecialAttackPunch;
-            @Climbing.started += instance.OnClimbing;
-            @Climbing.performed += instance.OnClimbing;
-            @Climbing.canceled += instance.OnClimbing;
             @Swing.started += instance.OnSwing;
             @Swing.performed += instance.OnSwing;
             @Swing.canceled += instance.OnSwing;
@@ -1322,9 +1293,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @SpecialAttackPunch.started -= instance.OnSpecialAttackPunch;
             @SpecialAttackPunch.performed -= instance.OnSpecialAttackPunch;
             @SpecialAttackPunch.canceled -= instance.OnSpecialAttackPunch;
-            @Climbing.started -= instance.OnClimbing;
-            @Climbing.performed -= instance.OnClimbing;
-            @Climbing.canceled -= instance.OnClimbing;
             @Swing.started -= instance.OnSwing;
             @Swing.performed -= instance.OnSwing;
             @Swing.canceled -= instance.OnSwing;
@@ -1705,13 +1673,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSpecialAttackPunch(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Climbing" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnClimbing(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Swing" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
