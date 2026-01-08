@@ -46,6 +46,8 @@ public class EnemyTiger : EnemyBase
     public AudioClip WalkSound; // Sonido de caminar (opcional)
     public AudioClip RunSound; // Sonido de correr (opcional)
 
+    [Header("Effecto de muerte Script")]
+    public DeathEffectHandler deathEffectHandler;
     private Rigidbody2D rb;
     private Transform player;
 
@@ -98,18 +100,36 @@ public class EnemyTiger : EnemyBase
         }
     }
 
-    private void Death()
+   private void Death()
+{
+    animator.SetTrigger("Death");
+    
+    if (audioSource != null && DeathSound != null)
     {
-        animator.SetTrigger("Death");
-        if (audioSource != null && DeathSound != null)
-        {
-            audioSource.PlayOneShot(DeathSound);
-        }
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector2.zero; // Detener movimiento
-        }
+        audioSource.PlayOneShot(DeathSound);
     }
+    
+    if (rb != null)
+    {
+        rb.linearVelocity = Vector2.zero;
+        rb.bodyType = RigidbodyType2D.Static; // Hacer estático para que no se mueva
+    }
+    
+    // Deshabilitar colisiones
+    Collider2D col = GetComponent<Collider2D>();
+    if (col != null) col.enabled = false;
+    
+    // Iniciar secuencia de muerte con efectos
+    if (deathEffectHandler != null)
+    {
+        deathEffectHandler.TriggerDeathSequence();
+    }
+    else
+    {
+        // Fallback: destruir después de un tiempo
+        Destroy(gameObject, 2f);
+    }
+}
 
     private void Damaged()
     {

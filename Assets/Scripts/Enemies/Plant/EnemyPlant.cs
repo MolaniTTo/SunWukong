@@ -6,9 +6,9 @@ public class EnemyPlant : EnemyBase
 {
     [Header("Plant Settings")]
     public float detectionRange = 5f;
-    public LayerMask playerLayer; //Capa del jugador per detectar col�lisions amb el jugador
+    public LayerMask playerLayer; //Capa del jugador per detectar col·lisions amb el jugador
     public bool facingRight = true; //Indica si la planta mira cap a la dreta o cap a l'esquerra
-    public Animator animator; //Refer�ncia a l'animator de la planta
+    public Animator animator; //Referència a l'animator de la planta
     public CharacterHealth characterHealth; //referencia al component de vida
 
     [Header("Raycast Settings")]
@@ -24,6 +24,9 @@ public class EnemyPlant : EnemyBase
     [Header("PlayerRef")]
     public PlayerStateMachine playerRef;
 
+    [Header("Death Effect")]
+    public DeathEffectHandler deathEffectHandler; // Sistema de efectos de muerte
+
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip InRangeSound;
@@ -32,16 +35,22 @@ public class EnemyPlant : EnemyBase
     public AudioClip DeathSound;
     public AudioClip HurtSound;
 
-
-
     protected override void Awake()
     {
         base.Awake(); //Cridem a l'Awake de la classe base EnemyBase perque inicialitzi la maquina d'estats
         InitializeBulletPool(); //inicialitzem la pool de bales
+        
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+            
         if (characterHealth == null)
         {
             characterHealth = GetComponent<CharacterHealth>();
         }
+        
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+            
         if (characterHealth != null)
         {
             characterHealth.OnDeath += Death;
@@ -61,19 +70,46 @@ public class EnemyPlant : EnemyBase
     private void Death()
     {
         animator.SetTrigger("Death"); //Activem la animacio de mort
-        audioSource.PlayOneShot(DeathSound); //Reproduim el so de mort
+        
+        if (audioSource != null && DeathSound != null)
+        {
+            audioSource.PlayOneShot(DeathSound); //Reproduim el so de mort
+        }
+        
+        // Deshabilitar col·lisions perquè no interfereixi amb altres objectes
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+        
+        // Detenir qualsevol corrutina o comportament actiu
+        StopAllCoroutines();
+        
+        // Iniciar seqüència de mort amb efectes
+        if (deathEffectHandler != null)
+        {
+            deathEffectHandler.TriggerDeathSequence();
+        }
+        else
+        {
+            // Fallback: destruir després d'un temps
+            Destroy(gameObject, 2f);
+        }
     }
 
     private void Damaged()
     {
-        animator.SetTrigger("Damaged"); //Activem la animacio de mort
-        audioSource.PlayOneShot(HurtSound); //Reproduim el so de ser colpejat
+        animator.SetTrigger("Damaged"); //Activem la animacio de dany
+        
+        if (audioSource != null && HurtSound != null)
+        {
+            audioSource.PlayOneShot(HurtSound); //Reproduim el so de ser colpejat
+        }
     }
    
     private void Start()
     {
-        var idleState = new PlantIdle(this); //Creem l'estat d'idle i li passem una referencia a l'enemic (mirar)
+        var idleState = new PlantIdle(this); //Creem l'estat d'idle i li passem una referencia a l'enemic
         StateMachine.Initialize(idleState); //Inicialitzem la maquina d'estats amb l'estat d'idle
+        
         if(playerRef == null)
         {
             playerRef = FindAnyObjectByType<PlayerStateMachine>();
@@ -86,7 +122,6 @@ public class EnemyPlant : EnemyBase
     }
 
     //METODE PER GIRAR LA PLANTA
-
     private void Flip()
     {
         facingRight = !facingRight; //canvia la direccio a la que mira la planta
@@ -95,9 +130,7 @@ public class EnemyPlant : EnemyBase
         transform.localScale = scale; //assignem la nova escala a la planta
     }
 
-    
     //METODES DE LA POOL DE BALES
-
     public void InitializeBulletPool()
     {
         bulletStack = new Stack<GameObject>(); //inicialitzem la pila
@@ -116,14 +149,12 @@ public class EnemyPlant : EnemyBase
         bulletStack.Push(bullet); //la tornem a afegir a la pila
     }
 
-
     //METODES COMUNS DELS ENEMICS
-
     public override bool CanSeePlayer()
     {
         //Direccions del raycast segons cap a on miri la planta
-        Vector2 forwardDir = facingRight ? Vector2.right : Vector2.left; //Si mira a la dreta, el raycast va cap a la dreta, sino cap a l'esquerra
-        Vector2 backwardDir = facingRight ? Vector2.left : Vector2.right; //Direccio contraria al raycast (esquena)
+        Vector2 forwardDir = facingRight ? Vector2.right : Vector2.left;
+        Vector2 backwardDir = facingRight ? Vector2.left : Vector2.right;
 
         //Tira els raycasts per detectar el jugador
         RaycastHit2D forwardHit = Physics2D.Raycast(rayOrigin.position, forwardDir, rayLength, playerLayer);
@@ -142,10 +173,9 @@ public class EnemyPlant : EnemyBase
         }
 
         return false; //no ha detectat el jugador
-
     }
 
-    public override void Attack() //Aquest metode es crida des de l'animacio d'atac mitjancant un event per disparar la bala a l'hora que toca
+    public override void Attack()
     {
         if (bulletStack.Count > 0)
         {
@@ -157,7 +187,11 @@ public class EnemyPlant : EnemyBase
             Bullet bulletScript = bullet.GetComponent<Bullet>();
             bulletScript.SetEnemyPlant(this); //assignem la planta que ha disparat la bala
             bulletScript.Launch(facingRight); //disparem la bala en la direccio que toca
-            audioSource.PlayOneShot(ShootSound); //reproduim el so de disparar
+            
+            if (audioSource != null && ShootSound != null)
+            {
+                audioSource.PlayOneShot(ShootSound); //reproduim el so de disparar
+            }
         }
     }
 
