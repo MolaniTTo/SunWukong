@@ -14,13 +14,13 @@ public class SerpienteDeath : IState
         snake.StopMovement();
         snake.animator.SetTrigger("Die");
 
-        // Destruir después de 1 segundo
+        // Destruir despuï¿½s de 1 segundo
         snake.Invoke(nameof(DestroySelf), 1f);
     }
 
     public void Exit()
     {
-        // No se usa porque es el último estado
+        // No se usa porque es el ï¿½ltimo estado
     }
 
     public void Update()
