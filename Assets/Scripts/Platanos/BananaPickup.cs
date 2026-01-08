@@ -177,7 +177,7 @@ public class BananaPickup : MonoBehaviour
         playerController.RestoreFullKi(); // Restaurar Ki al máximo nuevo
         
         // Notificar a la barra de Ki que actualice su máximo
-        BarraDeKi barraKi = FindObjectOfType<BarraDeKi>();
+        BarraDeKi barraKi = FindFirstObjectByType<BarraDeKi>();
         if (barraKi != null)
         {
             barraKi.ActualizarMaxKi(playerController.maxKi);
@@ -198,7 +198,7 @@ public class BananaPickup : MonoBehaviour
             health.ForceHealthUpdate(); // Actualizar la UI de salud
             
             // Notificar a la barra de vida que actualice su máximo
-            BarraDeVida barraVida = FindObjectOfType<BarraDeVida>();
+            BarraDeVida barraVida = FindFirstObjectByType<BarraDeVida>();
             if (barraVida != null)
             {
                 barraVida.ActualizarMaxVida(health.maxHealth);
