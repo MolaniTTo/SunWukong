@@ -750,11 +750,14 @@ MonoBehaviour:
   rayOrigin: {fileID: 1530634402561665528}
   rayLength: 8
   groundCheck: {fileID: 1210564170350863324}
+  wallCheck: {fileID: 0}
+  wallCheckDistance: 0.5
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
   patrolSpeed: 2
   chaseSpeed: 3.5
   patrolDistance: 5
-  pointA: {fileID: 0}
-  pointB: {fileID: 0}
   attackDamage: 8
   attackCooldown: 2
   contactDamage: 10
