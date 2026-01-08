@@ -75,10 +75,26 @@ public class BarraDeKi : MonoBehaviour
         
         Debug.Log($"Barra de Ki actualizada: {kiActual}/{playerStateMachine.maxKi}");
     }
+    
+    // Método público para actualizar el máximo de Ki cuando cambia (por ejemplo, al recoger plátanos)
+    public void ActualizarMaxKi(float nuevoMaxKi)
+    {
+        if (sliderKi != null)
+        {
+            sliderKi.maxValue = nuevoMaxKi;
+            Debug.Log($"Max Ki de la barra actualizado a: {nuevoMaxKi}");
+        }
+    }
 
     private void Update()
     {
         if (sliderKi == null) return;
+
+        // Verificar si el máximo ha cambiado y actualizarlo
+        if (playerStateMachine != null && sliderKi.maxValue != playerStateMachine.maxKi)
+        {
+            sliderKi.maxValue = playerStateMachine.maxKi;
+        }
 
         // Animar el cambio de la barra suavemente
         if (animarCambios)

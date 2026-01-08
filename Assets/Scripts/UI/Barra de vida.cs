@@ -75,10 +75,26 @@ public class BarraDeVida : MonoBehaviour
         
         Debug.Log($"Barra de vida actualizada: {vidaActual}/{characterHealth.maxHealth}");
     }
+    
+    // Método público para actualizar el máximo de vida cuando cambia (por ejemplo, al recoger plátanos)
+    public void ActualizarMaxVida(float nuevaMaxVida)
+    {
+        if (sliderVida != null)
+        {
+            sliderVida.maxValue = nuevaMaxVida;
+            Debug.Log($"Max Vida de la barra actualizado a: {nuevaMaxVida}");
+        }
+    }
 
     private void Update()
     {
         if (sliderVida == null) return;
+
+        // Verificar si el máximo ha cambiado y actualizarlo
+        if (characterHealth != null && sliderVida.maxValue != characterHealth.maxHealth)
+        {
+            sliderVida.maxValue = characterHealth.maxHealth;
+        }
 
         // Animar el cambio de la barra suavemente
         if (animarCambios)
