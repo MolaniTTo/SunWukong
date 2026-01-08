@@ -142,7 +142,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a1ca7a58ff85f46876e01f91a7c266, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 8
+  speed: 18
+  ImpactGroundParticlePrefab: {fileID: 2708598583397607911, guid: 6398d43fe79ea0140913dc5530c646af, type: 3}
 --- !u!50 &5569761812705606846
 Rigidbody2D:
   serializedVersion: 5
@@ -158,7 +159,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 0
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
