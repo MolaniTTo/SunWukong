@@ -78,7 +78,7 @@ public class ProgressManager : MonoBehaviour
     }
 
 
-    // ==================== Guardar i Carregar ====================
+    // ==================== Guardar Carregar i Eliminar ====================
 
     public void SaveProgress() //guarda el progrés actual
     {
@@ -226,6 +226,7 @@ public class ProgressManager : MonoBehaviour
         return Mathf.Clamp((float)completedItems / totalPossibleItems * 100f, 0f, 100f);
     }
 
+
     // ==================== Enemics ====================
 
     public void RegisterEnemyDefeated(GameObject enemy) //registra un enemic com a derrotat
@@ -295,16 +296,24 @@ public class ProgressManager : MonoBehaviour
 
     // ==================== Utilitats ====================
 
-    public void ResetSlot() //aixo es per resetejar les dades d'un slot concret en el Menu de jugar
+    public void ResetSlot(int slotIndex = -1) //aixo es per resetejar les dades d'un slot concret en el Menu de jugar
     {
-        currentSlot = PlayerPrefs.GetInt("CurrentSlot", 0); //actualitza el slot actual
+        if (slotIndex == -1) //si no es passa cap index, reseteja el slot actual
+        {
+            slotIndex = PlayerPrefs.GetInt("CurrentSlot", 0); //si no es passa cap index, reseteja el slot actual
+        }
 
-        PlayerPrefs.DeleteKey($"Slot{currentSlot}_GameProgress"); //esborra les dades del slot actual
-        PlayerPrefs.DeleteKey($"Slot{currentSlot}_Progress"); //esborra el percentatge de progrés
-        PlayerPrefs.DeleteKey($"Slot{currentSlot}_HasData"); //esborra la marca de dades existents
+        PlayerPrefs.DeleteKey($"Slot{slotIndex}_GameProgress");
+        PlayerPrefs.DeleteKey($"Slot{slotIndex}_Progress");
+        PlayerPrefs.DeleteKey($"Slot{slotIndex}_HasData");
+        PlayerPrefs.DeleteKey($"Slot{slotIndex}_NoHit");
         PlayerPrefs.Save(); //assegura que es guardin les dades
 
-        currentProgress = new GameProgress();
+        if (slotIndex == currentSlot)
+        {
+            currentProgress = new GameProgress();
+        }
+
         Debug.Log($"??? Slot {currentSlot} reseteado");
     }
 

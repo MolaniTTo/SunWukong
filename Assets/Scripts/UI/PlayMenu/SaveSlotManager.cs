@@ -229,11 +229,20 @@ public class SaveSlotManager : MonoBehaviour
     {
         Debug.Log($"Borrar Slot {selectedSlot + 1}");
 
-        // Borrar datos del slot
-        PlayerPrefs.DeleteKey($"Slot{selectedSlot}_HasData");
-        PlayerPrefs.DeleteKey($"Slot{selectedSlot}_Progress");
-        PlayerPrefs.Save();
-
+        if (ProgressManager.Instance != null) //borrar dades del ProgressManager
+        {
+            ProgressManager.Instance.ResetSlot(selectedSlot);
+        }
+        else
+        {
+            // Borrar datos del slot
+            PlayerPrefs.DeleteKey($"Slot{selectedSlot}_HasData");
+            PlayerPrefs.DeleteKey($"Slot{selectedSlot}_Progress");
+            PlayerPrefs.DeleteKey($"Slot{selectedSlot}_GameProgress");
+            PlayerPrefs.DeleteKey($"Slot{selectedSlot}_NoHit");
+            PlayerPrefs.Save();
+        }
+        
         // Actualizar datos y UI
         saveData[selectedSlot] = new SaveData { hasData = false, progressPercentage = 0f };
         UpdateSlotUI(selectedSlot);
@@ -262,7 +271,7 @@ public class SaveSlotManager : MonoBehaviour
         // AQUÍ cargas tu escena de juego
         if (!saveData[slotIndex].hasData)
         {
-            ProgressManager.Instance?.ResetSlot();
+            ProgressManager.Instance?.ResetSlot(slotIndex);
         }
         UnityEngine.SceneManagement.SceneManager.LoadScene("LVL1");
     }

@@ -33,7 +33,7 @@ public class CharacterHealth : MonoBehaviour
     {
         if (isDead) { return; }
 
-        if(isPlayer && playerStateMachine != null && playerStateMachine.currentState == PlayerStateMachine.PlayerState.Block)
+        if (isPlayer && playerStateMachine != null && playerStateMachine.currentState == PlayerStateMachine.PlayerState.Block)
         {
             amount *= 0.5f; //si el jugador esta bloquejant, redueixim el dany a la meitat
         }
@@ -61,11 +61,17 @@ public class CharacterHealth : MonoBehaviour
             return;
         }
 
-        if (isPlayer && playerStateMachine != null)
+        if (isPlayer && playerStateMachine != null && playerStateMachine.currentState != PlayerStateMachine.PlayerState.Block)
         {
             playerStateMachine.animator.SetTrigger("BeingHit"); //activem la animacio de ser colpejat
             playerStateMachine.audioSource.PlayOneShot(playerStateMachine.hurtSound); //reproduim el so de ser colpejat
             playerStateMachine.ForceNewState(PlayerStateMachine.PlayerState.BeingHit); //canviem l'estat del jugador a BeingHit
+        }
+
+        if(isPlayer && playerStateMachine != null && playerStateMachine.currentState == PlayerStateMachine.PlayerState.Block && playerStateMachine.hasStaff)
+        {
+            playerStateMachine.animator.SetTrigger("Parry"); //activem la animacio de ser colpejat mentre bloqueja amb el basto
+            playerStateMachine.audioSource.PlayOneShot(playerStateMachine.hurtSound); //reproduim el so de ser colpejat
         }
     }
 
