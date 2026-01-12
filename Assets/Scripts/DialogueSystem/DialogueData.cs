@@ -24,5 +24,8 @@ public class DialogueData : ScriptableObject
 
         public bool deactivateObjects = false;
 
+        [Header("Audio")]
+        public AudioClip lineAudio;
+
     }
 }
