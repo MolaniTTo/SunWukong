@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Maneja los efectos visuales al morir un enemigo.
+/// Maneja los efectos visuales y de audio al morir un enemigo.
 /// Puede ser usado por cualquier enemigo o jefe.
 /// </summary>
 public class DeathEffectHandler : MonoBehaviour
@@ -16,6 +16,16 @@ public class DeathEffectHandler : MonoBehaviour
     
     [Tooltip("Tiempo que tarda en destruirse el efecto (si es 0, se autodestruye según el Animator/Particles)")]
     public float effectDuration = 2f;
+    
+    [Header("Audio Settings")]
+    [Tooltip("Clip de audio que se reproducirá al morir")]
+    public AudioClip deathSound;
+    
+    [Tooltip("Volumen del sonido de muerte (0 a 1)")]
+    [Range(0f, 1f)]
+    public float deathSoundVolume = 1f;
+    
+  
     
     [Header("Destruction Settings")]
     [Tooltip("Tiempo de espera después de la animación de muerte antes de destruir el enemigo")]
@@ -60,6 +70,43 @@ public class DeathEffectHandler : MonoBehaviour
         StartCoroutine(DeathSequence());
     }
 
+    /// <summary>
+    /// Reproduce el sonido de muerte
+    /// </summary>
+    private void PlayDeathSound()
+    {
+        if (deathSound == null)
+        {
+            if (showDebugLogs)
+            {
+                Debug.LogWarning($"[DeathEffectHandler] No hay AudioClip asignado para {gameObject.name}");
+            }
+            return;
+        }
+
+       
+        else
+        {
+            // Audio 2D (se escucha igual desde cualquier distancia)
+            // Crear un GameObject temporal para reproducir el audio
+            GameObject audioObject = new GameObject("DeathSound_Temp");
+            AudioSource audioSource = audioObject.AddComponent<AudioSource>();
+            
+            audioSource.clip = deathSound;
+            audioSource.volume = deathSoundVolume;
+            audioSource.spatialBlend = 0f; // 2D audio
+            audioSource.Play();
+            
+            // Destruir el objeto temporal cuando termine el audio
+            Destroy(audioObject, deathSound.length);
+            
+            if (showDebugLogs)
+            {
+                Debug.Log($"[DeathEffectHandler] Reproduciendo sonido 2D: {deathSound.name}");
+            }
+        }
+    }
+
     private IEnumerator DeathSequence()
     {
         if (showDebugLogs)
@@ -79,6 +126,9 @@ public class DeathEffectHandler : MonoBehaviour
             {
                 Debug.Log($"[DeathEffectHandler] Spawneando efecto en posición: {effectPosition}");
             }
+            
+            // REPRODUCIR EL SONIDO JUSTO ANTES DE SPAWNEAR EL EFECTO
+            PlayDeathSound();
             
             GameObject effect = Instantiate(deathEffectPrefab, effectPosition, Quaternion.identity);
             
@@ -191,5 +241,8 @@ public class DeathEffectHandler : MonoBehaviour
         {
             Debug.LogError("deathEffectPrefab es NULL!");
         }
+        
+        // Testear también el sonido
+        PlayDeathSound();
     }
 }
