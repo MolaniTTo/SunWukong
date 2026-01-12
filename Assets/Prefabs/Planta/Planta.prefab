@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 1836321043041603122}
   - component: {fileID: 6868982221021238584}
   - component: {fileID: 33736265392469749}
+  - component: {fileID: 4104449275862765746}
   m_Layer: 0
   m_Name: Planta
   m_TagString: Enemy
@@ -192,6 +193,7 @@ MonoBehaviour:
   poolSize: 10
   spawnPoint: {fileID: 6752876241928885565}
   playerRef: {fileID: 0}
+  deathEffectHandler: {fileID: 4104449275862765746}
   audioSource: {fileID: 33736265392469749}
   InRangeSound: {fileID: 8300000, guid: 302c99cb74603d74a916cdbbfacc1c64, type: 3}
   OutOfRangeSound: {fileID: 8300000, guid: d33e93373b3cc1146ac9bbd4a62800dc, type: 3}
@@ -357,6 +359,28 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4104449275862765746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2130235769207535872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66da62a36324960438253584a18ae4a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deathEffectPrefab: {fileID: 141433446842962269, guid: 9fe8f8b3288e45a44af36ff8aa04486e, type: 3}
+  effectOffset: {x: 0, y: 0, z: 0}
+  effectDuration: 1.5
+  deathSound: {fileID: 8300000, guid: c2cbe93734795f4479d3fa690848483d, type: 3}
+  deathSoundVolume: 1
+  destroyDelay: 1.5
+  destroyAfterAnimation: 1
+  fadeOutSprite: 0
+  fadeDuration: 0.5
+  showDebugLogs: 1
 --- !u!1 &2740305641233934819
 GameObject:
   m_ObjectHideFlags: 0
