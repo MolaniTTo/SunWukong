@@ -12,8 +12,12 @@ public class PlayerHealth : MonoBehaviour
         {
             Debug.Log("Player Died");
         }
-
-    }
+        LowHealthOverlay lowHealthOverlay = FindObjectOfType<LowHealthOverlay>();
+        if (lowHealthOverlay != null)
+        {
+            lowHealthOverlay.Update();
+        }
+   
 
   
 }
