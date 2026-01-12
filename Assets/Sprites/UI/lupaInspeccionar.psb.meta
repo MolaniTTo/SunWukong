@@ -104,7 +104,7 @@ ScriptedImporter:
     rect:
       serializedVersion: 2
       x: 4
-      y: 750
+      y: 4
       width: 764
       height: 361
     spriteID: 2943403eb7e2c414698fca74e0ee5574
@@ -115,30 +115,8 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 750}
-    spritePosition: {x: 4382, y: 2070}
-  - name: <Grupo>
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 4
-      width: 577
-      height: 738
-    spriteID: dbce116c9247aad4092df0774054cc2c
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
     uvTransform: {x: 4, y: 4}
-    spritePosition: {x: 4465, y: 2540}
+    spritePosition: {x: 4382, y: 2070}
   spriteImportData: []
   rigSpriteImportData: []
   sharedRigSpriteImportData: []
@@ -194,16 +172,6 @@ ScriptedImporter:
     parentIndex: 0
     spriteID: 2943403eb7e2c414698fca74e0ee5574
     layerID: 3
-    mosaicPosition: {x: 4, y: 750}
-    flatten: 0
-    isImported: 1
-    isVisible: 1
-  - name: <Grupo>
-    spriteName: <Grupo>
-    isGroup: 0
-    parentIndex: 0
-    spriteID: dbce116c9247aad4092df0774054cc2c
-    layerID: 2
     mosaicPosition: {x: 4, y: 4}
     flatten: 0
     isImported: 1
