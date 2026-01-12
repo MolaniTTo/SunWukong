@@ -26,6 +26,9 @@ public class DialogueUI : MonoBehaviour
     [Header("Input Actions")]
     [SerializeField] private InputActionReference continueAction;
 
+    [Header("Audio")]
+    public AudioSource dialogueAudioSource;
+
     //ESTAT DEL DIÀLEG
     private DialogueData.DialogueLine[] lines; //Línies del diàleg actuals
     private int index; //Índex de la línia actual
@@ -42,6 +45,12 @@ public class DialogueUI : MonoBehaviour
     {
         if (dialoguePanel != null) { dialoguePanel.SetActive(false); } //Assegura que el panell de diàleg està desactivat al principi
         if (continueButton != null) { continueButton.onClick.AddListener(OnContinuePressed); } //Assigna el botó de continuar
+
+        if(dialogueAudioSource == null)
+        {
+            dialogueAudioSource = gameObject.AddComponent<AudioSource>();
+            dialogueAudioSource.playOnAwake = false;
+        }
     }
 
     private void OnEnable()
@@ -97,6 +106,11 @@ public class DialogueUI : MonoBehaviour
     {
         ForceClearInternalState();
 
+        if(dialogueAudioSource != null && dialogueAudioSource.isPlaying)
+        {
+            dialogueAudioSource.Stop();
+        }
+
         if(dialoguePanel != null) { dialoguePanel.SetActive(false); } //Desactiva el panell de diàleg
 
         onFinishCallback?.Invoke(); //Invoca el callback quan el diàleg acaba
@@ -136,6 +150,11 @@ public class DialogueUI : MonoBehaviour
             dialogueText.text = lines[index].text; //Mostra la línia completa
             isTyping = false;
             canContinue = true;
+
+            if(dialogueAudioSource != null && dialogueAudioSource.isPlaying)
+            {
+                dialogueAudioSource.Stop();
+            }
             return;
         }
 
@@ -156,6 +175,14 @@ public class DialogueUI : MonoBehaviour
         if (lines == null || index < 0 || index >= lines.Length) return;
 
         DialogueData.DialogueLine line = lines[index]; //Línia actual del diàleg
+
+        if(line.lineAudio != null && dialogueAudioSource != null)
+        {
+            dialogueAudioSource.Stop();
+            dialogueAudioSource.clip = line.lineAudio;
+            dialogueAudioSource.Play();
+        }
+
         if (autoAdvance && continueButton != null)
         {
             continueButton.gameObject.SetActive(false);
@@ -232,6 +259,11 @@ public class DialogueUI : MonoBehaviour
     private void EndDialogue()
     {
         Debug.Log("DialogueUI: Diàleg acabat.");
+
+        if(dialogueAudioSource != null && dialogueAudioSource.isPlaying)
+        {
+            dialogueAudioSource.Stop();
+        }
 
         dialoguePanel.SetActive(false); //Desactiva el panell de diàleg
       

@@ -83,6 +83,12 @@ public class PlayerStateMachine : MonoBehaviour
     private Collider2D cachedVineCollider = null;
     private HingeJoint2D currentVineJoint;
 
+    [Header("Vine Settings")]
+    public float maxVineDistance = 3.5f; //Distancia máxima per agafar una liana
+    public float vineAttachSpeedDamping = 0.7f; //Reducció de velocitat al agafar la liana
+    public float maxSwingSpeed = 12f; //Velocitat máxima de balanceig
+    public float swingDrag = 0.5f; //Resistència al balanceig
+
     [Header("Dialogue")]
     [SerializeField] public bool dialogueLocked = false; //true mentre el diàleg està actiu
 
@@ -377,7 +383,7 @@ public class PlayerStateMachine : MonoBehaviour
         CheckIfGrounded();
         CheckWallCollision();
 
-        if (onSlope && moveInput.x == 0 && isGrounded)
+        if (onSlope && moveInput.x == 0 && isGrounded) 
         {
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
             SetGravity(0f);
@@ -392,6 +398,12 @@ public class PlayerStateMachine : MonoBehaviour
             Move();
             HandleSlopeStep();
         }
+
+        if (currentState == PlayerState.Swinging)
+        {
+            ApplySwingPhysics();
+        }
+            
     }
 
     // ==================== CALLBACKS DE INPUTS ====================
@@ -957,6 +969,8 @@ public class PlayerStateMachine : MonoBehaviour
 
             foreach (var hit in hits) //per cada liana trobada
             {
+                if (hit.attachedRigidbody == null) continue;
+
                 float dist = Vector2.Distance(vineCheckPoint.position, hit.transform.position); //calculem la distancia entre el vineCheckPoint i la liana
                 if (dist < minDist) //si la distancia es menor que la distancia minima actual
                 {
@@ -979,13 +993,28 @@ public class PlayerStateMachine : MonoBehaviour
     {
         if (cachedVineCollider == null || currentVineJoint != null) { return; } //si no hi ha liana o ja estem enganxats a una liana, sortim
 
+        //Amortiguem la velocitat abans de enganxar-nos a la liana perque no quedi brusc i no s'estiri massa la liana
+        float fallSpeed = Mathf.Abs(rb.linearVelocity.y);
+        if (fallSpeed > 5f) //si caiem molt rapid
+        {
+            rb.linearVelocity = new Vector2(
+                rb.linearVelocity.x * vineAttachSpeedDamping,
+                rb.linearVelocity.y * vineAttachSpeedDamping
+            );
+        }
+
         currentVineJoint = gameObject.AddComponent<HingeJoint2D>(); //creem un nou HingeJoint2D al jugador
         currentVineJoint.connectedBody = cachedVineCollider.attachedRigidbody; //connectem el HingeJoint2D al Rigidbody2D de la liana
         currentVineJoint.autoConfigureConnectedAnchor = false; //desactivem l'auto configuracio dels anchors (per defecte estan a (0,0))
-
         currentVineJoint.anchor = new Vector2(1.1f, 2.3f); //posicio de l'anchor al jugador
         currentVineJoint.connectedAnchor = Vector2.zero;
+        currentVineJoint.enableCollision = false; //desactivem la colisio entre el jugador i la liana
 
+        currentVineJoint.useLimits = true;
+        JointAngleLimits2D limits = currentVineJoint.limits;
+        limits.min = -85f;
+        limits.max = 85f;
+        currentVineJoint.limits = limits;
         //rb.linearVelocity = Vector2.zero; ho tinc commentat perque crec que queda millor si conserva la velocitat que portava abans d'agafar la liana
         SetGravity(1f); //revisar si cal posar-ho aqui
         ChangeState(PlayerState.Swinging); //canviem a estat Swinging
@@ -995,6 +1024,7 @@ public class PlayerStateMachine : MonoBehaviour
     {
         if (currentVineJoint != null) //si ja tenim un HingeJoint2D creat
         {
+            currentVineJoint.enabled = false;
             Destroy(currentVineJoint); //eliminem el HingeJoint2D
             currentVineJoint = null;
         }
@@ -1016,23 +1046,60 @@ public class PlayerStateMachine : MonoBehaviour
 
         if (jumpReleased && currentState == PlayerState.Swinging) //si li deixem anar el espai i estem enganxats a una liana
         {
-            if (currentVineJoint == null) return;
+            if (currentVineJoint == null || !currentVineJoint.enabled) return;
 
+            if (currentVineJoint.connectedBody == null)
+            {
+                DetachFromVine();
+                return;
+            }
+
+            //guardem les dades abans de desenganxar-nos
             Transform anchor = currentVineJoint.connectedBody.transform;
             Vector2 anchorPos = anchor.position;
-            Vector2 currentSwungVelocity = rb.linearVelocity;
+            Vector2 playerPos = transform.position;
+            Vector2 currentSwingVelocity = rb.linearVelocity;
 
-            Vector2 ropeDir = (transform.position - anchor.position).normalized;
+            //Direccio de la corda
+            Vector2 ropeDir = (playerPos - anchorPos).normalized;
+
+            //Tangent (perpendicular a la corda)
             Vector2 tangent = new Vector2(ropeDir.y, -ropeDir.x); // (puedes invertir signos si se invierte el lado)
-            Vector2 jumpDir = (tangent * 1.0f + Vector2.up * 0.8f).normalized;
 
-            Debug.DrawRay(transform.position, ropeDir * 2f, Color.red, 2f);
-            Debug.DrawRay(transform.position, tangent * 2f, Color.cyan, 2f);
-            Debug.DrawRay(transform.position, jumpDir * 2f, Color.yellow, 2f);
+            // Verificar que la tangente apunta en la dirección correcta del movimiento
+            if (Vector2.Dot(tangent, currentSwingVelocity) < 0)
+            {
+                tangent = -tangent;
+            }
+
+            //Mirar la magnitud de la velocitat per aplicar-la al salt
+            float currentSpeed = currentSwingVelocity.magnitude;
+            float speedRatio = Mathf.Clamp01(currentSpeed / maxSwingSpeed);
+
+            //Calcul de la veliitat de salt segons dos factors:
+            //Tangent (més ràpid = més tangent)
+            //Velocitat actual (més ràpid = més horitzontal)
+            float horizontalInfluence = 0.7f + (speedRatio * 0.3f); // De 0.7 a 1.0
+            float verticalInfluence = 0.6f + ((1f - speedRatio) * 0.4f); // De 1.0 a 0.6
+
+            Vector2 jumpDirection = (tangent * horizontalInfluence + Vector2.up * verticalInfluence).normalized;
 
             DetachFromVine();
 
-            rb.linearVelocity = (currentSwungVelocity * 0.8f) + (jumpDir * (jumpForce * 1.6f));
+            float momentumRetention = 0.75f; // Conservamos 75% del momentum
+            float jumpBoost = jumpForce * 1.3f; // Impulso base
+
+            float dynamicBoost = jumpBoost * Mathf.Lerp(1.2f, 0.9f, speedRatio);
+
+            Vector2 finalVelocity = (currentSwingVelocity * momentumRetention) + (jumpDirection * dynamicBoost);
+
+            //Limirar la velocitat vertical maxima per evitar salts massa alts
+            if (finalVelocity.y > 20f)
+            {
+                finalVelocity.y = 20f;
+            }
+
+            rb.linearVelocity = finalVelocity;
 
             audioSource.Stop();
             if (jumpSound != null)
@@ -1040,6 +1107,36 @@ public class PlayerStateMachine : MonoBehaviour
                 audioSource.PlayOneShot(jumpSound); //reproduim el so de saltar sense que es talli el que s'estigui reproduint
             }
         }
+    }
+
+    public void ApplySwingPhysics()
+    {
+        if (currentVineJoint == null || !currentVineJoint.enabled) return;
+
+        //Limitar la velocitat maxima de balanceig
+        if (rb.linearVelocity.magnitude > maxSwingSpeed)
+        {
+            rb.linearVelocity = rb.linearVelocity.normalized * maxSwingSpeed;
+        }
+
+        //Aplicar fregament per reduir la velocitat amb el temps
+        if (Mathf.Abs(moveInput.x) < 0.1f) //si no hi ha input de moviment
+        {
+            rb.linearVelocity = Vector2.Lerp(
+                rb.linearVelocity,
+                rb.linearVelocity * (1f - swingDrag),
+                Time.fixedDeltaTime * 5f // Multiplicamos por 5 para que el lerp sea más efectivo
+            );
+        }
+
+        else
+        {
+            //si no hi ha input de moviment aplicar una força addicional en la direccio del moviment
+            //aixo permet mantenir la velocitat de balanceig quan es dona input
+            float pushForce = moveInput.x * 2f;
+            rb.AddForce(new Vector2(pushForce, 0f), ForceMode2D.Force);
+        }
+
     }
 
     private void HandleFlip()
