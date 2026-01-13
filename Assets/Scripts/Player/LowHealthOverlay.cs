@@ -10,7 +10,7 @@ public class LowHealthOverlay : MonoBehaviour
 
     private bool isLowHealth => playerHealth.health <= lowHealthThreshold;
 
-    private void Update()
+    public void Update()
     {
         if (isLowHealth)
         {

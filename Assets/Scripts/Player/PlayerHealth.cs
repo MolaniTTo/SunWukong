@@ -17,7 +17,5 @@ public class PlayerHealth : MonoBehaviour
         {
             lowHealthOverlay.Update();
         }
-   
-
-  
+    }
 }
