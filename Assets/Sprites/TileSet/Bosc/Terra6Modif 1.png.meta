@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 28f781e1d1787064fb31a0956b9c2ed6
+guid: 7cc73743cf433044abd0a9e90646f8b0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4153842054190601001
-    second: Terra2Modif_0
+      213: -7090612378524343243
+    second: Terra6Modif 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -73,9 +73,9 @@ TextureImporter:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
-    resizeAlgorithm: 1
+    resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -85,6 +85,32 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 12
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -100,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Terra2Modif_0
+      name: Terra6Modif 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -108,21 +134,21 @@ TextureImporter:
         width: 256
         height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9231c1d175965a930800000000000000
-      internalID: 4153842054190601001
+      spriteID: 534a1120c95199d90800000000000000
+      internalID: -7090612378524343243
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terra2Modif_1
+      name: Terra6Modif 1_1
       rect:
         serializedVersion: 2
         x: 256
@@ -130,21 +156,21 @@ TextureImporter:
         width: 256
         height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1ed6fea4babf5594284aac3f7a4e7f0a
-      internalID: -730786757
+      spriteID: c298ff1d67b551f4b8275ae3aab39676
+      internalID: 1909935263
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terra2Modif_2
+      name: Terra6Modif 1_2
       rect:
         serializedVersion: 2
         x: 512
@@ -152,21 +178,21 @@ TextureImporter:
         width: 256
         height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b183604b0b03d254cbba6e34c1f8c1d4
-      internalID: -256729201
+      spriteID: f6848fd3a8c6c2246b1e45241dacff1d
+      internalID: -559258346
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terra2Modif_4
+      name: Terra6Modif 1_4
       rect:
         serializedVersion: 2
         x: 0
@@ -174,21 +200,21 @@ TextureImporter:
         width: 256
         height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 62260f213c4f2ca49b1b6b5f25f631dd
-      internalID: -881148190
+      spriteID: 5474c39e5b2d930498fadfec971d8753
+      internalID: 48144688
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terra2Modif_5
+      name: Terra6Modif 1_5
       rect:
         serializedVersion: 2
         x: 256
@@ -196,21 +222,21 @@ TextureImporter:
         width: 256
         height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b3c8c7062bf1a704ebb7904128761ff6
-      internalID: 1671891817
+      spriteID: 85f809e93fa6f2d4680acec62876c13b
+      internalID: 1104873079
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terra2Modif_6
+      name: Terra6Modif 1_6
       rect:
         serializedVersion: 2
         x: 512
@@ -218,21 +244,21 @@ TextureImporter:
         width: 256
         height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aad765c94c11c674586c0e5a7d5b925d
-      internalID: -388548616
+      spriteID: 66f1ca751cd9d6749b4da032f9330b9c
+      internalID: -1887082035
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terra2Modif_7
+      name: Terra6Modif 1_7
       rect:
         serializedVersion: 2
         x: 0
@@ -240,21 +266,21 @@ TextureImporter:
         width: 256
         height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0068b0f652b9bfb4ab5ac4c6cb330c34
-      internalID: 82150691
+      spriteID: acac51017e9341c45b30e4c2cc9a75bf
+      internalID: -64504440
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terra2Modif_8
+      name: Terra6Modif 1_8
       rect:
         serializedVersion: 2
         x: 256
@@ -262,21 +288,21 @@ TextureImporter:
         width: 256
         height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 719b81edf72ca3a4fba50eab53e1157b
-      internalID: 257642634
+      spriteID: 506c72aaf1db70a4bb0169310cdea8dc
+      internalID: 605771161
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terra2Modif_9
+      name: Terra6Modif 1_9
       rect:
         serializedVersion: 2
         x: 512
@@ -284,15 +310,15 @@ TextureImporter:
         width: 256
         height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5fa040305029e834299bf783e4403066
-      internalID: 210392368
+      spriteID: b49965295fe8918409b1d037f57d1711
+      internalID: 1042929957
       vertices: []
       indices: 
       edges: []
@@ -301,7 +327,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: a9729188993c8054185e1f31cfe8cb0f
+    spriteID: 00bcd0a094dd7a946b8365f0a78a6432
     internalID: 0
     vertices: []
     indices: 
@@ -311,16 +337,16 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Terra2Modif_0: 4153842054190601001
-      Terra2Modif_1: -730786757
-      Terra2Modif_2: -256729201
-      Terra2Modif_3: 1231656053
-      Terra2Modif_4: -881148190
-      Terra2Modif_5: 1671891817
-      Terra2Modif_6: -388548616
-      Terra2Modif_7: 82150691
-      Terra2Modif_8: 257642634
-      Terra2Modif_9: 210392368
+      Terra6Modif 1_0: -7090612378524343243
+      Terra6Modif 1_1: 1909935263
+      Terra6Modif 1_2: -559258346
+      Terra6Modif 1_3: 1529999946
+      Terra6Modif 1_4: 48144688
+      Terra6Modif 1_5: 1104873079
+      Terra6Modif 1_6: -1887082035
+      Terra6Modif 1_7: -64504440
+      Terra6Modif 1_8: 605771161
+      Terra6Modif 1_9: 1042929957
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
