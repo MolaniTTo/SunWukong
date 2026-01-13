@@ -8,7 +8,10 @@ public class ExitGame : MonoBehaviour
     public GameObject panel;
     public Button PlayButton;
     public Button OptionsButton;
+    public Button ControllsButton;
     public Button ExitButton;
+
+    public Button SelectedInPanel;
 
     private void Start()
     {
@@ -18,7 +21,9 @@ public class ExitGame : MonoBehaviour
     {
         PlayButton.interactable = false;
         OptionsButton.interactable = false;
+        ControllsButton.interactable = false;
         ExitButton.interactable = false;
+        SelectedInPanel.Select();
         panel.SetActive(true);
     }
 
@@ -26,8 +31,10 @@ public class ExitGame : MonoBehaviour
     {
         PlayButton.interactable = true;
         OptionsButton.interactable = true;
+        ControllsButton.interactable = true;
         ExitButton.interactable = true;
         panel.SetActive(false);
+        ExitButton.Select();
     }
 
     public void QuitGame()

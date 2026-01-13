@@ -112,6 +112,9 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("Particles")]
     [SerializeField] private GameObject touchGroundParticlePrefab;
     private Vector2 lastGroundPoint;
+    [SerializeField] private GameObject invertedControllsParticlePrefab;
+    public GameObject invertedParticleSpawnPoint;
+
 
     private float defaultGravity = 2f;
     private float currentGravity = 2f;
