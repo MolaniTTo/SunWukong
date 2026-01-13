@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7524865539494589326}
   - component: {fileID: 1590971862027051755}
   - component: {fileID: 3737747205005738013}
+  - component: {fileID: 3859852292798627464}
   m_Layer: 0
   m_Name: Terremoto 1
   m_TagString: Untagged
@@ -179,6 +180,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.5803528, y: 3.7202349}
   m_EdgeRadius: 0
+--- !u!210 &3859852292798627464
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129183675052675782}
+  m_Enabled: 1
+  m_SortingLayerID: -681294695
+  m_SortingLayer: 8
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1 &3242840415954667407
 GameObject:
   m_ObjectHideFlags: 0
