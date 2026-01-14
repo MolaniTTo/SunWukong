@@ -613,8 +613,9 @@ GameObject:
   - component: {fileID: 7913821257540648277}
   - component: {fileID: 7030777111556759559}
   - component: {fileID: 3764918775174816234}
+  - component: {fileID: 1071354104915094381}
   m_Layer: 0
-  m_Name: Serpiente
+  m_Name: SERPIENTE
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -783,6 +784,9 @@ MonoBehaviour:
   HissSound: {fileID: 8300000, guid: 8fd9c41b0f8c34f42aa1bc40db25dd29, type: 3}
   AttackSound: {fileID: 8300000, guid: 6c762667036ef3b489055e31d3f785e9, type: 3}
   DeathSound: {fileID: 8300000, guid: b9db3036aa39a4e40a545e161fc92545, type: 3}
+  HurtSound: {fileID: 0}
+  deathEffectHandler: {fileID: 1071354104915094381}
+  playerRef: {fileID: 0}
 --- !u!114 &4846055957204223416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -896,7 +900,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -912,6 +916,28 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.0001, y: 0.0001}
   m_EdgeRadius: 0
+--- !u!114 &1071354104915094381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075560064836783643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66da62a36324960438253584a18ae4a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deathEffectPrefab: {fileID: 141433446842962269, guid: 63e11f0d9e35b554aa3141b66b09c555, type: 3}
+  effectOffset: {x: 2, y: 1, z: 0}
+  effectDuration: 1.5
+  deathSound: {fileID: 8300000, guid: c2cbe93734795f4479d3fa690848483d, type: 3}
+  deathSoundVolume: 1
+  destroyDelay: 2
+  destroyAfterAnimation: 1
+  fadeOutSprite: 0
+  fadeDuration: 0
+  showDebugLogs: 1
 --- !u!1 &2240772105360248111
 GameObject:
   m_ObjectHideFlags: 0
@@ -1333,7 +1359,7 @@ Transform:
   m_GameObject: {fileID: 8163833906321376230}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -20.190002, y: 10.405, z: 0}
+  m_LocalPosition: {x: -19.9, y: -6.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
