@@ -13,7 +13,7 @@ public class EnemySnake : EnemyBase
     public float detectionRange = 8f;
     public float attackRange = 0.8f;
     public LayerMask playerLayer;
-    public bool facingRight = false; // sprite mira a la izquierda por defecto
+    public bool facingRight = false;
     public Animator animator;
     public CharacterHealth characterHealth;
 
@@ -23,18 +23,18 @@ public class EnemySnake : EnemyBase
     [Header("Raycast Settings")]
     public Transform rayOrigin;
     public float rayLength = 8f;
-    public Vector2 rayOffset = new Vector2(0f, 0.4f); // X en 0 para que sea el centro exacto
+    public Vector2 rayOffset = new Vector2(0f, 0.4f);
 
     [Header("Ground & Wall Detection")]
-    public Transform groundCheck; // Punto para detectar suelo
-    public Transform wallCheck; // Punto para detectar paredes
+    public Transform groundCheck;
+    public Transform wallCheck;
     public float wallCheckDistance = 0.5f;
-    public LayerMask groundLayer; // Capa del suelo/paredes
+    public LayerMask groundLayer;
 
     [Header("Movement Settings")]
     public float patrolSpeed = 2f;
     public float chaseSpeed = 3.5f;
-    public float patrolDistance = 5f; // Distancia máxima de patrulla desde posición inicial
+    public float patrolDistance = 5f;
     private Vector2 startPosition;
 
     [Header("Combat Settings")]
@@ -48,13 +48,21 @@ public class EnemySnake : EnemyBase
 
     [Header("Audio")]
     public AudioSource audioSource;
-    public AudioClip HissSound; // Sonido de siseo (patrulla y persecución)
-    public AudioClip AttackSound; // Sonido de mordisco
-    public AudioClip DeathSound; // Sonido de muerte
+    public AudioClip HissSound;
+    public AudioClip AttackSound;
+    public AudioClip DeathSound;
+    public AudioClip HurtSound;
+
+    [Header("Efecto de muerte Script")]
+    public DeathEffectHandler deathEffectHandler;
+
+    [Header("PlayerRef")]
+    public PlayerStateMachine playerRef;
 
     private Rigidbody2D rb;
     private Transform player;
     private bool isAttacking = false;
+    private bool isDead = false;
 
     public Transform Player => player;
 
@@ -122,15 +130,26 @@ public class EnemySnake : EnemyBase
         DeathState = new SerpienteDeath(this);
 
         StateMachine.Initialize(PatrolState);
+
+        if (playerRef == null)
+        {
+            playerRef = FindAnyObjectByType<PlayerStateMachine>();
+        }
     }
 
     protected override void Update()
     {
-        StateMachine.Update();
+        if (!isDead)
+        {
+            StateMachine.Update();
+        }
     }
 
     private void Death()
     {
+        if (isDead) return;
+        
+        isDead = true;
         animator.SetTrigger("Die");
 
         StopHissSound();
@@ -139,21 +158,56 @@ public class EnemySnake : EnemyBase
             audioSource.PlayOneShot(DeathSound);
 
         if (rb != null)
+        {
             rb.linearVelocity = Vector2.zero;
+            rb.bodyType = RigidbodyType2D.Static;
+        }
+
+        // Deshabilitar colisiones
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        if (biteCollider != null)
+            biteCollider.SetActive(false);
+
+        // Iniciar secuencia de muerte con efectos
+        if (deathEffectHandler != null)
+        {
+            deathEffectHandler.TriggerDeathSequence();
+        }
+        else
+        {
+            // Fallback: destruir después de un tiempo
+            Destroy(gameObject, 2f);
+        }
     }
 
-private void Damaged(float currentHealth, GameObject attacker)
-{
-    isAttacking = false; 
-    if (biteCollider != null) biteCollider.SetActive(false);
-    
-    // Limpiamos órdenes de ataque pendientes
-    animator.ResetTrigger("Attack");
-    animator.SetTrigger("Damaged");
-}
+    private void Damaged(float currentHealth, GameObject attacker)
+    {
+        if (isDead) return;
+
+        isAttacking = false;
+        if (biteCollider != null) 
+            biteCollider.SetActive(false);
+
+        animator.ResetTrigger("Attack");
+        animator.SetTrigger("Damaged");
+
+        if (audioSource != null && HurtSound != null)
+        {
+            audioSource.PlayOneShot(HurtSound);
+        }
+    }
+
+    public bool CheckIfPlayerIsDead()
+    {
+        if (playerRef == null) return false;
+        return playerRef.isDead;
+    }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+        if (isDead) return;
         if (!collision.gameObject.CompareTag("Player")) return;
 
         if (Time.time >= lastContactDamageTime + contactDamageCooldown)
@@ -174,13 +228,13 @@ private void Damaged(float currentHealth, GameObject attacker)
         facingRight = !facingRight;
 
         Vector3 scale = bone_1.localScale;
-        scale.y *= -1; 
+        scale.y *= -1;
         bone_1.localScale = scale;
 
         if (rayOrigin != null)
         {
             Vector3 pos = rayOrigin.localPosition;
-            pos.x *= -1; 
+            pos.x *= -1;
             rayOrigin.localPosition = pos;
         }
     }
@@ -207,29 +261,45 @@ private void Damaged(float currentHealth, GameObject attacker)
     }
 
     public override bool CanSeePlayer()
-{
-    if (player == null) return false;
-
-    Vector2 origenConOffset = (Vector2)transform.position + rayOffset;
-    Vector2 direccion = facingRight ? Vector2.right : Vector2.left;
-
-    RaycastHit2D hit = Physics2D.Raycast(origenConOffset, direccion, detectionRange, playerLayer);
-    
-    if (hit.collider != null && hit.collider.CompareTag("Player"))
     {
-        return true;
-    }
+        if (player == null || isDead) return false;
 
-    return false;
-}
+        // Verificar si el jugador está muerto
+        if (CheckIfPlayerIsDead()) return false;
+
+        Vector2 origenConOffset = (Vector2)transform.position + rayOffset;
+        Vector2 direccion = facingRight ? Vector2.right : Vector2.left;
+
+        // Primero verificar distancia
+        float distanceToPlayer = Vector2.Distance(origenConOffset, player.position);
+        if (distanceToPlayer > detectionRange) return false;
+
+        // Verificar dirección del jugador
+        Vector2 dirToPlayer = (player.position - (Vector3)origenConOffset).normalized;
+        float dot = Vector2.Dot(direccion, dirToPlayer);
+
+        // Raycast para detectar al jugador
+        RaycastHit2D hit = Physics2D.Raycast(origenConOffset, dirToPlayer, detectionRange, playerLayer);
+
+        if (hit.collider != null && hit.collider.CompareTag("Player"))
+        {
+            // Si el jugador está detrás, girar
+            if (dot < 0)
+            {
+                Flip();
+            }
+            return true;
+        }
+
+        return false;
+    }
 
     public bool IsPlayerInAttackRange()
     {
-        if (player == null) return false;
-        
-        // CAMBIO: Origen de distancia fijo
+        if (player == null || isDead) return false;
+        if (CheckIfPlayerIsDead()) return false;
+
         Vector2 centroCuerpo = (Vector2)transform.position + rayOffset;
-        
         float distanceToPlayer = Vector2.Distance(centroCuerpo, player.position);
         return distanceToPlayer <= attackRange;
     }
@@ -238,7 +308,7 @@ private void Damaged(float currentHealth, GameObject attacker)
 
     public void MoveTowardsPlayer()
     {
-        if (player == null || rb == null) return;
+        if (player == null || rb == null || isDead) return;
 
         Vector2 direction = (player.position - transform.position).normalized;
 
@@ -269,6 +339,8 @@ private void Damaged(float currentHealth, GameObject attacker)
 
     public void Patrol()
     {
+        if (isDead) return;
+
         float leftLimit = startPosition.x - patrolDistance;
         float rightLimit = startPosition.x + patrolDistance;
 
@@ -305,7 +377,7 @@ private void Damaged(float currentHealth, GameObject attacker)
 
     public override void Attack()
     {
-        if (player == null) return;
+        if (player == null || isDead) return;
 
         if (IsPlayerInAttackRange())
         {
@@ -320,25 +392,26 @@ private void Damaged(float currentHealth, GameObject attacker)
 
     public bool CanAttack()
     {
-        return Time.time - lastAttackTime >= attackCooldown && !isAttacking;
+        return Time.time - lastAttackTime >= attackCooldown && !isAttacking && !isDead;
     }
 
     public void StartAttack()
-{
-    if (isAttacking) return;
+    {
+        if (isAttacking || isDead) return;
 
-    isAttacking = true;
-    lastAttackTime = Time.time;
-    
-    // IMPORTANTE: Apagar booleanos para que no interfieran con la animación de ataque
-    animator.SetBool("isMoving", false);
-    animator.SetBool("isChasing", false);
-    
-    animator.SetTrigger("Attack");
-}
+        isAttacking = true;
+        lastAttackTime = Time.time;
+
+        animator.SetBool("isMoving", false);
+        animator.SetBool("isChasing", false);
+
+        animator.SetTrigger("Attack");
+    }
 
     public void OnBiteImpact()
     {
+        if (isDead) return;
+        
         if (biteCollider != null)
             biteCollider.SetActive(true);
         Attack();
@@ -365,7 +438,6 @@ private void Damaged(float currentHealth, GameObject attacker)
 
     private void OnDrawGizmosSelected()
     {
-        // CAMBIO: Origen de dibujo fijo
         Vector3 centroCuerpo = transform.position + (Vector3)rayOffset;
 
         Gizmos.color = Color.yellow;
@@ -386,7 +458,6 @@ private void Damaged(float currentHealth, GameObject attacker)
 
     private void OnDrawGizmos()
     {
-        // CAMBIO: Origen de rayo azul fijo
         Vector3 origenGizmo = transform.position + (Vector3)rayOffset;
         Vector3 forwardDir = facingRight ? Vector3.right : Vector3.left;
 
@@ -399,5 +470,5 @@ private void Damaged(float currentHealth, GameObject attacker)
             Gizmos.color = Color.magenta;
             Gizmos.DrawLine(wallCheck.position, wallCheck.position + wallDir * wallCheckDistance);
         }
-    } 
+    }
 }
