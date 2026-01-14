@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class SerpientePatrol : IState
 {
     private EnemySnake snake;
@@ -11,16 +13,19 @@ public class SerpientePatrol : IState
     {
         snake.animator.SetBool("isMoving", true);
         snake.animator.SetBool("isChasing", false);
+        snake.StopHissSound();
     }
 
     public void Update()
     {
-        if (snake.CanSeePlayer())
+        // Si detecta al jugador y no está muerto, perseguirlo
+        if (snake.CanSeePlayer() && !snake.CheckIfPlayerIsDead())
         {
             snake.StateMachine.ChangeState(new SerpienteChase(snake));
             return;
         }
 
+        // Continuar patrullando
         snake.Patrol();
     }
 

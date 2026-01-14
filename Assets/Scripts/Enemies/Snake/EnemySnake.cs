@@ -13,7 +13,7 @@ public class EnemySnake : EnemyBase
     public float detectionRange = 8f;
     public float attackRange = 0.8f;
     public LayerMask playerLayer;
-    public bool facingRight = false; // sprite mira a la izquierda por defecto
+    public bool facingRight = false;
     public Animator animator;
     public CharacterHealth characterHealth;
 
@@ -23,17 +23,18 @@ public class EnemySnake : EnemyBase
     [Header("Raycast Settings")]
     public Transform rayOrigin;
     public float rayLength = 8f;
+    public Vector2 rayOffset = new Vector2(0f, 0.4f);
 
     [Header("Ground & Wall Detection")]
-    public Transform groundCheck; // Punto para detectar suelo
-    public Transform wallCheck; // Punto para detectar paredes
+    public Transform groundCheck;
+    public Transform wallCheck;
     public float wallCheckDistance = 0.5f;
-    public LayerMask groundLayer; // Capa del suelo/paredes
+    public LayerMask groundLayer;
 
     [Header("Movement Settings")]
     public float patrolSpeed = 2f;
     public float chaseSpeed = 3.5f;
-    public float patrolDistance = 5f; // Distancia máxima de patrulla desde posición inicial
+    public float patrolDistance = 5f;
     private Vector2 startPosition;
 
     [Header("Combat Settings")]
@@ -47,13 +48,21 @@ public class EnemySnake : EnemyBase
 
     [Header("Audio")]
     public AudioSource audioSource;
-    public AudioClip HissSound; // Sonido de siseo (patrulla y persecución)
-    public AudioClip AttackSound; // Sonido de mordisco
-    public AudioClip DeathSound; // Sonido de muerte
+    public AudioClip HissSound;
+    public AudioClip AttackSound;
+    public AudioClip DeathSound;
+    public AudioClip HurtSound;
+
+    [Header("Efecto de muerte Script")]
+    public DeathEffectHandler deathEffectHandler;
+
+    [Header("PlayerRef")]
+    public PlayerStateMachine playerRef;
 
     private Rigidbody2D rb;
     private Transform player;
     private bool isAttacking = false;
+    private bool isDead = false;
 
     public Transform Player => player;
 
@@ -121,15 +130,26 @@ public class EnemySnake : EnemyBase
         DeathState = new SerpienteDeath(this);
 
         StateMachine.Initialize(PatrolState);
+
+        if (playerRef == null)
+        {
+            playerRef = FindAnyObjectByType<PlayerStateMachine>();
+        }
     }
 
     protected override void Update()
     {
-        StateMachine.Update();
+        if (!isDead)
+        {
+            StateMachine.Update();
+        }
     }
 
     private void Death()
     {
+        if (isDead) return;
+        
+        isDead = true;
         animator.SetTrigger("Die");
 
         StopHissSound();
@@ -138,16 +158,56 @@ public class EnemySnake : EnemyBase
             audioSource.PlayOneShot(DeathSound);
 
         if (rb != null)
+        {
             rb.linearVelocity = Vector2.zero;
+            rb.bodyType = RigidbodyType2D.Static;
+        }
+
+        // Deshabilitar colisiones
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        if (biteCollider != null)
+            biteCollider.SetActive(false);
+
+        // Iniciar secuencia de muerte con efectos
+        if (deathEffectHandler != null)
+        {
+            deathEffectHandler.TriggerDeathSequence();
+        }
+        else
+        {
+            // Fallback: destruir después de un tiempo
+            Destroy(gameObject, 2f);
+        }
     }
 
     private void Damaged(float currentHealth, GameObject attacker)
     {
+        if (isDead) return;
+
+        isAttacking = false;
+        if (biteCollider != null) 
+            biteCollider.SetActive(false);
+
+        animator.ResetTrigger("Attack");
         animator.SetTrigger("Damaged");
+
+        if (audioSource != null && HurtSound != null)
+        {
+            audioSource.PlayOneShot(HurtSound);
+        }
+    }
+
+    public bool CheckIfPlayerIsDead()
+    {
+        if (playerRef == null) return false;
+        return playerRef.isDead;
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+        if (isDead) return;
         if (!collision.gameObject.CompareTag("Player")) return;
 
         if (Time.time >= lastContactDamageTime + contactDamageCooldown)
@@ -166,12 +226,19 @@ public class EnemySnake : EnemyBase
         if (bone_1 == null) return;
 
         facingRight = !facingRight;
+
         Vector3 scale = bone_1.localScale;
-        scale.y *= -1; // solo flipear Y
+        scale.y *= -1;
         bone_1.localScale = scale;
+
+        if (rayOrigin != null)
+        {
+            Vector3 pos = rayOrigin.localPosition;
+            pos.x *= -1;
+            rayOrigin.localPosition = pos;
+        }
     }
 
-    // Reproducir sonido de siseo en loop
     public void PlayHissSound()
     {
         if (audioSource != null && HissSound != null)
@@ -185,7 +252,6 @@ public class EnemySnake : EnemyBase
         }
     }
 
-    // Detener sonido de siseo
     public void StopHissSound()
     {
         if (audioSource != null && audioSource.clip == HissSound)
@@ -196,19 +262,24 @@ public class EnemySnake : EnemyBase
 
     public override bool CanSeePlayer()
     {
-        if (player == null) return false;
+        if (player == null || isDead) return false;
 
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        // Verificar si el jugador está muerto
+        if (CheckIfPlayerIsDead()) return false;
 
+        Vector2 origenConOffset = (Vector2)transform.position + rayOffset;
+        Vector2 direccion = facingRight ? Vector2.right : Vector2.left;
+
+        // Primero verificar distancia
+        float distanceToPlayer = Vector2.Distance(origenConOffset, player.position);
         if (distanceToPlayer > detectionRange) return false;
 
-        Vector2 forwardDir = facingRight ? Vector2.right : Vector2.left;
-        Vector2 dirToPlayer = (player.position - transform.position).normalized;
-        float dot = Vector2.Dot(forwardDir, dirToPlayer);
+        // Verificar dirección del jugador
+        Vector2 dirToPlayer = (player.position - (Vector3)origenConOffset).normalized;
+        float dot = Vector2.Dot(direccion, dirToPlayer);
 
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin.position, dirToPlayer, detectionRange, playerLayer);
-
-        Debug.DrawRay(rayOrigin.position, dirToPlayer * detectionRange, Color.red);
+        // Raycast para detectar al jugador
+        RaycastHit2D hit = Physics2D.Raycast(origenConOffset, dirToPlayer, detectionRange, playerLayer);
 
         if (hit.collider != null && hit.collider.CompareTag("Player"))
         {
@@ -225,8 +296,11 @@ public class EnemySnake : EnemyBase
 
     public bool IsPlayerInAttackRange()
     {
-        if (player == null) return false;
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        if (player == null || isDead) return false;
+        if (CheckIfPlayerIsDead()) return false;
+
+        Vector2 centroCuerpo = (Vector2)transform.position + rayOffset;
+        float distanceToPlayer = Vector2.Distance(centroCuerpo, player.position);
         return distanceToPlayer <= attackRange;
     }
 
@@ -234,22 +308,19 @@ public class EnemySnake : EnemyBase
 
     public void MoveTowardsPlayer()
     {
-        if (player == null || rb == null) return;
+        if (player == null || rb == null || isDead) return;
 
         Vector2 direction = (player.position - transform.position).normalized;
 
-        // Asegurarse de que mira hacia el jugador
         if ((direction.x > 0 && !facingRight) || (direction.x < 0 && facingRight))
         {
             Flip();
         }
 
-        // Detectar si hay suelo delante antes de moverse
         Vector2 frontDirection = facingRight ? Vector2.right : Vector2.left;
         Vector2 frontGroundCheck = (Vector2)groundCheck.position + (frontDirection * 0.5f);
         RaycastHit2D groundHit = Physics2D.Raycast(frontGroundCheck, Vector2.down, 1f, groundLayer);
 
-        // Solo moverse si hay suelo delante
         if (groundHit.collider != null)
         {
             rb.linearVelocity = new Vector2(direction.x * chaseSpeed, rb.linearVelocity.y);
@@ -262,57 +333,32 @@ public class EnemySnake : EnemyBase
         }
         else
         {
-            // No hay suelo delante, detenerse
             StopMovement();
         }
     }
 
     public void Patrol()
     {
-        // Calcular límites de patrulla basados en la posición inicial
+        if (isDead) return;
+
         float leftLimit = startPosition.x - patrolDistance;
         float rightLimit = startPosition.x + patrolDistance;
 
-        // Detectar pared delante
         Vector2 wallDirection = facingRight ? Vector2.right : Vector2.left;
         RaycastHit2D wallHit = Physics2D.Raycast(wallCheck.position, wallDirection, wallCheckDistance, groundLayer);
 
-        // Detectar si hay suelo delante (para evitar caer)
         Vector2 frontGroundCheck = (Vector2)groundCheck.position + (wallDirection * 0.5f);
         RaycastHit2D groundHit = Physics2D.Raycast(frontGroundCheck, Vector2.down, 1f, groundLayer);
 
-        // LÓGICA CORREGIDA: Primero determinar si necesita girar, luego hacer Flip UNA SOLA VEZ
         bool needsToFlip = false;
 
-        // Verificar límites de patrulla
-        if (transform.position.x <= leftLimit && !facingRight)
-        {
-            needsToFlip = true; // Necesita mirar a la derecha
-        }
-        else if (transform.position.x >= rightLimit && facingRight)
-        {
-            needsToFlip = true; // Necesita mirar a la izquierda
-        }
-        // Verificar pared
-        else if (wallHit.collider != null)
-        {
-            needsToFlip = true; // Necesita girar
-        }
-        // Verificar borde (no hay suelo delante)
-        else if (groundHit.collider == null)
-        {
-            needsToFlip = true; // Necesita girar
-        }
+        if (transform.position.x <= leftLimit && !facingRight) needsToFlip = true;
+        else if (transform.position.x >= rightLimit && facingRight) needsToFlip = true;
+        else if (wallHit.collider != null) needsToFlip = true;
+        else if (groundHit.collider == null) needsToFlip = true;
 
-        // Si necesita girar, hacer Flip una sola vez
-        if (needsToFlip)
-        {
-            Flip();
-        }
+        if (needsToFlip) Flip();
 
-        // MOVIMIENTO: Usar facingRight como fuente de verdad
-        // facingRight = false → mover a la izquierda (-1)
-        // facingRight = true → mover a la derecha (+1)
         float direction = facingRight ? 1f : -1f;
         rb.linearVelocity = new Vector2(direction * patrolSpeed, rb.linearVelocity.y);
 
@@ -331,40 +377,41 @@ public class EnemySnake : EnemyBase
 
     public override void Attack()
     {
-        if (player == null) return;
+        if (player == null || isDead) return;
 
-        if (Vector2.Distance(transform.position, player.position) <= attackRange)
+        if (IsPlayerInAttackRange())
         {
             CharacterHealth playerHealth = player.GetComponent<CharacterHealth>();
             if (playerHealth != null)
                 playerHealth.TakeDamage(attackDamage, gameObject);
         }
 
-        // Reproducir sonido de mordisco
         if (audioSource != null && AttackSound != null)
             audioSource.PlayOneShot(AttackSound);
     }
 
     public bool CanAttack()
     {
-        return Time.time - lastAttackTime >= attackCooldown && !isAttacking;
+        return Time.time - lastAttackTime >= attackCooldown && !isAttacking && !isDead;
     }
 
     public void StartAttack()
     {
-        if (isAttacking) return;
+        if (isAttacking || isDead) return;
 
         isAttacking = true;
         lastAttackTime = Time.time;
-        StopMovement();
 
         animator.SetBool("isMoving", false);
         animator.SetBool("isChasing", false);
+
         animator.SetTrigger("Attack");
     }
 
     public void OnBiteImpact()
     {
+        if (isDead) return;
+        
         if (biteCollider != null)
             biteCollider.SetActive(true);
         Attack();
@@ -391,13 +438,14 @@ public class EnemySnake : EnemyBase
 
     private void OnDrawGizmosSelected()
     {
+        Vector3 centroCuerpo = transform.position + (Vector3)rayOffset;
+
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.DrawWireSphere(centroCuerpo, detectionRange);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(centroCuerpo, attackRange);
 
-        // Mostrar límites de patrulla
         if (Application.isPlaying)
         {
             Gizmos.color = Color.cyan;
@@ -410,29 +458,17 @@ public class EnemySnake : EnemyBase
 
     private void OnDrawGizmos()
     {
-        // Raycast de detección del jugador
-        if (rayOrigin != null)
-        {
-            Vector2 forwardDir = facingRight ? Vector2.right : Vector2.left;
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(rayOrigin.position, rayOrigin.position + (Vector3)(forwardDir * rayLength));
-        }
+        Vector3 origenGizmo = transform.position + (Vector3)rayOffset;
+        Vector3 forwardDir = facingRight ? Vector3.right : Vector3.left;
 
-        // Raycast de detección de pared
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(origenGizmo, origenGizmo + forwardDir * detectionRange);
+
         if (wallCheck != null)
         {
-            Vector2 wallDirection = facingRight ? Vector2.right : Vector2.left;
+            Vector3 wallDir = facingRight ? Vector3.right : Vector3.left;
             Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3)(wallDirection * wallCheckDistance));
-        }
-
-        // Raycast de detección de suelo
-        if (groundCheck != null)
-        {
-            Vector2 frontCheck = facingRight ? Vector2.right : Vector2.left;
-            Vector3 checkPos = groundCheck.position + (Vector3)(frontCheck * 0.5f);
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(checkPos, checkPos + Vector3.down);
+            Gizmos.DrawLine(wallCheck.position, wallCheck.position + wallDir * wallCheckDistance);
         }
     }
 }
