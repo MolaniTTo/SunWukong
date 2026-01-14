@@ -300,6 +300,37 @@ Transform:
   - {fileID: 6061789604418771430}
   m_Father: {fileID: 342886799821009094}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2543017063710700541
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7002239783273226879}
+  m_Layer: 0
+  m_Name: WallCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7002239783273226879
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2543017063710700541}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -43.81, y: 17.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2507620661425746904}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2778917351241669357
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,6 +660,7 @@ Transform:
   - {fileID: 1078252369336871955}
   - {fileID: 1530634402561665528}
   - {fileID: 1210564170350863324}
+  - {fileID: 7002239783273226879}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1992013763133737635
@@ -750,11 +782,11 @@ MonoBehaviour:
   rayOrigin: {fileID: 1530634402561665528}
   rayLength: 8
   groundCheck: {fileID: 1210564170350863324}
-  wallCheck: {fileID: 0}
+  wallCheck: {fileID: 7002239783273226879}
   wallCheckDistance: 0.5
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   patrolSpeed: 2
   chaseSpeed: 3.5
   patrolDistance: 5
@@ -764,11 +796,9 @@ MonoBehaviour:
   contactDamageCooldown: 1
   biteCollider: {fileID: 0}
   audioSource: {fileID: 0}
-  InRangeSound: {fileID: 0}
-  OutOfRangeSound: {fileID: 0}
+  HissSound: {fileID: 0}
   AttackSound: {fileID: 0}
   DeathSound: {fileID: 0}
-  HurtSound: {fileID: 0}
 --- !u!114 &9149856462708674256
 MonoBehaviour:
   m_ObjectHideFlags: 0
