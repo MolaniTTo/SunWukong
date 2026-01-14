@@ -69,6 +69,8 @@ public class PlayerStateMachine : MonoBehaviour
     public CharacterHealth characterHealth;
     public Transform lastCheckPoint;
     public FirstSequence firstSequence;
+    public bool isPlayerOnGorilaBossZone = false; 
+    public bool isPlayerOnMonjeBossZone = false;
 
 
     [Header("Jump tuning")]
@@ -238,9 +240,6 @@ public class PlayerStateMachine : MonoBehaviour
         healAction.performed -= OnHealPerformed;
         healAction.canceled -= OnHealCanceled;
 
-        blockAction.performed -= OnBlockPerformed;
-        blockAction.canceled -= OnBlockCanceled;
-
         specialAttackPunchAction.performed -= OnSpecialAttackPunchPerformed;
 
         swingAction.performed -= OnSwingPerformed;
@@ -248,6 +247,8 @@ public class PlayerStateMachine : MonoBehaviour
 
         if (hasStaff)
         {
+            blockAction.performed -= OnBlockPerformed;
+            blockAction.canceled -= OnBlockCanceled;
             staffClimbAction.performed -= OnStaffClimbPerformed;
             staffClimbAction.canceled -= OnStaffClimbCanceled;
             specialAttackStaffAction.performed -= OnSpecialAttackStaffPerformed;

@@ -187,6 +187,10 @@ public class ProgressManager : MonoBehaviour
 
         //Desactiva els enemics que ja han sigut derrotats
         ApplyDefeatedEnemies();
+
+        ApplyCollectedBananas();
+
+        ApplyCompletedDialogues();
     }
 
     private void ApplyDefeatedEnemies()
@@ -215,10 +219,63 @@ public class ProgressManager : MonoBehaviour
         }
     }
 
+    private void ApplyCollectedBananas()
+    {
+        //Busca tots els plátanos a l'escena
+        BananaPickup[] allBananas = FindObjectsByType<BananaPickup>(FindObjectsSortMode.None);
+        int bananasDisabled = 0;
+
+        foreach (BananaPickup banana in allBananas)
+        {
+            //Genera un ID únic per al plátano
+            string bananaID = GenerateBananaID(banana.gameObject);
+
+            //Si ja ha estat recollit, el desactiva
+            if (currentProgress.collectedBananas.Contains(bananaID))
+            {
+                banana.gameObject.SetActive(false);
+                bananasDisabled++;
+            }
+        }
+
+        if (bananasDisabled > 0)
+        {
+            Debug.Log($"plátanos desactivados según progreso: {bananasDisabled}");
+        }
+    }
+
+    private void ApplyCompletedDialogues()
+    {
+        //Busca tots els NPCs amb diàleg a l'escena
+        NPCDialogue[] allNPCs = FindObjectsByType<NPCDialogue>(FindObjectsSortMode.None);
+        int dialoguesApplied = 0;
+
+        foreach (NPCDialogue npc in allNPCs)
+        {
+            if (npc.dialogue != null)
+            {
+                string dialogueID = npc.dialogue.name; //Usem el nom del ScriptableObject com a ID
+
+                //Si aquest diàleg ja s'ha completat, marquem-lo com a usat
+                if (currentProgress.completedDialogues.Contains(dialogueID))
+                {
+                    npc.dialogue.hasBeenUsed = true;
+                    dialoguesApplied++;
+                    Debug.Log($"Diálogo '{dialogueID}' marcado como completado");
+                }
+            }
+        }
+
+        if (dialoguesApplied > 0)
+        {
+            Debug.Log($"Diálogos aplicados según progreso: {dialoguesApplied}");
+        }
+    }
+
     private float CalculateProgressPercentage() //calcula el percentatge de progrés basat en els enemics derrotats, checkpoints i habilitats
     {
         //Exemple simple: cada enemic derrotat = 1 punt, bastó = 10 punts, cada checkpoint = 5 punts
-        int totalPossibleItems = 104; // Ajusta según tu juego
+        int totalPossibleItems = 202; // Ajusta según tu juego
         int completedItems = currentProgress.defeatedEnemies.Count +
                             (currentProgress.hasStaff ? 10 : 0) +
                             currentProgress.unlockedCheckpoints.Count * 5;
@@ -255,6 +312,63 @@ public class ProgressManager : MonoBehaviour
         return $"{sceneName}_{enemy.name}_{Mathf.RoundToInt(pos.x)}_{Mathf.RoundToInt(pos.y)}"; //ID únic
     }
 
+    // ==================== PLÁTANOS ====================
+
+    public void RegisterBananaCollected(GameObject banana)
+    {
+        string bananaID = GenerateBananaID(banana);
+
+        if (!currentProgress.collectedBananas.Contains(bananaID))
+        {
+            currentProgress.collectedBananas.Add(bananaID);
+            Debug.Log($"Plátano recogido: {bananaID}");
+            SaveProgress(); //Auto-guardar al recoger plátanos
+        }
+    }
+
+    public bool IsBananaCollected(GameObject banana)
+    {
+        string bananaID = GenerateBananaID(banana);
+        return currentProgress.collectedBananas.Contains(bananaID);
+    }
+
+    private string GenerateBananaID(GameObject banana)
+    {
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        Vector3 pos = banana.transform.position;
+
+        //Incluïm també el tipus de plátano per si hi ha dos del mateix tipus al mateix lloc
+        BananaPickup bananaScript = banana.GetComponent<BananaPickup>();
+        string bananaType = bananaScript != null ? bananaScript.bananaType.ToString() : "Unknown";
+
+        return $"{sceneName}_Banana_{bananaType}_{Mathf.RoundToInt(pos.x)}_{Mathf.RoundToInt(pos.y)}";
+    }
+
+    // ==================== DIÁLOGOS ====================
+
+    public void RegisterDialogueCompleted(DialogueData dialogue)
+    {
+        if (dialogue == null) return;
+
+        string dialogueID = dialogue.name; //Usem el nom del ScriptableObject
+
+        if (!currentProgress.completedDialogues.Contains(dialogueID))
+        {
+            currentProgress.completedDialogues.Add(dialogueID);
+            Debug.Log($"Diálogo completado: {dialogueID}");
+            SaveProgress(); //Auto-guardar al completar diálogos
+        }
+    }
+
+    public bool IsDialogueCompleted(DialogueData dialogue)
+    {
+        if (dialogue == null) return false;
+
+        string dialogueID = dialogue.name;
+        return currentProgress.completedDialogues.Contains(dialogueID);
+    }
+
+
     // ==================== CHECKPOINTS ====================
 
     public void RegisterCheckpoint(Transform checkpoint) //registra un checkpoint com a desbloquejat
@@ -289,7 +403,7 @@ public class ProgressManager : MonoBehaviour
                 }
             }
 
-            Debug.Log("?? Staff desbloqueado!");
+            Debug.Log("Staff desbloqueado!");
             SaveProgress(); // Auto-guardar en desbloquejar habilitats
         }
     }
@@ -339,6 +453,12 @@ public class GameProgress //estructura que guarda totes les dades del progrés de
 
     //Enemics derrotats amb IDs únics
     public List<string> defeatedEnemies = new List<string>();
+
+    //Plátanos recollits amb IDs únics
+    public List<string> collectedBananas = new List<string>();
+
+    //Diàlegs completats (guardant el nom del ScriptableObject)
+    public List<string> completedDialogues = new List<string>();
 
     //Configuracio de mode NoHit
     public bool isOneHitMode = false;
