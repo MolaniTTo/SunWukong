@@ -41,6 +41,15 @@ public class NPCDialogue : MonoBehaviour
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform; //referència al jugador
+                                                                        // Comprobar si este diálogo ya está completado según el ProgressManager
+        if (ProgressManager.Instance != null && dialogue != null)
+        {
+            if (ProgressManager.Instance.IsDialogueCompleted(dialogue))
+            {
+                dialogue.hasBeenUsed = true;
+                Debug.Log($"Diálogo '{dialogue.name}' ya completado anteriormente");
+            }
+        }
     }
 
     private void OnEnable()
@@ -144,6 +153,11 @@ public class NPCDialogue : MonoBehaviour
 
     private void OnDialogueFinished()
     {
+        if (ProgressManager.Instance != null && dialogue != null)
+        {
+            ProgressManager.Instance.RegisterDialogueCompleted(dialogue);
+        }
+
         Debug.Log("NPCDialogue: Diálogo finalizado para " + gameObject.name);
 
         if (monjeBoss != null) { monjeBoss.dialogueFinished = true; }

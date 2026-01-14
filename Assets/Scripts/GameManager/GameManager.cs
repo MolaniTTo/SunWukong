@@ -26,6 +26,10 @@ public class GameManager : MonoBehaviour
     public float totalDamageTaken;
     public bool playerDead;
 
+    [Header("BossSettings")]
+    public BossTriggerZone2D gorilaBossZone;
+    public BossTriggerZone2D monjeBossZone;
+
     private void OnEnable()
     {
         CombatEvents.OnPlayerAttack += OnAttack;
@@ -64,6 +68,14 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                if (player.isPlayerOnGorilaBossZone)
+                {
+                    monjeBossZone.OnPlayerDefeated(); //cridem a la funcio perque el jugador surti de la zona del boss
+                }
+                else if (player.isPlayerOnMonjeBossZone)
+                {
+                    monjeBossZone.OnPlayerDefeated(); //cridem a la funcio perque el jugador surti de la zona del boss
+                }
 
                 screenFade.FadeOut(); //fem fade out
                 StartCoroutine(RespawnPlayer()); //respawnejem el jugador

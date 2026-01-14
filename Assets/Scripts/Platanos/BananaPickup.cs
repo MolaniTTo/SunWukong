@@ -17,12 +17,6 @@ public class BananaPickup : MonoBehaviour
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private GameObject visualContainer; // Contenedor con sprite y partículas idle
     
-    [Header("Interaction")]
-    [SerializeField] private float interactionRange = 2f;
-    
-    private bool playerInRange = false;
-    private PlayerStateMachine playerController;
-    private InputSystem_Actions inputActions;
     private SpriteRenderer spriteRenderer;
     public AudioSource audioSource;
     
@@ -38,7 +32,6 @@ public class BananaPickup : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
-        inputActions = new InputSystem_Actions();
         
         // Si no tiene AudioSource, añadirlo automáticamente
         if (audioSource == null)
@@ -48,50 +41,19 @@ public class BananaPickup : MonoBehaviour
             audioSource.spatialBlend = 0f; // 2D sound
         }
     }
-    
-    private void OnEnable()
-    {
-        inputActions.Player.Enable();
-    }
-    
-    private void OnDisable()
-    {
-        inputActions.Player.Disable();
-    }
-    
-    private void Update()
-    {
-        if (playerInRange && playerController != null)
-        {
-            Debug.Log($"Jugador en rango, esperando input... (dialogueLocked: {playerController.dialogueLocked})");
-            
-            // Leer directamente del Input System sin pasar por el player controller
-            if (inputActions.Player.AttackPunch.triggered)
-            {
-                Debug.Log("¡Botón A detectado! Recogiendo plátano...");
-                CollectBanana();
-            }
-            
-            // También permitir con el botón de salto como alternativa
-            if (inputActions.Player.Jump.triggered)
-            {
-                Debug.Log("¡Botón de salto detectado! Recogiendo plátano...");
-                CollectBanana();
-            }
-        }
-    }
-    
+
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log($"Trigger detectado con: {collision.gameObject.name}, Tag: {collision.tag}");
-        
+
         if (collision.CompareTag("Player"))
         {
-            playerController = collision.GetComponent<PlayerStateMachine>();
+            PlayerStateMachine playerController = collision.GetComponent<PlayerStateMachine>();
             if (playerController != null)
             {
-                playerInRange = true;
-                Debug.Log("¡Jugador en rango del plátano! Presiona A/X para recoger.");
+                Debug.Log("¡Jugador detectado! Recogiendo plátano automáticamente...");
+                CollectBanana(playerController);
             }
             else
             {
@@ -100,37 +62,32 @@ public class BananaPickup : MonoBehaviour
         }
     }
     
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            Debug.Log("Jugador salió del rango del plátano");
-            playerInRange = false;
-            playerController = null;
-        }
-    }
-    
-    private void CollectBanana()
+    private void CollectBanana(PlayerStateMachine playerController)
     {
         if (playerController == null) return;
-        
+
+        if (ProgressManager.Instance != null)
+        {
+            ProgressManager.Instance.RegisterBananaCollected(gameObject);
+        }
+
         // Aplicar efecto según el tipo de plátano
         switch (bananaType)
         {
             case BananaType.Yellow:
-                ApplyYellowBananaEffect();
+                ApplyYellowBananaEffect(playerController);
                 break;
                 
             case BananaType.Green:
-                ApplyGreenBananaEffect();
+                ApplyGreenBananaEffect(playerController);
                 break;
                 
             case BananaType.Red:
-                ApplyRedBananaEffect();
+                ApplyRedBananaEffect(playerController);
                 break;
                 
             case BananaType.Blue:
-                ApplyBlueBananaEffect();
+                ApplyBlueBananaEffect(playerController);
                 break;
         }
         
@@ -170,7 +127,7 @@ public class BananaPickup : MonoBehaviour
         Destroy(gameObject, soundLength + 0.1f);
     }
     
-    private void ApplyYellowBananaEffect()
+    private void ApplyYellowBananaEffect(PlayerStateMachine playerController)
     {
         // Aumentar Ki máximo
         playerController.maxKi += yellowMaxKiBonus;
@@ -186,7 +143,7 @@ public class BananaPickup : MonoBehaviour
         Debug.Log($"¡Plátano Amarillo recogido! Ki máximo aumentado a {playerController.maxKi}");
     }
     
-    private void ApplyGreenBananaEffect()
+    private void ApplyGreenBananaEffect(PlayerStateMachine playerController)
     {
         // Aumentar vida máxima
         CharacterHealth health = playerController.characterHealth;
@@ -208,7 +165,7 @@ public class BananaPickup : MonoBehaviour
         Debug.Log($"¡Plátano Verde recogido! Vida máxima aumentada en {greenMaxHealthBonus}");
     }
     
-    private void ApplyRedBananaEffect()
+    private void ApplyRedBananaEffect(PlayerStateMachine playerController)
     {
         // Aumentar daño de ataques
         PlayerDamageModifier damageModifier = playerController.GetComponent<PlayerDamageModifier>();
@@ -222,7 +179,7 @@ public class BananaPickup : MonoBehaviour
         Debug.Log($"¡Plátano Rojo recogido! Daño aumentado en {redDamageBonus}");
     }
     
-    private void ApplyBlueBananaEffect()
+    private void ApplyBlueBananaEffect(PlayerStateMachine playerController)
     {
         // Reducir consumo de Ki
         float reductionFactor = 1f - (blueKiReductionPercent / 100f);
@@ -249,12 +206,6 @@ public class BananaPickup : MonoBehaviour
         }
     }
     
-    // Visualización del rango de interacción en el editor
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactionRange);
-    }
 }
 
 // Script adicional para manejar el modificador de daño
