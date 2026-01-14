@@ -3,7 +3,7 @@ using UnityEngine;
 public class SerpienteAttack : IState
 {
     private EnemySnake snake;
-    private bool attackExecuted = false;
+    private bool stateExiting = false;
 
     public SerpienteAttack(EnemySnake snake)
     {
@@ -12,54 +12,76 @@ public class SerpienteAttack : IState
 
     public void Enter()
     {
+        stateExiting = false;
+        // Mirar al jugador al empezar
+        if (snake.Player != null)
+        {
+            float dir = snake.Player.position.x - snake.transform.position.x;
+            if (dir > 0 && !snake.facingRight) snake.Flip();
+            else if (dir < 0 && snake.facingRight) snake.Flip();
+        }
+
         snake.StartAttack();
-        attackExecuted = false;
-        snake.StopHissSound(); // Detener siseo durante ataque
+        snake.StopHissSound();
     }
 
     public void Update()
     {
-        // Seguir la dirección del jugador durante el ataque
-        TrackPlayer();
+        if (stateExiting) return;
+
+        // Si el mono sale del CÍRCULO ROJO, cortamos el ataque al instante
+        if (!snake.IsPlayerInAttackRange())
+        {
+            ExitToMovement();
+            return;
+        }
 
         AnimatorStateInfo stateInfo = snake.animator.GetCurrentAnimatorStateInfo(0);
 
-        if (stateInfo.IsName("attack") && stateInfo.normalizedTime >= 0.9f && !attackExecuted)
+        // Si sigue en el círculo y terminó la animación, atacamos de nuevo
+        if (stateInfo.IsName("attack") && stateInfo.normalizedTime >= 0.95f)
         {
-            attackExecuted = true;
-
-            if (snake.CanSeePlayer() && snake.IsPlayerInAttackRange() && snake.CanAttack())
-                snake.StateMachine.ChangeState(new SerpienteAttack(snake));
-            else if (snake.CanSeePlayer())
-                snake.StateMachine.ChangeState(new SerpienteChase(snake));
-            else
-                snake.StateMachine.ChangeState(new SerpientePatrol(snake));
+            if (snake.CanAttack())
+            {
+                snake.StartAttack();
+            }
         }
     }
 
-    private void TrackPlayer()
+private void ExitToMovement()
+{
+    stateExiting = true;
+    
+    // Resetear estado de ataque
+    snake.OnAttackEnd();
+    if (snake.biteCollider != null) 
+        snake.biteCollider.SetActive(false);
+    
+    // Limpiar todos los triggers y forzar salida
+    snake.animator.ResetTrigger("Attack");
+    snake.animator.ResetTrigger("Damaged");
+    
+    // CLAVE: Forzar la reproducción de otro estado inmediatamente
+    if (snake.CanSeePlayer())
     {
-        if (snake.Player == null) return;
-
-        // Calcular la dirección hacia el jugador
-        float directionToPlayer = snake.Player.position.x - snake.transform.position.x;
-
-        // Si el jugador está a la derecha y la serpiente mira a la izquierda, voltear
-        if (directionToPlayer > 0 && !snake.facingRight)
-        {
-            snake.Flip();
-        }
-        // Si el jugador está a la izquierda y la serpiente mira a la derecha, voltear
-        else if (directionToPlayer < 0 && snake.facingRight)
-        {
-            snake.Flip();
-        }
+        snake.animator.SetBool("isMoving", false);
+        snake.animator.SetBool("isChasing", true);
+        // Forzar la transición inmediatamente
+        snake.animator.Play("walk", 0, 0f); // Reproduce walk desde el inicio
+        snake.StateMachine.ChangeState(new SerpienteChase(snake));
     }
+    else
+    {
+        snake.animator.SetBool("isChasing", false);
+        snake.animator.SetBool("isMoving", true);
+        // Forzar la transición inmediatamente
+        snake.animator.Play("walk", 0, 0f); // Reproduce walk desde el inicio
+        snake.StateMachine.ChangeState(new SerpientePatrol(snake));
+    }
+}
 
     public void Exit()
     {
-        // Evitar que la animación de walk se reproduzca al salir del ataque
-        snake.animator.SetBool("isMoving", false);
-        snake.animator.SetBool("isChasing", false);
+        snake.animator.ResetTrigger("Attack");
     }
 }
