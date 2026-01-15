@@ -2384,7 +2384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baf791b961fe4614fac37ebfcf5fdb58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 100
   currentHealth: 0
   characterName: Tigre
   isPlayer: 0
@@ -2486,7 +2486,7 @@ SortingGroup:
   m_GameObject: {fileID: 7727942836551285428}
   m_Enabled: 1
   m_SortingLayerID: -412599195
-  m_SortingLayer: 9
+  m_SortingLayer: 11
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!82 &5905687591289899678
