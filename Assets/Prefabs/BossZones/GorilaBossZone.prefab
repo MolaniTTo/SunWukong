@@ -770,7 +770,7 @@ GameObject:
   - component: {fileID: 2753042625218402133}
   m_Layer: 0
   m_Name: GorilaBossZone
-  m_TagString: Untagged
+  m_TagString: GorilaBossZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1015,6 +1015,7 @@ MonoBehaviour:
   camBoss: {fileID: 8842155409872340466}
   camNormal: {fileID: 0}
   invisibleWalls: {fileID: 1577032268667172061}
+  playerStateMachine: {fileID: 0}
 --- !u!61 &7575990629901617796
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1201,6 +1202,10 @@ PrefabInstance:
       propertyPath: gorilaAudioSource
       value: 
       objectReference: {fileID: 8007017577401420012}
+    - target: {fileID: 2491986031086959011, guid: 9f23f24567fc7f940abf657bf3fdd84e, type: 3}
+      propertyPath: deathEffectHandler
+      value: 
+      objectReference: {fileID: 1517629711019208118}
     - target: {fileID: 2491986031086959011, guid: 9f23f24567fc7f940abf657bf3fdd84e, type: 3}
       propertyPath: gorilaMusicController
       value: 

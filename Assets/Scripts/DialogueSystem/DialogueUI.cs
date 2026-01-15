@@ -53,6 +53,11 @@ public class DialogueUI : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (dialoguePanel != null) { dialoguePanel.SetActive(false); }
+    }
+
     private void OnEnable()
     {
         if(continueAction != null)

@@ -1,5 +1,4 @@
 using Unity.Cinemachine;
-
 using UnityEngine;
 
 public enum BossType { Gorila, Monje }
@@ -14,49 +13,87 @@ public class BossTriggerZone2D : MonoBehaviour
 
     public CinemachineCamera camBoss;
     public CinemachineCamera camNormal;
-    public GameObject invisibleWalls; //parets invisibles que es activen quan el jugador entra a la zona del boss
+    public GameObject invisibleWalls;
     public PlayerStateMachine playerStateMachine;
 
     private bool triggered = false;
 
     private void Start()
     {
-        camBoss.Priority = 0; //Ens assegurem que la camara del boss comenci desactivada
-        invisibleWalls.SetActive(false); //Ens assegurem que les parets invisibles comencin desactivades
-        PlayerStateMachine playerStateMachine = playerObject.GetComponent<PlayerStateMachine>();
+        camBoss.Priority = 0;
+        invisibleWalls.SetActive(false);
+
+        // Buscar referencias si no están asignadas
+        if (playerObject == null)
+        {
+            playerObject = GameObject.FindGameObjectWithTag("Player");
+        }
+
+        if (playerObject != null)
+        {
+            playerStateMachine = playerObject.GetComponent<PlayerStateMachine>();
+        }
+
+        // Buscar BossSpawnController si no está asignado
+        if (bossSpawnController == null)
+        {
+            bossSpawnController = FindFirstObjectByType<BossSpawnController>();
+            if (bossSpawnController == null)
+            {
+                Debug.LogWarning("BossSpawnController no encontrado! OnPlayerDefeated no funcionará correctamente.");
+            }
+        }
+
         UpdateGameManagerReference();
     }
-
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (triggered) return;
         if (collision.gameObject == playerObject)
         {
-            playerStateMachine = playerObject.GetComponent<PlayerStateMachine>();
-            UpdateGameManagerReference();
-            if(bossType == BossType.Gorila) //Si es el gorila
+            // Actualizar referencia del player por si acaso
+            if (playerStateMachine == null)
             {
-                gorila.playerIsOnConfiner = true; //indiquem al monje que el jugador esta dins del confiner
-                playerStateMachine.isPlayerOnGorilaBossZone = true; //indiquem al player state machine que el jugador esta en zona de boss
+                playerStateMachine = playerObject.GetComponent<PlayerStateMachine>();
             }
-            else if(bossType == BossType.Monje) //Si es el monje
+
+            UpdateGameManagerReference();
+
+            if (bossType == BossType.Gorila)
             {
-                monje.playerIsOnConfiner = true; //indiquem al monje que el jugador esta dins del confiner
-                playerStateMachine.isPlayerOnMonjeBossZone = true; //indiquem al player state machine que el jugador esta en zona de boss
+                gorila.playerIsOnConfiner = true;
+                playerStateMachine.isPlayerOnGorilaBossZone = true;
+            }
+            else if (bossType == BossType.Monje)
+            {
+                monje.playerIsOnConfiner = true;
+                playerStateMachine.isPlayerOnMonjeBossZone = true;
             }
 
             triggered = true;
-           
-
-            camBoss.Priority = 2; //Augmentem la prioritat de la camara del boss perque s'activi
-            invisibleWalls.SetActive(true); //activem les parets invisibles
-            gameManager.CanMoveParalax(false); //desactivem el paralax
+            camBoss.Priority = 2;
+            invisibleWalls.SetActive(true);
+            gameManager.CanMoveParalax(false);
         }
     }
 
     private void UpdateGameManagerReference()
     {
+        if (gameManager == null)
+        {
+            GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
+            if (gameController != null)
+            {
+                gameManager = gameController.GetComponent<GameManager>();
+            }
+            else
+            {
+                Debug.LogError("GameController con tag 'GameController' no encontrado!");
+                return;
+            }
+        }
+
         if (gameManager != null)
         {
             if (bossType == BossType.Gorila)
@@ -68,49 +105,83 @@ public class BossTriggerZone2D : MonoBehaviour
                 gameManager.monjeBossZone = this;
             }
         }
-        else
-        {
-            gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
-            UpdateGameManagerReference();
-        }
     }
 
-
-    public void OnBossDefeated() //s'ha de cridar quan mori el gorila
+    public void OnBossDefeated()
     {
-        if(bossType == BossType.Gorila) //Si es el gorila
+        if (bossType == BossType.Gorila)
         {
-            
-            gorila.playerIsOnConfiner = false; //indiquem al monje que el jugador ja no esta dins del confiner
-            playerStateMachine.isPlayerOnGorilaBossZone = false; //indiquem al player state machine que el jugador ja no esta en zona de boss
+            gorila.playerIsOnConfiner = false;
+            if (playerStateMachine != null)
+            {
+                playerStateMachine.isPlayerOnGorilaBossZone = false;
+            }
         }
-        else if(bossType == BossType.Monje) //Si es el monje
+        else if (bossType == BossType.Monje)
         {
-            
-            monje.playerIsOnConfiner = false; //indiquem al monje que el jugador ja no esta dins del confiner
-            playerStateMachine.isPlayerOnMonjeBossZone = false; //indiquem al player state machine que el jugador ja no esta en zona de boss
-            //aqui activem booleano perque aparegui una llum i activi el dialag amb el buda de pedra
+            monje.playerIsOnConfiner = false;
+            if (playerStateMachine != null)
+            {
+                playerStateMachine.isPlayerOnMonjeBossZone = false;
+            }
         }
 
-        camBoss.Priority = 0; //Baixem la prioritat de la camara del boss perque es desactivi
-        invisibleWalls.SetActive(false); //desactivem les parets invisibles
-        gameManager.CanMoveParalax(true); //reactivem el paralax
+        camBoss.Priority = 0;
+        invisibleWalls.SetActive(false);
+
+        if (gameManager != null)
+        {
+            gameManager.CanMoveParalax(true);
+        }
     }
 
     public void OnPlayerDefeated()
     {
-        camBoss.Priority = 0; //Baixem la prioritat de la camara del boss perque es desactivi
-        camNormal.Priority = 2; //Augmentem la prioritat de la camara normal perque s'activi
-        
-        if(bossType == BossType.Gorila) //Si es el gorila
+        camBoss.Priority = 0;
+        camNormal.Priority = 2;
+
+        if (bossType == BossType.Gorila)
         {
-            playerStateMachine.isPlayerOnGorilaBossZone = false; //indiquem al player state machine que el jugador ja no esta en zona de boss
-            bossSpawnController.SpawnGorilaBossZone(); //Reapareix la zona del gorila
+            if (playerStateMachine != null)
+            {
+                playerStateMachine.isPlayerOnGorilaBossZone = false;
+            }
+            if (bossSpawnController != null)
+            {
+                bossSpawnController.SpawnGorilaBossZone();
+            }
+            else
+            {
+                Debug.LogError("BossSpawnController es null! No se puede respawnear la zona del Gorila.");
+                // Intentar encontrarlo de nuevo como último recurso
+                bossSpawnController = FindFirstObjectByType<BossSpawnController>();
+                if (bossSpawnController != null)
+                {
+                    bossSpawnController.SpawnGorilaBossZone();
+                }
+            }
         }
-        else if(bossType == BossType.Monje) //Si es el monje
+        else if (bossType == BossType.Monje)
         {
-            playerStateMachine.isPlayerOnMonjeBossZone = false; //indiquem al player state machine que el jugador ja no esta en zona de boss
-            bossSpawnController.SpawnMonjeBossZone(); //Reapareix la zona del monje
+            if (playerStateMachine != null)
+            {
+                playerStateMachine.isPlayerOnMonjeBossZone = false;
+            }
+
+            if (bossSpawnController != null)
+            {
+                bossSpawnController.SpawnMonjeBossZone();
+            }
+            else
+            {
+                Debug.LogError("BossSpawnController es null! No se puede respawnear la zona del Monje.");
+                // Intentar encontrarlo de nuevo como último recurso
+                bossSpawnController = FindFirstObjectByType<BossSpawnController>();
+                if (bossSpawnController != null)
+                {
+                    bossSpawnController.SpawnMonjeBossZone();
+                }
+            }
         }
     }
 }
