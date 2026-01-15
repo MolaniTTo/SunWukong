@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BossSpawnController : MonoBehaviour
 {
@@ -10,20 +10,26 @@ public class BossSpawnController : MonoBehaviour
 
     public void SpawnGorilaBossZone()
     {
-        if (GameObject.FindWithTag("GorilaBossZone") != null)
+        GameObject currentZone = GameObject.FindWithTag("GorilaBossZone");
+
+        if (currentZone != null)
         {
-            Destroy(GameObject.FindWithTag("GorilaBossZone"));
+            Destroy(currentZone);
         }
 
-        Instantiate(GorilaBossZonePrefab, GorilaZoneSpawnPoint.transform.position, Quaternion.identity);
+        GameObject newZone = Instantiate(GorilaBossZonePrefab, GorilaZoneSpawnPoint.transform.position, Quaternion.identity);
+
     }
+
     public void SpawnMonjeBossZone()
     {
-        if (GameObject.FindWithTag("MonjeBossZone") != null)
+        GameObject currentZone = GameObject.FindWithTag("MonjeBossZone");
+
+        if (currentZone != null)
         {
-            Destroy(GameObject.FindWithTag("MonjeBossZone"));
+            Destroy(currentZone);
         }
 
-        Instantiate(MonjeBossZonePrefab, MonjeZoneSpawnPoint.transform.position, Quaternion.identity);
+        GameObject newZone = Instantiate(MonjeBossZonePrefab, MonjeZoneSpawnPoint.transform.position, Quaternion.identity);
     }
 }

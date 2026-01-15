@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
             {
                 if (player.isPlayerOnGorilaBossZone)
                 {
-                    monjeBossZone.OnPlayerDefeated(); //cridem a la funcio perque el jugador surti de la zona del boss
+                    gorilaBossZone.OnPlayerDefeated(); //cridem a la funcio perque el jugador surti de la zona del boss
                 }
                 else if (player.isPlayerOnMonjeBossZone)
                 {
