@@ -724,7 +724,7 @@ public class PlayerStateMachine : MonoBehaviour
         {
             if (currentKi > 0)
             {
-                characterHealth.Heal(10f * Time.deltaTime);
+                characterHealth.Heal(20f * Time.deltaTime);
                 ConsumeKiOverTime(healingKiCostPerSecond);
                 if (healSound != null && !audioSource.isPlaying)
                 {
