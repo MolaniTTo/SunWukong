@@ -21,7 +21,6 @@ public class BananaPickup : MonoBehaviour
     public enum BananaType
     {
         Yellow,  // Restaura Ki al máximo
-        Green,   // Aumenta velocidad de movimiento temporalmente
         Red,     // Restaura vida al máximo
         Blue     // Ki ilimitado durante 60 segundos (barra azul)
     }
@@ -75,9 +74,6 @@ public class BananaPickup : MonoBehaviour
                 ApplyYellowBananaEffect(playerController);
                 break;
                 
-            case BananaType.Green:
-                ApplyGreenBananaEffect(playerController);
-                break;
                 
             case BananaType.Red:
                 ApplyRedBananaEffect(playerController);
@@ -132,19 +128,6 @@ public class BananaPickup : MonoBehaviour
         Debug.Log("¡Plátano Amarillo recogido! Ki restaurado al máximo");
     }
     
-    private void ApplyGreenBananaEffect(PlayerStateMachine playerController)
-    {
-        // Aumentar velocidad de movimiento temporalmente
-        PlayerTemporaryEffects tempEffects = playerController.GetComponent<PlayerTemporaryEffects>();
-        if (tempEffects == null)
-        {
-            tempEffects = playerController.gameObject.AddComponent<PlayerTemporaryEffects>();
-        }
-        
-        tempEffects.ActivateSpeedBoost(30f); // 30 segundos de velocidad aumentada
-        
-        Debug.Log("¡Plátano Verde recogido! Velocidad aumentada temporalmente");
-    }
     
     private void ApplyRedBananaEffect(PlayerStateMachine playerController)
     {

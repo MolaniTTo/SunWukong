@@ -8,13 +8,13 @@ public class PlayerTemporaryEffects : MonoBehaviour
     private BarraDeKi barraKi;
     
     private bool hasInfiniteKi = false;
-    private bool hasSpeedBoost = false;
+  
     
-    private float originalSpeed;
-    private float speedMultiplier = 1.5f; // 50% más rápido
+
+
     
     private Coroutine infiniteKiCoroutine;
-    private Coroutine speedBoostCoroutine;
+
     
     private void Awake()
     {
@@ -33,21 +33,7 @@ public class PlayerTemporaryEffects : MonoBehaviour
         infiniteKiCoroutine = StartCoroutine(InfiniteKiCoroutine(duration));
     }
     
-    public void ActivateSpeedBoost(float duration)
-    {
-        // Si ya hay un efecto activo, cancelarlo primero
-        if (speedBoostCoroutine != null)
-        {
-            StopCoroutine(speedBoostCoroutine);
-            // Restaurar velocidad antes de aplicar nuevo boost
-            if (hasSpeedBoost && playerStateMachine != null)
-            {
-                playerStateMachine.speed = originalSpeed;
-            }
-        }
-        
-        speedBoostCoroutine = StartCoroutine(SpeedBoostCoroutine(duration));
-    }
+   
     
     private IEnumerator InfiniteKiCoroutine(float duration)
     {
@@ -82,41 +68,11 @@ public class PlayerTemporaryEffects : MonoBehaviour
         Debug.Log("Efecto de Ki ilimitado terminado");
     }
     
-    private IEnumerator SpeedBoostCoroutine(float duration)
-    {
-        hasSpeedBoost = true;
-        
-        if (playerStateMachine != null)
-        {
-            // Guardar velocidad original
-            originalSpeed = playerStateMachine.speed;
-            
-            // Aplicar boost
-            playerStateMachine.speed *= speedMultiplier;
-            Debug.Log($"Velocidad aumentada de {originalSpeed} a {playerStateMachine.speed}");
-        }
-        
-        // Esperar duración
-        yield return new WaitForSeconds(duration);
-        
-        // Restaurar velocidad original
-        if (playerStateMachine != null)
-        {
-            playerStateMachine.speed = originalSpeed;
-            Debug.Log($"Velocidad restaurada a {originalSpeed}");
-        }
-        
-        hasSpeedBoost = false;
-        Debug.Log("Efecto de velocidad aumentada terminado");
-    }
+   
     
     public bool HasInfiniteKi()
     {
         return hasInfiniteKi;
     }
     
-    public bool HasSpeedBoost()
-    {
-        return hasSpeedBoost; // Added 'return' keyword
-    }
 }

@@ -15,7 +15,7 @@ public class PlayerHealth : MonoBehaviour
         LowHealthOverlay lowHealthOverlay = FindObjectOfType<LowHealthOverlay>();
         if (lowHealthOverlay != null)
         {
-            lowHealthOverlay.Update();
+            lowHealthOverlay.Refresh();
         }
     }
 }
