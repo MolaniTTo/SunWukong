@@ -30,6 +30,8 @@ public class Monje : EnemyBase
     public GameObject teletransportParticle;
     public GameObject teletransportSpawnPoint;
     public BossMusicController monjeMusicController;
+    public GameObject LowHealthPrefab;
+    public GameObject LowHealthPrefabSpawnPoint;
 
     [Header("Death Effect")]
     public DeathEffectHandler deathEffectHandler; // Sistema de efectos de muerte para el boss
@@ -43,6 +45,7 @@ public class Monje : EnemyBase
     public bool firstRayThrowed = false;
     public bool animationFinished = false;
     public bool raysFinished = false;
+    public bool LowHealthPrefabInstantiated = false;
 
     [Header("Flee")]
     public float groundCheckRadius = 0.2f;
@@ -109,12 +112,14 @@ public class Monje : EnemyBase
         if (characterHealth != null)
         {
             characterHealth.OnDeath += HandleCharacterDeath;
+            characterHealth.isInvincible = true;
         }
         
         if (!dialogueFinished)
         {
             rb.bodyType = RigidbodyType2D.Static;
         }
+
     }
 
     private void OnDestroy()
@@ -207,6 +212,18 @@ public class Monje : EnemyBase
             {
                 animator.SetTrigger("TeletransportImpact");
                 isFallingFromTeleport = false;
+            }
+        }
+
+        if (characterHealth != null && characterHealth.currentHealth <= characterHealth.maxHealth * 0.5f) //si tiene menos del 50% de vida
+        {
+            if (LowHealthPrefab != null && LowHealthPrefabSpawnPoint != null && !LowHealthPrefabInstantiated)
+            {
+                //instanciar el prefab como hijo del spawnPoint
+                Instantiate(LowHealthPrefab, LowHealthPrefabSpawnPoint.transform.position, Quaternion.identity, LowHealthPrefabSpawnPoint.transform);
+                LowHealthPrefabInstantiated = true;
+                Debug.LogWarning("Monje: LowHealthPrefab instantiated.");
+
             }
         }
     }

@@ -6,6 +6,8 @@ public class CharacterHealth : MonoBehaviour
     [Header("Stats")]
     public float maxHealth = 100f;
     public float currentHealth;
+    public bool isInvincible = false;
+    public bool isLowHealth = false;
 
     [Header("Identification")]
     public string characterName = "Unnamed";

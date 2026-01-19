@@ -17,6 +17,7 @@ public class DamageCollider : MonoBehaviour
     [SerializeField] private GameObject particleHitPrefab;
     [SerializeField] private Transform particleSpawnPoint;
 
+
     private void Awake()
     {
         if (owner == null) { owner = transform.root.gameObject; } //Assignem el propietari si no està assignat
@@ -30,6 +31,8 @@ public class DamageCollider : MonoBehaviour
         KnockBack knockBack = other.GetComponent<KnockBack>();
 
         if (characterHealth == null) { return; } // Si no té CharacterHealth, sortim
+
+        if (characterHealth.isInvincible) { return; } // Si és invencible, sortim
 
         if (knockBack != null) 
         {
