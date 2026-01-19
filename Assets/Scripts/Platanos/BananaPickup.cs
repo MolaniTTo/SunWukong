@@ -1,16 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class BananaPickup : MonoBehaviour
 {
     [Header("Banana Type")]
     public BananaType bananaType;
     
-    [Header("Stats Bonuses")]
-    [SerializeField] private float yellowMaxKiBonus = 50f;
-    [SerializeField] private float greenMaxHealthBonus = 75f;
-    [SerializeField] private float redDamageBonus = 7.5f;
-    [SerializeField] private float blueKiReductionPercent = 25f; // 25%
+    [Header("Temporary Effects Duration")]
+    [SerializeField] private float blueEffectDuration = 60f; // Duración del Ki ilimitado
     
     [Header("Visual Feedback")]
     [SerializeField] private GameObject pickupParticles; // Partículas que se instancian al recoger
@@ -22,10 +20,10 @@ public class BananaPickup : MonoBehaviour
     
     public enum BananaType
     {
-        Yellow,  // Aumenta Ki máximo
-        Green,   // Aumenta vida máxima
-        Red,     // Aumenta daño de ataques
-        Blue     // Reduce consumo de Ki
+        Yellow,  // Restaura Ki al máximo
+        Green,   // Aumenta velocidad de movimiento temporalmente
+        Red,     // Restaura vida al máximo
+        Blue     // Ki ilimitado durante 60 segundos (barra azul)
     }
     
     private void Awake()
@@ -41,7 +39,6 @@ public class BananaPickup : MonoBehaviour
             audioSource.spatialBlend = 0f; // 2D sound
         }
     }
-
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -129,66 +126,51 @@ public class BananaPickup : MonoBehaviour
     
     private void ApplyYellowBananaEffect(PlayerStateMachine playerController)
     {
-        // Aumentar Ki máximo
-        playerController.maxKi += yellowMaxKiBonus;
-        playerController.RestoreFullKi(); // Restaurar Ki al máximo nuevo
+        // Restaurar Ki al máximo
+        playerController.RestoreFullKi();
         
-        // Notificar a la barra de Ki que actualice su máximo
-        BarraDeKi barraKi = FindFirstObjectByType<BarraDeKi>();
-        if (barraKi != null)
-        {
-            barraKi.ActualizarMaxKi(playerController.maxKi);
-        }
-        
-        Debug.Log($"¡Plátano Amarillo recogido! Ki máximo aumentado a {playerController.maxKi}");
+        Debug.Log("¡Plátano Amarillo recogido! Ki restaurado al máximo");
     }
     
     private void ApplyGreenBananaEffect(PlayerStateMachine playerController)
     {
-        // Aumentar vida máxima
-        CharacterHealth health = playerController.characterHealth;
-        if (health != null)
+        // Aumentar velocidad de movimiento temporalmente
+        PlayerTemporaryEffects tempEffects = playerController.GetComponent<PlayerTemporaryEffects>();
+        if (tempEffects == null)
         {
-            health.maxHealth += greenMaxHealthBonus;
-            health.currentHealth += greenMaxHealthBonus; // Añadir la vida extra también al current
-            health.currentHealth = Mathf.Clamp(health.currentHealth, 0, health.maxHealth);
-            health.ForceHealthUpdate(); // Actualizar la UI de salud
-            
-            // Notificar a la barra de vida que actualice su máximo
-            BarraDeVida barraVida = FindFirstObjectByType<BarraDeVida>();
-            if (barraVida != null)
-            {
-                barraVida.ActualizarMaxVida(health.maxHealth);
-            }
+            tempEffects = playerController.gameObject.AddComponent<PlayerTemporaryEffects>();
         }
         
-        Debug.Log($"¡Plátano Verde recogido! Vida máxima aumentada en {greenMaxHealthBonus}");
+        tempEffects.ActivateSpeedBoost(30f); // 30 segundos de velocidad aumentada
+        
+        Debug.Log("¡Plátano Verde recogido! Velocidad aumentada temporalmente");
     }
     
     private void ApplyRedBananaEffect(PlayerStateMachine playerController)
     {
-        // Aumentar daño de ataques
-        PlayerDamageModifier damageModifier = playerController.GetComponent<PlayerDamageModifier>();
-        if (damageModifier == null)
+        // Restaurar vida al máximo
+        CharacterHealth health = playerController.characterHealth;
+        if (health != null)
         {
-            damageModifier = playerController.gameObject.AddComponent<PlayerDamageModifier>();
+            health.currentHealth = health.maxHealth;
+            health.ForceHealthUpdate();
         }
         
-        damageModifier.AddDamageBonus(redDamageBonus);
-        
-        Debug.Log($"¡Plátano Rojo recogido! Daño aumentado en {redDamageBonus}");
+        Debug.Log("¡Plátano Rojo recogido! Vida restaurada al máximo");
     }
     
     private void ApplyBlueBananaEffect(PlayerStateMachine playerController)
     {
-        // Reducir consumo de Ki
-        float reductionFactor = 1f - (blueKiReductionPercent / 100f);
+        // Activar Ki ilimitado con barra azul
+        PlayerTemporaryEffects tempEffects = playerController.GetComponent<PlayerTemporaryEffects>();
+        if (tempEffects == null)
+        {
+            tempEffects = playerController.gameObject.AddComponent<PlayerTemporaryEffects>();
+        }
         
-        playerController.specialAttackPunchCost *= reductionFactor;
-        playerController.specialAttackStaffCost *= reductionFactor;
-        playerController.healingKiCostPerSecond *= reductionFactor;
+        tempEffects.ActivateInfiniteKi(blueEffectDuration);
         
-        Debug.Log($"¡Plátano Azul recogido! Consumo de Ki reducido en {blueKiReductionPercent}%");
+        Debug.Log($"¡Plátano Azul recogido! Ki ilimitado durante {blueEffectDuration} segundos");
     }
     
     private void SpawnPickupEffects()
@@ -204,22 +186,5 @@ public class BananaPickup : MonoBehaviour
         {
             audioSource.PlayOneShot(pickupSound);
         }
-    }
-    
-}
-
-// Script adicional para manejar el modificador de daño
-public class PlayerDamageModifier : MonoBehaviour
-{
-    [HideInInspector] public float totalDamageBonus = 0f;
-    
-    public void AddDamageBonus(float bonus)
-    {
-        totalDamageBonus += bonus;
-    }
-    
-    public float GetTotalDamage(float baseDamage)
-    {
-        return baseDamage + totalDamageBonus;
     }
 }
