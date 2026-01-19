@@ -11,6 +11,10 @@ public class BarraDeKi : MonoBehaviour
     [SerializeField] private bool animarCambios = true;
     [SerializeField] private float velocidadAnimacion = 5f;
     
+    [Header("Colores")]
+    [SerializeField] private Image fillImage; // Referencia a la imagen de relleno del slider
+    private Color colorOriginal;
+    
     private float kiObjetivo;
 
     private void Start()
@@ -30,6 +34,18 @@ public class BarraDeKi : MonoBehaviour
             {
                 playerStateMachine = player.GetComponent<PlayerStateMachine>();
             }
+        }
+
+        // Obtener la imagen de relleno del slider si no está asignada
+        if (fillImage == null && sliderKi != null)
+        {
+            fillImage = sliderKi.fillRect?.GetComponent<Image>();
+        }
+        
+        // Guardar el color original
+        if (fillImage != null)
+        {
+            colorOriginal = fillImage.color;
         }
 
         // Configurar el slider
@@ -83,6 +99,30 @@ public class BarraDeKi : MonoBehaviour
         {
             sliderKi.maxValue = nuevoMaxKi;
             Debug.Log($"Max Ki de la barra actualizado a: {nuevoMaxKi}");
+        }
+    }
+    
+    // Método para cambiar el color de la barra (usado por el plátano azul)
+    public void SetBarColor(Color nuevoColor)
+    {
+        if (fillImage != null)
+        {
+            fillImage.color = nuevoColor;
+            Debug.Log($"Color de la barra de Ki cambiado a: {nuevoColor}");
+        }
+        else
+        {
+            Debug.LogWarning("BarraDeKi: No se encontró la imagen de relleno para cambiar el color");
+        }
+    }
+    
+    // Método para restaurar el color original de la barra
+    public void RestoreOriginalColor()
+    {
+        if (fillImage != null)
+        {
+            fillImage.color = colorOriginal;
+            Debug.Log("Color de la barra de Ki restaurado al original");
         }
     }
 

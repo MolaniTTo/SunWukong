@@ -52,6 +52,7 @@ public class RayManager : MonoBehaviour
         Instantiate(rayPrefab, spawnPosition, Quaternion.identity);
         yield return new WaitForSeconds(3f);
         monje.dialogueFinished = true; //marquem que ha acabat el diàleg després del primer raig
+        monje.characterHealth.isInvincible = false; //el jugador ja pot rebre danys després del primer raig
         monje.raysFinished = true; //marquem que ha acabat de tirar els raigs
         monje.playerRef.ExitDialogueMode(); //sortim del mode diàleg després del primer raig
         monje.monjeMusicController.StartBossMusic(); //iniciem la música de boss després del primer raig

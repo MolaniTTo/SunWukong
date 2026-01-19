@@ -34,6 +34,7 @@ public class DialogueUI : MonoBehaviour
     private int index; //Índex de la línia actual
     private bool isTyping;
     private bool canContinue;
+    private bool waitingForNextInput;
     private System.Action onFinishCallback; //Callback quan el diàleg acaba
     private Animator currentTargetAnimator; //Referència a l'animator de l'NPC actual
     private NPCDialogue currentNPCDialogue; //Referència al NPCDialogue actual
@@ -77,9 +78,12 @@ public class DialogueUI : MonoBehaviour
 
     private void Update()
     {
-        if (!autoAdvance && continueAction != null && continueAction.action.WasPerformedThisFrame() && canContinue)
+        if (!autoAdvance && continueAction != null && continueAction.action.WasPerformedThisFrame())
         {
-            OnContinuePressed();
+            if (!waitingForNextInput && canContinue)
+            {
+                OnContinuePressed();
+            }
         }
     }
 
@@ -155,11 +159,13 @@ public class DialogueUI : MonoBehaviour
             dialogueText.text = lines[index].text; //Mostra la línia completa
             isTyping = false;
             canContinue = true;
+            waitingForNextInput = true;
 
             if(dialogueAudioSource != null && dialogueAudioSource.isPlaying)
             {
                 dialogueAudioSource.Stop();
             }
+            StartCoroutine(ResetInputWait());
             return;
         }
 
@@ -172,6 +178,12 @@ public class DialogueUI : MonoBehaviour
         {
             EndDialogue();
         }
+    }
+
+    private IEnumerator ResetInputWait()
+    {
+        yield return null;
+        waitingForNextInput = false;
     }
 
 
@@ -231,6 +243,8 @@ public class DialogueUI : MonoBehaviour
     {
         isTyping = true;
         canContinue = false;
+        waitingForNextInput = false;
+
         foreach (char c in line)
         {
             dialogueText.text += c;
