@@ -80,7 +80,7 @@ public class DialogueUI : MonoBehaviour
     {
         if (!autoAdvance && continueAction != null && continueAction.action.WasPerformedThisFrame())
         {
-            if (!waitingForNextInput && canContinue)
+            if (isTyping || canContinue)
             {
                 OnContinuePressed();
             }
@@ -151,41 +151,35 @@ public class DialogueUI : MonoBehaviour
 
     public void OnContinuePressed()
     {
-        if (!canContinue) return;
-
         if (isTyping) //Si està escrivint, mostra la línia completa immediatament
         {
             if (typingCoroutine != null) { StopCoroutine(typingCoroutine); } //Atura l'escriptura en curs
             dialogueText.text = lines[index].text; //Mostra la línia completa
             isTyping = false;
             canContinue = true;
-            waitingForNextInput = true;
 
             if(dialogueAudioSource != null && dialogueAudioSource.isPlaying)
             {
                 dialogueAudioSource.Stop();
             }
-            StartCoroutine(ResetInputWait());
+
             return;
         }
 
-        index++;
-        if (index < lines.Length)
+        if(canContinue)
         {
-            ShowNextLine();
-        }
-        else
-        {
-            EndDialogue();
+            index++;
+            if (index < lines.Length)
+            {
+                ShowNextLine();
+            }
+            else
+            {
+                EndDialogue();
+            }
+
         }
     }
-
-    private IEnumerator ResetInputWait()
-    {
-        yield return null;
-        waitingForNextInput = false;
-    }
-
 
     private void ShowNextLine()
     {

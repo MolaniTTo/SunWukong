@@ -107,11 +107,13 @@ public class NPCDialogue : MonoBehaviour
 
         playerInRange = true;
 
-        if (!dialogue.onlyOnce || !dialogue.hasBeenUsed) //si el diàleg no és només una vegada o no s'ha utilitzat encara
+        if(!recentlyFinished && (!dialogue.onlyOnce || dialogue.hasBeenUsed))
         {
             if (bubbleSprite != null)
+            {
                 bubbleSprite.SetActive(true);
-        }
+            }
+        } 
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -122,6 +124,8 @@ public class NPCDialogue : MonoBehaviour
 
         if (bubbleSprite != null)
             bubbleSprite.SetActive(false);
+
+        recentlyFinished = false; //resetejem la variable per permetre reiniciar el diàleg si el jugador surt i torna a entrar
     }
 
     private void OpenDialogue()
@@ -175,8 +179,10 @@ public class NPCDialogue : MonoBehaviour
 
         if (bubbleSprite != null)
         {
-            bubbleSprite.SetActive(true);
+            bubbleSprite.SetActive(false);
         }
+
+        playerInRange = false;
 
         StartCoroutine(PreventImmediateRestart());
 
