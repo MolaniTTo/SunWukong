@@ -117,6 +117,7 @@ public class PlayerStateMachine : MonoBehaviour
     private Vector2 lastGroundPoint;
     [SerializeField] private GameObject invertedControllsParticlePrefab;
     public GameObject invertedParticleSpawnPoint;
+    [SerializeField] private GameObject healingAura;
 
     [Header("Attack Cooldowns")]
     public float attackCooldown = 0.1f;
@@ -200,6 +201,10 @@ public class PlayerStateMachine : MonoBehaviour
         tailDamageCollider.SetActive(false); //desactivem el collider de dany al iniciar
         if (!hasStaff) { staffObj.SetActive(false); }
 
+    if (healingAura != null)
+        {
+            healingAura.SetActive(false);
+        }
         currentKi = maxKi;
         OnKiChanged?.Invoke(currentKi);
     }
@@ -733,6 +738,12 @@ public class PlayerStateMachine : MonoBehaviour
     {
         if (isHealing)
         {
+            // Activar el aura si no está activa
+            if (healingAura != null && !healingAura.activeSelf)
+            {
+                healingAura.SetActive(true);
+            }
+
             if (currentKi > 0)
             {
                 characterHealth.Heal(20f * Time.deltaTime);
@@ -751,11 +762,23 @@ public class PlayerStateMachine : MonoBehaviour
                 animator.SetBool("HealButton", false);
                 Debug.Log("¡Ki agotado! No puedes seguir curándote.");
                 audioSource.Stop();
+                
+                // Desactivar el aura
+                if (healingAura != null)
+                {
+                    healingAura.SetActive(false);
+                }
             }
         }
 
         if (!isHealing)
         {
+            // Desactivar el aura cuando dejamos de curar
+            if (healingAura != null && healingAura.activeSelf)
+            {
+                healingAura.SetActive(false);
+            }
+
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateInfo.IsName("Idle"))
             {
