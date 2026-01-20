@@ -34,7 +34,6 @@ public class DialogueUI : MonoBehaviour
     private int index; //Índex de la línia actual
     private bool isTyping;
     private bool canContinue;
-    private bool waitingForNextInput;
     private System.Action onFinishCallback; //Callback quan el diàleg acaba
     private Animator currentTargetAnimator; //Referència a l'animator de l'NPC actual
     private NPCDialogue currentNPCDialogue; //Referència al NPCDialogue actual
@@ -237,7 +236,6 @@ public class DialogueUI : MonoBehaviour
     {
         isTyping = true;
         canContinue = false;
-        waitingForNextInput = false;
 
         foreach (char c in line)
         {

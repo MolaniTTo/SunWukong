@@ -29,6 +29,7 @@ public class PlayerStateMachine : MonoBehaviour
     private float groundCheckDelay = 0.1f;
     private float lastJumpTime = 0f;
     public bool facingRight = true; //esta mirant a la dreta (default)
+    private bool canFlip = true;
 
     [Header("Control Modifiers")]
     public bool invertedControls = false;
@@ -116,6 +117,10 @@ public class PlayerStateMachine : MonoBehaviour
     private Vector2 lastGroundPoint;
     [SerializeField] private GameObject invertedControllsParticlePrefab;
     public GameObject invertedParticleSpawnPoint;
+
+    [Header("Attack Cooldowns")]
+    public float attackCooldown = 0.1f;
+    private float lastAttackTime = 0f;
 
 
     private float defaultGravity = 2f;
@@ -595,12 +600,14 @@ public class PlayerStateMachine : MonoBehaviour
         }
 
         //ATACS
-        if (attackPunchPressed) //si premem el boto d'atac de puny i estem en un estat que ho permet
+        if (attackPunchPressed && Time.time >= lastAttackTime + attackCooldown) //si premem el boto d'atac de puny i estem en un estat que ho permet i ha passat el cooldown
         {
             if (currentState == PlayerState.Idle ||
                 currentState == PlayerState.Running ||
                 currentState == PlayerState.OnAir)
             {
+                lastAttackTime = Time.time;
+                canFlip = false; //evitem que es giri durant l'animacio d'atac
                 ChangeState(PlayerState.AttackPunch);
                 animator.SetTrigger("AttackPunch");
                 if (punchAttackSound != null)
@@ -610,12 +617,14 @@ public class PlayerStateMachine : MonoBehaviour
             }
         }
 
-        if (attackTailPressed) //si premem el boto d'atac de cua i estem en un estat que ho permet
+        if (attackTailPressed && Time.time >= lastAttackTime + attackCooldown) //si premem el boto d'atac de cua i estem en un estat que ho permet
         {
             if (currentState == PlayerState.Idle ||
                 currentState == PlayerState.Running ||
                 currentState == PlayerState.OnAir)
             {
+                lastAttackTime = Time.time;
+                canFlip = false; //evitem que es giri durant l'animacio d'atac
                 ChangeState(PlayerState.AttackTail);
                 animator.SetTrigger("AttackTail");
                 if (tailAttackSound != null)
@@ -625,12 +634,14 @@ public class PlayerStateMachine : MonoBehaviour
             }
         }
 
-        if (specialAttackPunchPressed)
+        if (specialAttackPunchPressed && Time.time >= lastAttackTime + attackCooldown)
         {
             if (currentState == PlayerState.Idle || currentState == PlayerState.Running)
             {
                 if (TryConsumeKi(specialAttackPunchCost))
                 {
+                    lastAttackTime = Time.time;
+                    canFlip = false; //evitem que es giri durant l'animacio d'atac
                     ChangeState(PlayerState.SpecialAttackPunch);
                     animator.SetTrigger("SpecialAttackPunch");
                 }
@@ -1147,7 +1158,7 @@ public class PlayerStateMachine : MonoBehaviour
     {
         if (currentState == PlayerState.Idle ||
             currentState == PlayerState.Running ||
-            currentState == PlayerState.OnAir)
+            currentState == PlayerState.OnAir && canFlip)
         {
             if (moveInput.x > 0 && !facingRight) //si es mou a la dreta i no esta mirant a la dreta
             {
@@ -1400,6 +1411,11 @@ public class PlayerStateMachine : MonoBehaviour
         invertedControls = true;
         yield return new WaitForSeconds(duration);
         invertedControls = false;
+    }
+
+    public void ResetFlip()
+    {
+        canFlip = true;
     }
 
 
