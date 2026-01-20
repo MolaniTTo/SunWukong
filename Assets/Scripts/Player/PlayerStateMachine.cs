@@ -29,7 +29,7 @@ public class PlayerStateMachine : MonoBehaviour
     private float groundCheckDelay = 0.1f;
     private float lastJumpTime = 0f;
     public bool facingRight = true; //esta mirant a la dreta (default)
-    private bool canFlip = true;
+    public bool canFlip = true;
 
     [Header("Control Modifiers")]
     public bool invertedControls = false;
@@ -1179,6 +1179,8 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void HandleFlip()
     {
+        if(!canFlip) return;
+
         if (currentState == PlayerState.Idle ||
             currentState == PlayerState.Running ||
             currentState == PlayerState.OnAir && canFlip)
@@ -1436,9 +1438,10 @@ public class PlayerStateMachine : MonoBehaviour
         invertedControls = false;
     }
 
-    public void ResetFlip()
+    public void ResetFlip() //metodo que se llama desde una animacion para permitir que el jugador pueda girar de nuevo
     {
         canFlip = true;
+        Debug.Log("Player can flip again.");
     }
 
 
