@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
 
 public class PlayerTemporaryEffects : MonoBehaviour
@@ -8,14 +7,12 @@ public class PlayerTemporaryEffects : MonoBehaviour
     private BarraDeKi barraKi;
     
     private bool hasInfiniteKi = false;
-  
-    
-
-
-    
     private Coroutine infiniteKiCoroutine;
-
     
+    [Header("Visual Feedback")]
+    [SerializeField] private GameObject infiniteKiAuraPrefab; // Aura opcional adicional para ki infinito
+    private GameObject currentInfiniteKiAura;
+
     private void Awake()
     {
         playerStateMachine = GetComponent<PlayerStateMachine>();
@@ -28,12 +25,11 @@ public class PlayerTemporaryEffects : MonoBehaviour
         if (infiniteKiCoroutine != null)
         {
             StopCoroutine(infiniteKiCoroutine);
+            CleanupInfiniteKiEffect();
         }
         
         infiniteKiCoroutine = StartCoroutine(InfiniteKiCoroutine(duration));
     }
-    
-   
     
     private IEnumerator InfiniteKiCoroutine(float duration)
     {
@@ -44,6 +40,18 @@ public class PlayerTemporaryEffects : MonoBehaviour
         {
             barraKi.SetBarColor(Color.cyan);
         }
+        
+        // Activar aura de ki infinito si existe el prefab
+        if (infiniteKiAuraPrefab != null && currentInfiniteKiAura == null)
+        {
+            currentInfiniteKiAura = Instantiate(infiniteKiAuraPrefab, transform.position, Quaternion.identity, transform);
+            // Posicionar el aura en el centro del jugador
+            currentInfiniteKiAura.transform.localPosition = new Vector3(0f, 1f, 0f);
+            // Escalar el aura para que sea visible
+            currentInfiniteKiAura.transform.localScale = new Vector3(2f, 2f, 2f);
+        }
+        
+        Debug.Log($"Efecto de Ki ilimitado activado durante {duration} segundos");
         
         // Mantener Ki al máximo durante la duración
         float elapsed = 0f;
@@ -58,21 +66,40 @@ public class PlayerTemporaryEffects : MonoBehaviour
             yield return null;
         }
         
+        // Limpiar efectos
+        CleanupInfiniteKiEffect();
+        
+        hasInfiniteKi = false;
+        Debug.Log("Efecto de Ki ilimitado terminado");
+    }
+    
+    private void CleanupInfiniteKiEffect()
+    {
         // Restaurar color original de la barra
         if (barraKi != null)
         {
             barraKi.RestoreOriginalColor();
         }
         
-        hasInfiniteKi = false;
-        Debug.Log("Efecto de Ki ilimitado terminado");
+        // Destruir aura de ki infinito si existe
+        if (currentInfiniteKiAura != null)
+        {
+            Destroy(currentInfiniteKiAura);
+            currentInfiniteKiAura = null;
+        }
     }
-    
-   
     
     public bool HasInfiniteKi()
     {
         return hasInfiniteKi;
     }
     
+    private void OnDestroy()
+    {
+        // Limpiar al destruir el componente
+        if (currentInfiniteKiAura != null)
+        {
+            Destroy(currentInfiniteKiAura);
+        }
+    }
 }

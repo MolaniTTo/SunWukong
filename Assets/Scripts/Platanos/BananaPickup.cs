@@ -15,6 +15,12 @@ public class BananaPickup : MonoBehaviour
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private GameObject visualContainer; // Contenedor con sprite y partículas idle
     
+    [Header("Player Aura Effects")]
+    [SerializeField] private GameObject yellowAuraPrefab; // Aura para plátano amarillo (Ki)
+    [SerializeField] private GameObject redAuraPrefab;    // Aura para plátano rojo (Vida)
+    [SerializeField] private GameObject blueAuraPrefab;   // Aura para plátano azul (Ki infinito)
+    [SerializeField] private float shortAuraDuration = 1.5f; // Duración para auras amarilla y roja
+    
     private SpriteRenderer spriteRenderer;
     public AudioSource audioSource;
     
@@ -74,7 +80,6 @@ public class BananaPickup : MonoBehaviour
                 ApplyYellowBananaEffect(playerController);
                 break;
                 
-                
             case BananaType.Red:
                 ApplyRedBananaEffect(playerController);
                 break;
@@ -125,9 +130,14 @@ public class BananaPickup : MonoBehaviour
         // Restaurar Ki al máximo
         playerController.RestoreFullKi();
         
+        // Activar aura amarilla temporal
+        if (yellowAuraPrefab != null)
+        {
+            SpawnPlayerAura(playerController.transform, yellowAuraPrefab, shortAuraDuration);
+        }
+        
         Debug.Log("¡Plátano Amarillo recogido! Ki restaurado al máximo");
     }
-    
     
     private void ApplyRedBananaEffect(PlayerStateMachine playerController)
     {
@@ -137,6 +147,12 @@ public class BananaPickup : MonoBehaviour
         {
             health.currentHealth = health.maxHealth;
             health.ForceHealthUpdate();
+        }
+        
+        // Activar aura roja temporal
+        if (redAuraPrefab != null)
+        {
+            SpawnPlayerAura(playerController.transform, redAuraPrefab, shortAuraDuration);
         }
         
         Debug.Log("¡Plátano Rojo recogido! Vida restaurada al máximo");
@@ -153,12 +169,18 @@ public class BananaPickup : MonoBehaviour
         
         tempEffects.ActivateInfiniteKi(blueEffectDuration);
         
+        // Activar aura azul durante toda la duración del efecto
+        if (blueAuraPrefab != null)
+        {
+            SpawnPlayerAura(playerController.transform, blueAuraPrefab, blueEffectDuration);
+        }
+        
         Debug.Log($"¡Plátano Azul recogido! Ki ilimitado durante {blueEffectDuration} segundos");
     }
     
     private void SpawnPickupEffects()
     {
-        // Partículas
+        // Partículas de recolección
         if (pickupParticles != null)
         {
             Instantiate(pickupParticles, transform.position, Quaternion.identity);
@@ -169,5 +191,22 @@ public class BananaPickup : MonoBehaviour
         {
             audioSource.PlayOneShot(pickupSound);
         }
+    }
+    
+    private void SpawnPlayerAura(Transform playerTransform, GameObject auraPrefab, float duration)
+    {
+        // Instanciar el aura como hijo del jugador
+        GameObject aura = Instantiate(auraPrefab, playerTransform.position, Quaternion.identity, playerTransform);
+        
+        // Posicionar el aura en el centro del jugador (ajusta Y para centrarlo verticalmente)
+        aura.transform.localPosition = new Vector3(0f, 1f, 0f); // Ajusta el 1f según la altura de tu personaje
+        
+        // Escalar el aura para que sea visible (ajusta según necesites)
+        aura.transform.localScale = new Vector3(2f, 2f, 2f); // Multiplica el tamaño por 2
+        
+        // Destruir el aura después de la duración especificada
+        Destroy(aura, duration);
+        
+        Debug.Log($"Aura activada durante {duration} segundos en posición: {aura.transform.localPosition} con escala: {aura.transform.localScale}");
     }
 }
