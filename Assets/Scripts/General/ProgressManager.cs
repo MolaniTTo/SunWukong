@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+Ôªøusing System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -12,8 +12,12 @@ public class ProgressManager : MonoBehaviour
     [SerializeField] private GameManager gameManager;
     [SerializeField] private PlayerStateMachine player;
 
+    [Header("NPC Prefabs")]
+    [SerializeField] private GameObject[] npcPrefabs; //Array de prefabs de NPCs
+
     private int currentSlot = 0; //slot al que estem jugant
     private GameProgress currentProgress;
+    private Dictionary<string, GameObject> spawnedNPCs = new Dictionary<string, GameObject>(); //Diccionari per fer seguiment dels NPCs instanciats
 
     void Awake()
     {
@@ -51,10 +55,11 @@ public class ProgressManager : MonoBehaviour
         FindReferences();
 
         
-        if (scene.name != "MainMenu" && scene.name != "StatsScene" && scene.name != "Options" && scene.name != "PlayMenu") //nomÈs carrega el progrÈs en escenes de joc
+        if (scene.name != "MainMenu" && scene.name != "StatsScene" && scene.name != "Options" && scene.name != "PlayMenu") //nom√©s carrega el progr√©s en escenes de joc
         {
             LoadProgress();
             ApplyProgressToWorld();
+            SpawnNPCsBasedOnProgress();
         }
 
     }
@@ -77,10 +82,184 @@ public class ProgressManager : MonoBehaviour
         }
     }
 
+    // ==================== NPC MANAGEMENT ====================
+
+    public void SetNPCLocation(string npcID, string locationID, bool waitForConditions = false)
+    {
+        if (!currentProgress.npcLocations.ContainsKey(npcID)) //si no existeix encara l'entrada per a aquest NPC
+        {
+            currentProgress.npcLocations.Add(npcID, locationID); //afegeix l'entrada
+        }
+        else //si ja existeix l'entrada
+        {
+            currentProgress.npcLocations[npcID] = locationID; //actualitza l'entrada existent
+        }
+
+        if (waitForConditions)
+        {
+            if (!currentProgress.npcPendingLocations.Contains(npcID))
+            {
+                currentProgress.npcPendingLocations.Add(npcID);
+            }
+        }
+        SaveProgress();
+        Debug.Log($"NPC {npcID} ubicaci√≥n guardada: {locationID}");
+    }
+
+    public string GetNPCLocation(string npcID)
+    {
+        if (currentProgress.npcLocations.ContainsKey(npcID)) //si existeix l'entrada per a aquest NPC
+        {
+            return currentProgress.npcLocations[npcID]; //retorna la ubicaci√≥ guardada
+        }
+        return "";
+    }
+
+    public void SetNPCDialogue(string npcID, string dialogueKey)
+    {
+        if (!currentProgress.npcCurrentDialogues.ContainsKey(npcID)) //si no existeix encara l'entrada per a aquest NPC
+        {
+            currentProgress.npcCurrentDialogues.Add(npcID, dialogueKey);
+        }
+        else
+        {
+            currentProgress.npcCurrentDialogues[npcID] = dialogueKey;
+        }
+        SaveProgress();
+        Debug.Log($"NPC {npcID} di√°logo guardado: {dialogueKey}");
+    }
+
+    public string GetNPCCurrentDialogue(string npcID)
+    {
+        if (currentProgress.npcCurrentDialogues.ContainsKey(npcID))
+        {
+            return currentProgress.npcCurrentDialogues[npcID];
+        }
+        return "";
+    }
+
+    public void SpawnNPCAtLocation(string npcID)
+    {
+        string locationID = GetNPCLocation(npcID); //obtenim la ubicaci√≥ guardada per a aquest NPC
+        if (string.IsNullOrEmpty(locationID))
+        {
+            Debug.LogWarning($"No hay ubicaci√≥n guardada para {npcID}");
+            return;
+        }
+
+        if (currentProgress.npcPendingLocations.Contains(npcID)) //si aquest NPC est√† pendent de spawnejar per condicions especials
+        {
+            string dialogueKey = GetNPCCurrentDialogue(npcID);
+            if (!string.IsNullOrEmpty(dialogueKey))
+            {
+                DialogueData dialogue = Resources.Load<DialogueData>($"Dialogues/{dialogueKey}");
+                if (dialogue != null && dialogue.requiresBossDefeated)
+                {
+                    // Verificar si el boss requerido est√° derrotado
+                    if (!IsBossDefeated(dialogue.requiredBossID))
+                    {
+                        Debug.Log($"NPC {npcID} no puede aparecer a√∫n. Boss {dialogue.requiredBossID} no derrotado.");
+                        return; // No spawneamos el NPC todav√≠a
+                    }
+                    else
+                    {
+                        // Boss derrotado, remover de pendientes
+                        currentProgress.npcPendingLocations.Remove(npcID);
+                        SaveProgress();
+                        Debug.Log($"Condiciones cumplidas para {npcID}, puede aparecer!");
+                    }
+                }
+            }
+        }
+
+        //Buscar el spawn point corresponent
+        NPCSpawnPoint[] spawnPoints = FindObjectsByType<NPCSpawnPoint>(FindObjectsSortMode.None);
+        NPCSpawnPoint targetSpawn = null;
+
+        foreach (NPCSpawnPoint sp in spawnPoints)
+        {
+            if (sp.locationID == locationID) //si coincideix l'ID de la ubicaci√≥
+            {
+                targetSpawn = sp; //hem trobat el spawn point i el guardem al targetSpawn
+                break;
+            }
+        }
+
+        if (targetSpawn == null)
+        {
+            Debug.LogWarning($"No se encontr√≥ spawn point con ID: {locationID}");
+            return;
+        }
+
+        //Busquem el prefab corresponent
+        GameObject npcPrefab = null;
+        foreach (GameObject prefab in npcPrefabs)
+        {
+            if (prefab.name == targetSpawn.npcPrefabName)
+            {
+                npcPrefab = prefab;
+                break;
+            }
+        }
+
+        if (npcPrefab == null)
+        {
+            Debug.LogWarning($"No se encontr√≥ prefab: {targetSpawn.npcPrefabName}");
+            return;
+        }
+
+        //Instanciem el NPC
+        GameObject npcInstance = Instantiate(npcPrefab, targetSpawn.transform.position, Quaternion.identity);
+
+        //Guardem la inst√†ncia al diccionari
+        if (spawnedNPCs.ContainsKey(npcID))
+        {
+            Destroy(spawnedNPCs[npcID]); //destru√Øm l'anterior inst√†ncia si existeix
+            spawnedNPCs[npcID] = npcInstance;
+        }
+        else //si no existeix encara l'entrada
+        {
+            spawnedNPCs.Add(npcID, npcInstance); //afegim la nova entrada al diccionari
+        }
+
+        //Assignem l'ID i el di√†leg a l'NPC instanciat
+        NPCDialogue npcDialogue = npcInstance.GetComponent<NPCDialogue>();
+        if (npcDialogue != null)
+        {
+            npcDialogue.npcID = npcID;
+
+            //Carreguem el di√†leg actual des del progr√©s
+            string dialogueKey = GetNPCCurrentDialogue(npcID);
+            if (!string.IsNullOrEmpty(dialogueKey))
+            {
+                DialogueData loadedDialogue = Resources.Load<DialogueData>($"Dialogues/{dialogueKey}");
+                if (loadedDialogue != null)
+                {
+                    npcDialogue.dialogue = loadedDialogue;
+                    Debug.Log($"Di√°logo asignado a NPC spawneado: {dialogueKey}");
+                }
+            }
+        }
+
+        Debug.Log($"NPC {npcID} spawneado en {locationID}");
+    }
+
+    private void SpawnNPCsBasedOnProgress()
+    {
+        //Neteja les inst√†ncies anteriors
+        spawnedNPCs.Clear();
+
+        //Perque cada NPC amb ubicaci√≥ guardada, el spawneja a la seva ubicaci√≥
+        foreach (var kvp in currentProgress.npcLocations)
+        {
+            string npcID = kvp.Key;
+            SpawnNPCAtLocation(npcID);
+        }
+    }
 
     // ==================== Guardar Carregar i Eliminar ====================
 
-    public void SaveProgress() //guarda el progrÈs actual
+    public void SaveProgress() //guarda el progr√©s actual
     {
         currentSlot = PlayerPrefs.GetInt("CurrentSlot", 0); //actualitza el slot actual
 
@@ -93,7 +272,7 @@ public class ProgressManager : MonoBehaviour
             return;
         }
 
-        //Guarda les dades de vida i del bastÛ del jugador
+        //Guarda les dades de vida i del bast√≥ del jugador
         currentProgress.playerHealth = player.characterHealth.currentHealth;
         currentProgress.hasStaff = player.hasStaff;
 
@@ -104,7 +283,7 @@ public class ProgressManager : MonoBehaviour
             currentProgress.lastCheckpointName = player.lastCheckPoint.name;
         }
 
-        //Guarda la configuraciÛ de NoHit
+        //Guarda la configuraci√≥ de NoHit
         if (gameManager != null)
         {
             currentProgress.isOneHitMode = gameManager.isOneHitMode;
@@ -114,16 +293,16 @@ public class ProgressManager : MonoBehaviour
         string json = JsonUtility.ToJson(currentProgress, true); //serialitza a JSON
         PlayerPrefs.SetString($"Slot{currentSlot}_GameProgress", json); //guarda el JSON al PlayerPrefs
 
-        //Calcula i guarda el percentatge de progrÈs
-        float progressPercentage = CalculateProgressPercentage(); //calcula el percentatge de progrÈs
+        //Calcula i guarda el percentatge de progr√©s
+        float progressPercentage = CalculateProgressPercentage(); //calcula el percentatge de progr√©s
         PlayerPrefs.SetFloat($"Slot{currentSlot}_Progress", progressPercentage); //guarda el percentatge en un PlayerPrefs amb el nom del slot
-        PlayerPrefs.SetInt($"Slot{currentSlot}_HasData", 1); //marca que aquest slot tÈ dades guardades
+        PlayerPrefs.SetInt($"Slot{currentSlot}_HasData", 1); //marca que aquest slot t√© dades guardades
 
         PlayerPrefs.Save(); //assegura que es guardin les dades
         Debug.Log($"? Progreso guardado en Slot {currentSlot}: {progressPercentage:F0}%");
     }
 
-    public void LoadProgress() //carrega el progrÈs desat
+    public void LoadProgress() //carrega el progr√©s desat
     {
         currentSlot = PlayerPrefs.GetInt("CurrentSlot", 0); //actualitza el slot actual
 
@@ -132,23 +311,23 @@ public class ProgressManager : MonoBehaviour
         if (string.IsNullOrEmpty(json)) //si no hi ha dades guardades
         {
             //nova partida
-            currentProgress = new GameProgress(); //inicialitza nou progrÈs
-            currentProgress.isOneHitMode = PlayerPrefs.GetInt($"Slot{currentSlot}_NoHit", 0) == 1; //carrega la configuraciÛ de NoHit
-            Debug.Log("?? Nueva partida iniciada");
-            gameManager.firstSequence.StartSequence(); //nomes comenÁa la sequËncia si es nova partida
+            currentProgress = new GameProgress(); //inicialitza nou progr√©s
+            currentProgress.isOneHitMode = PlayerPrefs.GetInt($"Slot{currentSlot}_NoHit", 0) == 1; //carrega la configuraci√≥ de NoHit
+            Debug.Log("Nueva partida iniciada");
+            gameManager.firstSequence.StartSequence(); //nomes comen√ßa la sequ√®ncia si es nova partida
 
         }
         else
         {
             currentProgress = JsonUtility.FromJson<GameProgress>(json); //deserialitza el JSON a l'objecte GameProgress
-            Debug.Log($"?? Progreso cargado: {currentProgress.defeatedEnemies.Count} enemigos derrotados");
+            Debug.Log($"Progreso cargado: {currentProgress.defeatedEnemies.Count} enemigos derrotados");
             gameManager.screenFade.FadeIn(); //fa un fade in suau al carregar
             AudioManager.Instance.PlayMusic("Base", 1f); //posem musica base
         }
     }
 
     
-    private void ApplyProgressToWorld() //aplica el procrÈs carregat al joc
+    private void ApplyProgressToWorld() //aplica el procr√©s carregat al joc
     {
         if (player == null) player = FindFirstObjectByType<PlayerStateMachine>();
         if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
@@ -166,23 +345,23 @@ public class ProgressManager : MonoBehaviour
             player.characterHealth.ForceHealthUpdate();
         }
 
-        //Restaurem el bastÛ
+        //Restaurem el bast√≥
         player.hasStaff = currentProgress.hasStaff;
         if (player.staffObj != null)
         {
-            player.staffObj.SetActive(currentProgress.hasStaff); //mostra o amaga el bastÛ segons el progrÈs
+            player.staffObj.SetActive(currentProgress.hasStaff); //mostra o amaga el bast√≥ segons el progr√©s
         }
 
         //Restaura la posicio del ultim checkpoint
         if (currentProgress.lastCheckpointPosition != Vector3.zero)
         {
-            player.transform.position = currentProgress.lastCheckpointPosition; //posa al player a la posiciÛ del checkpoint
+            player.transform.position = currentProgress.lastCheckpointPosition; //posa al player a la posici√≥ del checkpoint
         }
 
-        //Aplica la configuraciÛ de NoHit
+        //Aplica la configuraci√≥ de NoHit
         if (gameManager != null)
         {
-            gameManager.isOneHitMode = currentProgress.isOneHitMode; //aplica la configuraciÛ de NoHit
+            gameManager.isOneHitMode = currentProgress.isOneHitMode; //aplica la configuraci√≥ de NoHit
         }
 
         //Desactiva els enemics que ja han sigut derrotats
@@ -203,7 +382,7 @@ public class ProgressManager : MonoBehaviour
         {
             if (enemy.isPlayer) continue; //Saltem al jugador
 
-            //Genera un ID ˙nic per a l'enemic
+            //Genera un ID √∫nic per a l'enemic
             string enemyID = GenerateEnemyID(enemy.gameObject);
 
             //Si ja ha estat derrotat, el desactiva
@@ -215,19 +394,19 @@ public class ProgressManager : MonoBehaviour
         }
         if(enemiesDisabled > 0)
         {
-            Debug.Log($"?? Enemigos desactivados seg˙n progreso: {enemiesDisabled}");
+            Debug.Log($"Enemigos desactivados seg√∫n progreso: {enemiesDisabled}");
         }
     }
 
     private void ApplyCollectedBananas()
     {
-        //Busca tots els pl·tanos a l'escena
+        //Busca tots els pl√°tanos a l'escena
         BananaPickup[] allBananas = FindObjectsByType<BananaPickup>(FindObjectsSortMode.None);
         int bananasDisabled = 0;
 
         foreach (BananaPickup banana in allBananas)
         {
-            //Genera un ID ˙nic per al pl·tano
+            //Genera un ID √∫nic per al pl√°tano
             string bananaID = GenerateBananaID(banana.gameObject);
 
             //Si ja ha estat recollit, el desactiva
@@ -240,13 +419,13 @@ public class ProgressManager : MonoBehaviour
 
         if (bananasDisabled > 0)
         {
-            Debug.Log($"pl·tanos desactivados seg˙n progreso: {bananasDisabled}");
+            Debug.Log($"pl√°tanos desactivados seg√∫n progreso: {bananasDisabled}");
         }
     }
 
     private void ApplyCompletedDialogues()
     {
-        //Busca tots els NPCs amb di‡leg a l'escena
+        //Busca tots els NPCs amb di√†leg a l'escena
         NPCDialogue[] allNPCs = FindObjectsByType<NPCDialogue>(FindObjectsSortMode.None);
         int dialoguesApplied = 0;
 
@@ -256,26 +435,26 @@ public class ProgressManager : MonoBehaviour
             {
                 string dialogueID = npc.dialogue.name; //Usem el nom del ScriptableObject com a ID
 
-                //Si aquest di‡leg ja s'ha completat, marquem-lo com a usat
+                //Si aquest di√†leg ja s'ha completat, marquem-lo com a usat
                 if (currentProgress.completedDialogues.Contains(dialogueID))
                 {
                     npc.dialogue.hasBeenUsed = true;
                     dialoguesApplied++;
-                    Debug.Log($"Di·logo '{dialogueID}' marcado como completado");
+                    Debug.Log($"Di√°logo '{dialogueID}' marcado como completado");
                 }
             }
         }
 
         if (dialoguesApplied > 0)
         {
-            Debug.Log($"Di·logos aplicados seg˙n progreso: {dialoguesApplied}");
+            Debug.Log($"Di√°logos aplicados seg√∫n progreso: {dialoguesApplied}");
         }
     }
 
-    private float CalculateProgressPercentage() //calcula el percentatge de progrÈs basat en els enemics derrotats, checkpoints i habilitats
+    private float CalculateProgressPercentage() //calcula el percentatge de progr√©s basat en els enemics derrotats, checkpoints i habilitats
     {
-        //Exemple simple: cada enemic derrotat = 1 punt, bastÛ = 10 punts, cada checkpoint = 5 punts
-        int totalPossibleItems = 202; // Ajusta seg˙n tu juego
+        //Exemple simple: cada enemic derrotat = 1 punt, bast√≥ = 10 punts, cada checkpoint = 5 punts
+        int totalPossibleItems = 202; // Ajusta seg√∫n tu juego
         int completedItems = currentProgress.defeatedEnemies.Count +
                             (currentProgress.hasStaff ? 10 : 0) +
                             currentProgress.unlockedCheckpoints.Count * 5;
@@ -288,31 +467,64 @@ public class ProgressManager : MonoBehaviour
 
     public void RegisterEnemyDefeated(GameObject enemy) //registra un enemic com a derrotat
     {
-        string enemyID = GenerateEnemyID(enemy); //genera un ID ˙nic per a l'enemic
+        string enemyID = GenerateEnemyID(enemy); //genera un ID √∫nic per a l'enemic
 
-        if (!currentProgress.defeatedEnemies.Contains(enemyID)) //si no est‡ ja registrat com a derrotat
+        if (!currentProgress.defeatedEnemies.Contains(enemyID)) //si no est√† ja registrat com a derrotat
         {
             currentProgress.defeatedEnemies.Add(enemyID); //l'afegeix a la llista
-            Debug.Log($"?? Enemigo derrotado: {enemyID}");
+            Debug.Log($"Enemigo derrotado: {enemyID}");
             SaveProgress(); //Auto-guardar en derrotar enemics
         }
     }
 
+    // ==================== BOSSES ====================
+
+    public void RegisterBossDefeated(string bossID)
+    {
+        if (!currentProgress.defeatedBosses.Contains(bossID))
+        {
+            currentProgress.defeatedBosses.Add(bossID);
+            Debug.Log($"‚ö° BOSS DERROTADO: {bossID}");
+            SaveProgress();
+
+            // IMPORTANTE: Intentar spawnear NPCs que estaban esperando este boss
+            CheckPendingNPCs();
+        }
+    }
+
+    public bool IsBossDefeated(string bossID)
+    {
+        return currentProgress.defeatedBosses.Contains(bossID);
+    }
+
+    private void CheckPendingNPCs()
+    {
+        // Hacer una copia de la lista para evitar modificarla durante la iteraci√≥n
+        List<string> pendingNPCs = new List<string>(currentProgress.npcPendingLocations);
+
+        foreach (string npcID in pendingNPCs)
+        {
+            Debug.Log($"Verificando condiciones para NPC pendiente: {npcID}");
+            SpawnNPCAtLocation(npcID);
+        }
+    }
+
+
     public bool IsEnemyDefeated(GameObject enemy) //comprova si un enemic ja ha sigut derrotat
     {
-        string enemyID = GenerateEnemyID(enemy); //genera l'ID ˙nic per a l'enemic
-        return currentProgress.defeatedEnemies.Contains(enemyID); //comprova si est‡ a la llista
+        string enemyID = GenerateEnemyID(enemy); //genera l'ID √∫nic per a l'enemic
+        return currentProgress.defeatedEnemies.Contains(enemyID); //comprova si est√† a la llista
     }
 
     
-    private string GenerateEnemyID(GameObject enemy) //Generem un ID ˙nic per a cada enemic basat en l'escena i la seva posiciÛ
+    private string GenerateEnemyID(GameObject enemy) //Generem un ID √∫nic per a cada enemic basat en l'escena i la seva posici√≥
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name; //nom de l'escena actual
-        Vector3 pos = enemy.transform.position; //posiciÛ de l'enemic
-        return $"{sceneName}_{enemy.name}_{Mathf.RoundToInt(pos.x)}_{Mathf.RoundToInt(pos.y)}"; //ID ˙nic
+        Vector3 pos = enemy.transform.position; //posici√≥ de l'enemic
+        return $"{sceneName}_{enemy.name}_{Mathf.RoundToInt(pos.x)}_{Mathf.RoundToInt(pos.y)}"; //ID √∫nic
     }
 
-    // ==================== PL¡TANOS ====================
+    // ==================== PL√ÅTANOS ====================
 
     public void RegisterBananaCollected(GameObject banana)
     {
@@ -321,8 +533,8 @@ public class ProgressManager : MonoBehaviour
         if (!currentProgress.collectedBananas.Contains(bananaID))
         {
             currentProgress.collectedBananas.Add(bananaID);
-            Debug.Log($"Pl·tano recogido: {bananaID}");
-            SaveProgress(); //Auto-guardar al recoger pl·tanos
+            Debug.Log($"Pl√°tano recogido: {bananaID}");
+            SaveProgress(); //Auto-guardar al recoger pl√°tanos
         }
     }
 
@@ -337,14 +549,14 @@ public class ProgressManager : MonoBehaviour
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         Vector3 pos = banana.transform.position;
 
-        //IncluÔm tambÈ el tipus de pl·tano per si hi ha dos del mateix tipus al mateix lloc
+        //Inclu√Øm tamb√© el tipus de pl√°tano per si hi ha dos del mateix tipus al mateix lloc
         BananaPickup bananaScript = banana.GetComponent<BananaPickup>();
         string bananaType = bananaScript != null ? bananaScript.bananaType.ToString() : "Unknown";
 
         return $"{sceneName}_Banana_{bananaType}_{Mathf.RoundToInt(pos.x)}_{Mathf.RoundToInt(pos.y)}";
     }
 
-    // ==================== DI¡LOGOS ====================
+    // ==================== DI√ÅLOGOS ====================
 
     public void RegisterDialogueCompleted(DialogueData dialogue)
     {
@@ -355,8 +567,8 @@ public class ProgressManager : MonoBehaviour
         if (!currentProgress.completedDialogues.Contains(dialogueID))
         {
             currentProgress.completedDialogues.Add(dialogueID);
-            Debug.Log($"Di·logo completado: {dialogueID}");
-            SaveProgress(); //Auto-guardar al completar di·logos
+            Debug.Log($"Di√°logo completado: {dialogueID}");
+            SaveProgress(); //Auto-guardar al completar di√°logos
         }
     }
 
@@ -378,7 +590,7 @@ public class ProgressManager : MonoBehaviour
         if (!currentProgress.unlockedCheckpoints.Contains(checkpointID)) //si no conte el checkpoint en una llista dels desbloquejats
         {
             currentProgress.unlockedCheckpoints.Add(checkpointID); //l'afegeix
-            currentProgress.lastCheckpointPosition = checkpoint.position; //actualitza la posiciÛ del checkpoint
+            currentProgress.lastCheckpointPosition = checkpoint.position; //actualitza la posici√≥ del checkpoint
             currentProgress.lastCheckpointName = checkpointID;  //actualitza el nom del checkpoint
 
             Debug.Log($"?? Checkpoint guardado: {checkpointID}");
@@ -388,18 +600,18 @@ public class ProgressManager : MonoBehaviour
 
     // ==================== Habilitats ====================
 
-    public void UnlockStaff() //desbloqueja el bastÛ per al jugador
+    public void UnlockStaff() //desbloqueja el bast√≥ per al jugador
     {
-        if (!currentProgress.hasStaff) //si encara no el tÈ desbloquejat
+        if (!currentProgress.hasStaff) //si encara no el t√© desbloquejat
         {
-            currentProgress.hasStaff = true; //l'afegeix al progrÈs
+            currentProgress.hasStaff = true; //l'afegeix al progr√©s
 
             if (player != null)
             {
                 player.hasStaff = true; //actualitza l'estat del jugador
                 if (player.staffObj != null)
                 {
-                    player.staffObj.SetActive(true); //mostra l'objecte del bastÛ
+                    player.staffObj.SetActive(true); //mostra l'objecte del bast√≥
                 }
             }
 
@@ -431,7 +643,7 @@ public class ProgressManager : MonoBehaviour
         Debug.Log($"??? Slot {currentSlot} reseteado");
     }
 
-    public GameProgress GetCurrentProgress() //retorna l'objecte de progrÈs actual
+    public GameProgress GetCurrentProgress() //retorna l'objecte de progr√©s actual
     {
         return currentProgress;
     }
@@ -440,7 +652,7 @@ public class ProgressManager : MonoBehaviour
 // ==================== Estructura de dades ====================
 
 [System.Serializable]
-public class GameProgress //estructura que guarda totes les dades del progrÈs del joc
+public class GameProgress //estructura que guarda totes les dades del progr√©s del joc
 {
     //Jugador
     public float playerHealth = 100f;
@@ -451,15 +663,65 @@ public class GameProgress //estructura que guarda totes les dades del progrÈs de
     public string lastCheckpointName = "";
     public List<string> unlockedCheckpoints = new List<string>();
 
-    //Enemics derrotats amb IDs ˙nics
+    //Enemics derrotats amb IDs √∫nics
     public List<string> defeatedEnemies = new List<string>();
 
-    //Pl·tanos recollits amb IDs ˙nics
+    //Pl√°tanos recollits amb IDs √∫nics
     public List<string> collectedBananas = new List<string>();
 
-    //Di‡legs completats (guardant el nom del ScriptableObject)
+    //Di√†legs completats (guardant el nom del ScriptableObject)
     public List<string> completedDialogues = new List<string>();
+
+    // Bosses derrotados
+    public List<string> defeatedBosses = new List<string>();
+
+    [System.Serializable]
+    public class StringStringPair //estructura per a parells clau-valor
+    {
+        public string key;
+        public string value; 
+    }
+
+    public List<StringStringPair> npcLocationsList = new List<StringStringPair>(); //llista per serialitzar el diccionari de ubicacions dels NPCs
+    public List<StringStringPair> npcCurrentDialoguesList = new List<StringStringPair>(); //llista per serialitzar el diccionari de di√†legs actuals dels NPCs
+    public List<string> npcPendingLocations = new List<string>(); //NPCs esperando condiciones
+
+    [System.NonSerialized]
+    public Dictionary<string, string> npcLocations = new Dictionary<string, string>(); //diccionari de ubicacions dels NPCs (no serialitzat)
+    [System.NonSerialized]
+    public Dictionary<string, string> npcCurrentDialogues = new Dictionary<string, string>(); //diccionari de di√†legs actuals dels NPCs (no serialitzat)
 
     //Configuracio de mode NoHit
     public bool isOneHitMode = false;
+
+    public void OnAfterDeserialize()
+    {
+        npcLocations = new Dictionary<string, string>();
+        foreach (var pair in npcLocationsList)
+        {
+            if (!npcLocations.ContainsKey(pair.key))
+                npcLocations.Add(pair.key, pair.value);
+        }
+
+        npcCurrentDialogues = new Dictionary<string, string>();
+        foreach (var pair in npcCurrentDialoguesList) 
+        {
+            if (!npcCurrentDialogues.ContainsKey(pair.key))
+                npcCurrentDialogues.Add(pair.key, pair.value);
+        }
+    }
+    public void OnBeforeSerialize()
+    {
+        npcLocationsList.Clear();
+        foreach (var kvp in npcLocations)
+        {
+            npcLocationsList.Add(new StringStringPair { key = kvp.Key, value = kvp.Value });
+        }
+
+        npcCurrentDialoguesList.Clear();
+        foreach (var kvp in npcCurrentDialogues)
+        {
+            npcCurrentDialoguesList.Add(new StringStringPair { key = kvp.Key, value = kvp.Value });
+        }
+    }
 }

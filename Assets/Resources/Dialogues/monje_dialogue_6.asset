@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac904e20e0756e5478f5a82c04981101, type: 3}
+  m_Name: monje_dialogue_6
+  m_EditorClassIdentifier: 
+  exitDialogueModeByScripting: 0
+  onlyOnce: 0
+  hasBeenUsed: 0
+  changeMusic: 1
+  dialogueMusicKey: Dialogue1
+  lines:
+  - text: "\xBFQu\xE9\u2026? \xBFQu\xE9 has dicho? \xBFQue lo has derrotado? \xBFAl
+      gorila? \xA1No, no, no, no! \xA1Eso no me lo creo ni aunque me lo jure un dios
+      inmortal!"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: ee5ae0d0dda369640b0418d7db19454c, type: 3}
+  - text: "\xA1Pero si ese monstruo me lanz\xF3 volando tres veces! Y eso fue solo
+      porque intent\xE9 saludarlo\u2026 \xA1Imag\xEDnate si hubiera luchado de verdad!"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: ec9a22e242a171845829f42d22587169, type: 3}
+  - text: "Hmph\u2026 aun as\xED, el bast\xF3n es m\xEDo y no pienso d\xE1rtelo."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: 0ab29d366027eac45be4c6c1c3bb8443, type: 3}
+  teleportNPCAfterDialogue: 1
+  nextLocationID: monje_location_7
+  nextDialogueKey: monje_dialogue_7
+  requiresBossDefeated: 1
+  requiredBossID: GorilaBoss

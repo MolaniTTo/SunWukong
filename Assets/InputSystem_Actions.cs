@@ -330,7 +330,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""0c907c0a-57e1-46a9-8447-d5c499123ee0"",
-                    ""path"": ""<Keyboard>/#(')"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -462,7 +462,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""52c0178e-20b7-4bec-b2bd-69225ba30914"",
-                    ""path"": ""<Keyboard>/#(')"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

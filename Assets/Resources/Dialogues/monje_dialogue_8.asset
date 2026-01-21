@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac904e20e0756e5478f5a82c04981101, type: 3}
+  m_Name: monje_dialogue_8
+  m_EditorClassIdentifier: 
+  exitDialogueModeByScripting: 0
+  onlyOnce: 1
+  hasBeenUsed: 0
+  changeMusic: 1
+  dialogueMusicKey: Dialogue1
+  lines:
+  - text: "En fin\u2026 no tengo escapatoria."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: cc8c1fc88930fa247b56378accaa0cc9, type: 3}
+  - text: Ya no me quedan fuerzas para huir de ti.
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: d014b3aaa5c20954a8e620cd29837972, type: 3}
+  - text: "Mis rezos son lo \xFAnico que me queda\u2026 y lo \xFAnico que me acerca,
+      aunque sea un poquito, a lo divino."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: cc8c1fc88930fa247b56378accaa0cc9, type: 3}
+  - text: "Pero t\xFA\u2026 t\xFA s\xED que tienes camino por delante. Has hecho
+      lo que yo nunca pude. Aunque todav\xEDa no me crea del todo que ese gorila
+      acabara en el suelo y no t\xFA."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: d014b3aaa5c20954a8e620cd29837972, type: 3}
+  - text: "Toma mi bast\xF3n. Ya no lo necesito."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 1
+    lineAudio: {fileID: 8300000, guid: faf5a956b726a7e41bfaad999027ae79, type: 3}
+  teleportNPCAfterDialogue: 0
+  nextLocationID: 
+  nextDialogueKey: 

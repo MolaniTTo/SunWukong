@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac904e20e0756e5478f5a82c04981101, type: 3}
+  m_Name: monje_dialogue_5
+  m_EditorClassIdentifier: 
+  exitDialogueModeByScripting: 0
+  onlyOnce: 0
+  hasBeenUsed: 0
+  changeMusic: 1
+  dialogueMusicKey: Dialogue1
+  lines:
+  - text: "Vaya\u2026 sigues encaprichado con el bast\xF3n, \xBFeh?"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: cc8c1fc88930fa247b56378accaa0cc9, type: 3}
+  - text: "Esc\xFAchame bien, muchacho. No puedo prometerte que te dar\xE9 mi bast\xF3n\u2026
+      pero hay un favor que podr\xEDas hacerme antes de que siquiera lo considere."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: faf5a956b726a7e41bfaad999027ae79, type: 3}
+  - text: "Ad\xE9ntrate en el bosque prohibido\u2026 all\xED vive un gran\u2014 esto\u2026
+      quiero decir, un diminuto gorila. S\xED, s\xED, peque\xF1\xEDsimo."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: cc8c1fc88930fa247b56378accaa0cc9, type: 3}
+  - text: "Apenas te ver\xE1 y saldr\xE1 corriendo\u2026 probablemente."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: 0ab29d366027eac45be4c6c1c3bb8443, type: 3}
+  - text: "Si consigues derrotarlo \u2014lo cual ser\xE1 facil\xEDsimo, claro, facil\xEDsimo\u2014
+      quiz\xE1 me piense si darte mi bast\xF3n\u2026 quiz\xE1."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: faf5a956b726a7e41bfaad999027ae79, type: 3}
+  - text: "Anda, ve, ve\u2026 antes de que el gorila se eche la siesta y despiertes
+      su mal humor."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: 0ab29d366027eac45be4c6c1c3bb8443, type: 3}
+  teleportNPCAfterDialogue: 1
+  nextLocationID: monje_location_6
+  nextDialogueKey: monje_dialogue_6

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac904e20e0756e5478f5a82c04981101, type: 3}
+  m_Name: monje_dialogue_3
+  m_EditorClassIdentifier: 
+  exitDialogueModeByScripting: 0
+  onlyOnce: 0
+  hasBeenUsed: 0
+  changeMusic: 1
+  dialogueMusicKey: Dialogue1
+  lines:
+  - text: "Escucha, joven\u2026 la vida solo florece cuando uno busca m\xE1s all\xE1
+      de s\xED mismo."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: faf5a956b726a7e41bfaad999027ae79, type: 3}
+  - text: "La inmortalidad no es un regalo\u2026 es una b\xFAsqueda que exige valor."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: 0ab29d366027eac45be4c6c1c3bb8443, type: 3}
+  teleportNPCAfterDialogue: 1
+  nextLocationID: monje_location_4
+  nextDialogueKey: monje_dialogue_4

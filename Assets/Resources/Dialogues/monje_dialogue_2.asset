@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac904e20e0756e5478f5a82c04981101, type: 3}
+  m_Name: monje_dialogue_2
+  m_EditorClassIdentifier: 
+  exitDialogueModeByScripting: 0
+  onlyOnce: 0
+  hasBeenUsed: 0
+  changeMusic: 1
+  dialogueMusicKey: Dialogue1
+  lines:
+  - text: "Ah\u2026 has llegado. Te esperaba, como el amanecer espera al sol."
+    animatorTrigger: OpenEyes
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: ec9a22e242a171845829f42d22587169, type: 3}
+  - text: Toda mi vida he meditado, buscando el eco del Cielo Divino.
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: 0ab29d366027eac45be4c6c1c3bb8443, type: 3}
+  - text: "He visto a los budas en mis sue\xF1os\u2026 pero mi cuerpo ya es polvo
+      cansado."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: cc8c1fc88930fa247b56378accaa0cc9, type: 3}
+  teleportNPCAfterDialogue: 1
+  nextLocationID: monje_location_3
+  nextDialogueKey: monje_dialogue_3

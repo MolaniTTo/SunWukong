@@ -8,8 +8,18 @@ public class DialogueData : ScriptableObject
     public bool hasBeenUsed = false;
     public bool changeMusic = true;
     public string dialogueMusicKey = "Dialogue1"; //nom de la musica de dialogo
-
     public DialogueLine[] lines;
+
+    [Header("NPC Teleport Settings")]
+    public bool teleportNPCAfterDialogue = false; 
+    public string nextLocationID = "";
+    public string nextDialogueKey = "";
+
+    [Header("Conditional Appearance")]
+    [Tooltip("Si está activado, este NPC solo aparecerá después de derrotar al boss especificado")]
+    public bool requiresBossDefeated = false;
+    [Tooltip("ID del boss que debe estar derrotado para que aparezca este NPC")]
+    public string requiredBossID = "";
 
     [System.Serializable]
     public class DialogueLine
