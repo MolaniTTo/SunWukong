@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac904e20e0756e5478f5a82c04981101, type: 3}
+  m_Name: monje_dialogue_4
+  m_EditorClassIdentifier: 
+  exitDialogueModeByScripting: 0
+  onlyOnce: 0
+  hasBeenUsed: 0
+  changeMusic: 1
+  dialogueMusicKey: Dialogue1
+  lines:
+  - text: "Ah\u2026 t\xFA de nuevo. Puedes dejar de seguirme."
+    animatorTrigger: OpenEyes
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: ec9a22e242a171845829f42d22587169, type: 3}
+  - text: "\xBFEh? \xBFQu\xE9 has dicho? \xBFQue te gusta mi bast\xF3n?"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: ee5ae0d0dda369640b0418d7db19454c, type: 3}
+  - text: "Normal, las cosas brillantes siempre llaman la atenci\xF3n."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: 324d9e48f6de3c84e83fce1640a6c82b, type: 3}
+  - text: "\xBFQu\xE9 dices? \xBFQue lo quieres para ti?"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: d014b3aaa5c20954a8e620cd29837972, type: 3}
+  - text: "Anda, m\xE1rchate y deja de seguirme."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: 324d9e48f6de3c84e83fce1640a6c82b, type: 3}
+  teleportNPCAfterDialogue: 1
+  nextLocationID: monje_location_5
+  nextDialogueKey: monje_dialogue_5

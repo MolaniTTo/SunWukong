@@ -117,6 +117,11 @@ public class Gorila : EnemyBase
             bossTriggerZone.OnBossDefeated();
         }
 
+        if(ProgressManager.Instance != null)
+        {
+            ProgressManager.Instance.RegisterBossDefeated("GorilaBoss");
+        }
+
         // Aturem moviment i desactivem collider d'atac
         StopMovement();
         if (punchCollider != null) 
@@ -133,12 +138,6 @@ public class Gorila : EnemyBase
         // Deshabilitar colisiones principales
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
-        
-        // Cambiar diálogo del monje
-        if (monjeBueno != null)
-        {
-            monjeBueno.ChangeDialogue("Monje2");
-        }
         
         // Iniciar secuencia de muerte con efectos
         if (deathEffectHandler != null)

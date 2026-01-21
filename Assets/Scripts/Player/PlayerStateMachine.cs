@@ -575,7 +575,7 @@ public class PlayerStateMachine : MonoBehaviour
     private void ProcessInputActions()
     {
         //BLOQUEIG
-        if (blockPressed && isGrounded) //si premem el boto de bloqueig
+        if (blockPressed && isGrounded && hasStaff) //si premem el boto de bloqueig
         {
             ChangeState(PlayerState.Block);
             animator.SetBool("Blocking", true);
@@ -585,7 +585,7 @@ public class PlayerStateMachine : MonoBehaviour
                 audioSource.PlayOneShot(blockSound);
             }
         }
-        if (blockReleased && currentState == PlayerState.Block) //si deixem de prémer el botó de bloqueig
+        if (blockReleased && currentState == PlayerState.Block && hasStaff) //si deixem de prémer el botó de bloqueig
         {
             animator.SetBool("Blocking", false);
             ReturnToDefaultState();

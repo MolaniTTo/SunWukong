@@ -29,22 +29,49 @@ public class NPCDialogue : MonoBehaviour
     [Header("Monje Boss Ref")]
     public Monje monjeBoss;
 
+    [Header("NPC Identity")]
+    public string npcID = "";
+
+    [Header("Teleport VFX")]
+    public ParticleSystem particleEffect; // Sistema de partículas
+    public AudioClip teleportSound; // Sonido opcional
+    public AudioSource audioSource; // Fuente de audio para reproducir el sonido
+
     private bool playerInRange = false; //si el jugador està a l'abast
     private Transform player;
+    private bool isTeleporting = false;
 
     private void Awake()
     {
         if (bubbleSprite != null) { bubbleSprite.SetActive(false); }
         if (npcDialogueUI == null) { npcDialogueUI = GetComponentInChildren<DialogueUI>(); }
+
+        if(string.IsNullOrEmpty(npcID))
+        {
+            npcID = gameObject.name;
+        }
     }
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player")?.transform; //referència al jugador
-                                                                        // Comprobar si este diálogo ya está completado según el ProgressManager
-        if (ProgressManager.Instance != null && dialogue != null)
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+         
+        if(ProgressManager.Instance != null && !string.IsNullOrEmpty(npcID)) //si tenim un ID d'NPC vàlid
         {
-            if (ProgressManager.Instance.IsDialogueCompleted(dialogue))
+            string savedDialogueKey = ProgressManager.Instance.GetNPCCurrentDialogue(npcID); //obtenim el diàleg guardat per a aquest NPC
+
+            if (!string.IsNullOrEmpty(savedDialogueKey)) //si hi ha un diàleg guardat
+            {
+                //Carreguem el diàleg guardat des del Resources
+                DialogueData loadedDialogue = Resources.Load<DialogueData>($"Dialogues/{savedDialogueKey}");
+                if (loadedDialogue != null)
+                {
+                    dialogue = loadedDialogue;
+                    Debug.Log($"NPCDialogue: Diálogo cargado desde progreso: {savedDialogueKey}");
+                }
+            }
+
+            if (dialogue != null && ProgressManager.Instance.IsDialogueCompleted(dialogue))
             {
                 dialogue.hasBeenUsed = true;
                 Debug.Log($"Diálogo '{dialogue.name}' ya completado anteriormente");
@@ -70,19 +97,8 @@ public class NPCDialogue : MonoBehaviour
 
     private void Update()
     {
-        if (recentlyFinished) { return; } //si acabem de finalitzar un diàleg, no fem res aquest frame
+        if (recentlyFinished || isTeleporting) { return; } //si acabem de finalitzar un diàleg, no fem res aquest frame
         if (player == null) { return; }
-
-        /*if (!playerInRange && showDistance > 0f) //si el jugador esta fora de l'abast i tenim showDistance activat
-        {
-            float d = Vector2.Distance(transform.position, player.position);
-            if (d <= showDistance)
-            {
-                playerInRange = true;
-                if (bubbleSprite != null) { bubbleSprite.SetActive(true); }
-            }
-        }*/
-
         if (!playerInRange) { return; }//si el jugador no està a l'abast, no fem res
         if (DialogueManager.Instance != null && DialogueManager.Instance.DialogueActive) { return; }//si ja hi ha un diàleg actiu, no fem res
 
@@ -107,7 +123,7 @@ public class NPCDialogue : MonoBehaviour
 
         playerInRange = true;
 
-        if(!recentlyFinished && (!dialogue.onlyOnce || dialogue.hasBeenUsed))
+        if(!recentlyFinished && !isTeleporting && (!dialogue.onlyOnce || !dialogue.hasBeenUsed))
         {
             if (bubbleSprite != null)
             {
@@ -166,6 +182,12 @@ public class NPCDialogue : MonoBehaviour
 
         if (monjeBoss != null) { monjeBoss.dialogueFinished = true; }
 
+        if (dialogue != null && dialogue.teleportNPCAfterDialogue)
+        {
+            StartCoroutine(TeleportSequence());
+            return;
+        }
+
         if (dialogue.onlyOnce)
         {
             dialogue.hasBeenUsed = true;
@@ -183,12 +205,61 @@ public class NPCDialogue : MonoBehaviour
         }
 
         playerInRange = false;
-
         StartCoroutine(PreventImmediateRestart());
+        DialogueManager.Instance.EndDialogueMusic();
+    }
+
+    private IEnumerator TeleportSequence()
+    {
+        isTeleporting = true;
+
+        if (bubbleSprite != null)
+            bubbleSprite.SetActive(false);
+
+        yield return new WaitForSeconds(0.3f);
+
+
+        if (particleEffect != null)
+        {
+            particleEffect.Play();
+            audioSource.PlayOneShot(teleportSound);
+            Debug.Log("NPCDialogue: Partículas de teleport activadas");
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        HandleNPCTeleport();
 
         DialogueManager.Instance.EndDialogueMusic();
+    }
 
+    private void HandleNPCTeleport()
+    {
+        if(ProgressManager.Instance == null || string.IsNullOrEmpty(npcID)) { return; }
 
+        Debug.Log($"NPCDialogue: Teleportando {npcID} a {dialogue.nextLocationID}");
+
+        bool needsConditions = false;
+
+        if (!string.IsNullOrEmpty(dialogue.nextDialogueKey))
+        {
+            DialogueData nextDialogue = Resources.Load<DialogueData>($"Dialogues/{dialogue.nextDialogueKey}");
+            if (nextDialogue != null && nextDialogue.requiresBossDefeated)
+            {
+                needsConditions = true;
+                Debug.Log($"NPCDialogue: Nueva ubicación requiere que el boss '{nextDialogue.requiredBossID}' esté derrotado");
+            }
+        }
+
+        ProgressManager.Instance.SetNPCLocation(npcID, dialogue.nextLocationID, needsConditions);
+
+        if (!string.IsNullOrEmpty(dialogue.nextDialogueKey))
+        {
+            ProgressManager.Instance.SetNPCDialogue(npcID, dialogue.nextDialogueKey);
+        }
+
+        ProgressManager.Instance.SpawnNPCAtLocation(npcID);
+
+        gameObject.SetActive(false); //desactivem l'NPC actual
     }
 
     private IEnumerator PreventImmediateRestart()
