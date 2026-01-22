@@ -96,16 +96,21 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public IEnumerable OnPlayerWin(bool hasWon)
+    public void OnPlayerWin(bool hasWon)
     {
         if (hasWon)
         {
-            SaveCombatStats();
-            screenFade.FadeOut();
-            yield return new WaitForSeconds(2f); //esperem que faci el fade out
-            //ir a la escena de los creditos
-            //en la escena de creditos, poner un boton de volver que nos lleve a la escena de stats
+            StartCoroutine(EndGameRoutine());
         }
+    }
+
+    private IEnumerator EndGameRoutine()
+    {
+        SaveCombatStats();
+        screenFade.FadeOut();
+        yield return new WaitForSeconds(2f); //esperem que faci el fade out
+        //ir a la escena de los creditos
+        //en la escena de creditos, poner un boton de volver que nos lleve a la escena de stats
     }
 
 
