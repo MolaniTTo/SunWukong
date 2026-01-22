@@ -8,6 +8,11 @@ public class DialogueData : ScriptableObject
     public bool hasBeenUsed = false;
     public bool changeMusic = true;
     public string dialogueMusicKey = "Dialogue1"; //nom de la musica de dialogo
+
+    [Header("Boss Dialogue Settings")]
+    [Tooltip("Si está activado, este diálogo se reseteará cuando el jugador muera")]
+    public bool isBossDialogue = false; // NUEVO CAMPO
+
     public DialogueLine[] lines;
 
     [Header("NPC Teleport Settings")]

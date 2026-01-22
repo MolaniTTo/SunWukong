@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 1590971862027051755}
   - component: {fileID: 3737747205005738013}
   - component: {fileID: 4335449114057314465}
-  m_Layer: 0
+  - component: {fileID: -4750837696353111957}
+  m_Layer: 8
   m_Name: Terremoto 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 2129183675052675782}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.43, y: -1.39, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -131,9 +132,6 @@ MonoBehaviour:
   owner: 1
   speed: 20
   lifetime: 3
-  damage: 20
-  particleHitPrefab: {fileID: 3009009412502480865, guid: 792c1130a4b1b3144a719df67306eb0b, type: 3}
-  particleSpawnPoint: {fileID: 6318070129631162167}
   GroundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -197,6 +195,25 @@ SortingGroup:
   m_SortingLayer: 10
   m_SortingOrder: 0
   m_SortAtRoot: 0
+--- !u!114 &-4750837696353111957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129183675052675782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44a35c5e00ae1574ea5ce8f5e8cb1ebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 20
+  knockBackForce: 10
+  knockBackDuration: 0.5
+  tagToDamage: Enemy
+  owner: {fileID: 2129183675052675782}
+  particleHitPrefab: {fileID: 3009009412502480865, guid: 792c1130a4b1b3144a719df67306eb0b, type: 3}
+  particleSpawnPoint: {fileID: 6318070129631162167}
 --- !u!1 &3242840415954667407
 GameObject:
   m_ObjectHideFlags: 0

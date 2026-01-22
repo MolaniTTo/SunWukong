@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,7 +12,7 @@ public class DialogueUI : MonoBehaviour
     [Header("UI Refs")]
     public GameObject dialoguePanel; //ja sigui una vinyeta o un panell fix a la UI
     public TMP_Text dialogueText;
-    public Button continueButton; //BotÛ per continuar el di‡leg pero podem utilitzar la tecla E
+    public Button continueButton; //Bot√≥ per continuar el di√†leg pero podem utilitzar la tecla E
     public float typingSpeed = 0.03f;
     private bool autoAdvance = false;
 
@@ -26,31 +26,38 @@ public class DialogueUI : MonoBehaviour
     [Header("Input Actions")]
     [SerializeField] private InputActionReference continueAction;
 
+    private InputSystem_Actions inputActions;
+    private InputAction continueInputAction;
+    private bool continuePressed = false; // Flag para detectar input
+
     [Header("Audio")]
     public AudioSource dialogueAudioSource;
 
-    //ESTAT DEL DI¿LEG
-    private DialogueData.DialogueLine[] lines; //LÌnies del di‡leg actuals
-    private int index; //Õndex de la lÌnia actual
+    //ESTAT DEL DI√ÄLEG
+    private DialogueData.DialogueLine[] lines; //L√≠nies del di√†leg actuals
+    private int index; //√çndex de la l√≠nia actual
     private bool isTyping;
     private bool canContinue;
-    private System.Action onFinishCallback; //Callback quan el di‡leg acaba
-    private Animator currentTargetAnimator; //ReferËncia a l'animator de l'NPC actual
-    private NPCDialogue currentNPCDialogue; //ReferËncia al NPCDialogue actual
+    private System.Action onFinishCallback; //Callback quan el di√†leg acaba
+    private Animator currentTargetAnimator; //Refer√®ncia a l'animator de l'NPC actual
+    private NPCDialogue currentNPCDialogue; //Refer√®ncia al NPCDialogue actual
 
     private Coroutine zoomCoroutine;
     private Coroutine typingCoroutine;
 
     private void Awake()
     {
-        if (dialoguePanel != null) { dialoguePanel.SetActive(false); } //Assegura que el panell de di‡leg est‡ desactivat al principi
-        if (continueButton != null) { continueButton.onClick.AddListener(OnContinuePressed); } //Assigna el botÛ de continuar
+        if (dialoguePanel != null) { dialoguePanel.SetActive(false); } //Assegura que el panell de di√†leg est√† desactivat al principi
+        if (continueButton != null) { continueButton.onClick.AddListener(OnContinuePressed); } //Assigna el bot√≥ de continuar
 
         if(dialogueAudioSource == null)
         {
             dialogueAudioSource = gameObject.AddComponent<AudioSource>();
             dialogueAudioSource.playOnAwake = false;
         }
+
+        inputActions = new InputSystem_Actions();
+        continueInputAction = inputActions.Player.Interact;
     }
 
     private void Start()
@@ -60,33 +67,41 @@ public class DialogueUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if(continueAction != null)
-        {
-            continueAction.action.Enable();
-        }
+        inputActions.Player.Enable();
+        continueInputAction.performed += OnContinueInputPerformed;
+
+        Debug.Log("DialogueUI: InputActions habilitado y callback suscrito");
     }
 
     private void OnDisable()
     {
-        if (continueAction != null)
-        {
-            continueAction.action.Disable();
-        }
+        inputActions.Player.Disable();
+        continueInputAction.performed -= OnContinueInputPerformed;
+    }
+
+    private void OnContinueInputPerformed(InputAction.CallbackContext context)
+    {
+        Debug.Log("üü¢ OnContinueInputPerformed llamado en DialogueUI");
+        continuePressed = true;
     }
 
 
     private void Update()
     {
-        if (!autoAdvance && continueAction != null && continueAction.action.WasPerformedThisFrame())
+        // ‚≠ê NUEVO: Verificar el flag del callback
+        if (!autoAdvance && continuePressed)
         {
+            continuePressed = false; // ‚≠ê Resetear flag inmediatamente
+
             if (isTyping || canContinue)
             {
+                Debug.Log("DialogueUI: Procesando input de continuar");
                 OnContinuePressed();
             }
         }
     }
 
-    public void StartDialogue(DialogueData data, Animator targetAnimator = null, System.Action onFinish = null, bool autoAdvance = false) //Inicia un di‡leg amb les dades proporcionades
+    public void StartDialogue(DialogueData data, Animator targetAnimator = null, System.Action onFinish = null, bool autoAdvance = false) //Inicia un di√†leg amb les dades proporcionades
     {
         if (data == null) { return; }
 
@@ -97,17 +112,17 @@ public class DialogueUI : MonoBehaviour
         onFinishCallback = onFinish;
         currentTargetAnimator = targetAnimator;
 
-        if (dialoguePanel != null) { dialoguePanel.SetActive(true); }//Activa el panell de di‡leg
+        if (dialoguePanel != null) { dialoguePanel.SetActive(true); }//Activa el panell de di√†leg
 
-        if (vcam != null && originalFOV < 0) //Assegura que guardem la mida original de la c‡mera nomÈs una vegada
+        if (vcam != null && originalFOV < 0) //Assegura que guardem la mida original de la c√†mera nom√©s una vegada
         {
             //originalFOV = vcam.Lens.VerticalFOV;
         }
 
         ShowNextLine();
         this.autoAdvance = autoAdvance;
-        Debug.Log("DialogueUI: Di‡leg iniciat amb " + lines.Length + " lÌnies.");
-        Debug.Log("DialogueUI: AutoAdvance est‡ a " + autoAdvance);
+        Debug.Log("DialogueUI: Di√†leg iniciat amb " + lines.Length + " l√≠nies.");
+        Debug.Log("DialogueUI: AutoAdvance est√† a " + autoAdvance);
     }
 
     public void ForceCloseUI()
@@ -119,16 +134,16 @@ public class DialogueUI : MonoBehaviour
             dialogueAudioSource.Stop();
         }
 
-        if(dialoguePanel != null) { dialoguePanel.SetActive(false); } //Desactiva el panell de di‡leg
+        if(dialoguePanel != null) { dialoguePanel.SetActive(false); } //Desactiva el panell de di√†leg
 
-        onFinishCallback?.Invoke(); //Invoca el callback quan el di‡leg acaba
+        onFinishCallback?.Invoke(); //Invoca el callback quan el di√†leg acaba
 
         lines = null;
         index = 0;
         currentTargetAnimator = null;
         onFinishCallback = null;
 
-        if(useCameraZoom && vcam != null && originalFOV >= 0) //Torna a la mida original de la c‡mera si cal
+        if(useCameraZoom && vcam != null && originalFOV >= 0) //Torna a la mida original de la c√†mera si cal
         {
             if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
             {
@@ -138,22 +153,23 @@ public class DialogueUI : MonoBehaviour
         }
     }
 
-    private void ForceClearInternalState() //Neteja l'estat intern del di‡leg
+    private void ForceClearInternalState() //Neteja l'estat intern del di√†leg
     {
-        if (typingCoroutine != null) StopCoroutine(typingCoroutine); //Atura l'escriptura si est‡ en curs
-        if (zoomCoroutine != null) StopCoroutine(zoomCoroutine); //Atura el zoom si est‡ en curs
+        if (typingCoroutine != null) StopCoroutine(typingCoroutine); //Atura l'escriptura si est√† en curs
+        if (zoomCoroutine != null) StopCoroutine(zoomCoroutine); //Atura el zoom si est√† en curs
 
         isTyping = false;
         canContinue = false;
+        continuePressed = false;
     }
 
 
     public void OnContinuePressed()
     {
-        if (isTyping) //Si est‡ escrivint, mostra la lÌnia completa immediatament
+        if (isTyping) //Si est√† escrivint, mostra la l√≠nia completa immediatament
         {
             if (typingCoroutine != null) { StopCoroutine(typingCoroutine); } //Atura l'escriptura en curs
-            dialogueText.text = lines[index].text; //Mostra la lÌnia completa
+            dialogueText.text = lines[index].text; //Mostra la l√≠nia completa
             isTyping = false;
             canContinue = true;
 
@@ -184,7 +200,7 @@ public class DialogueUI : MonoBehaviour
     {
         if (lines == null || index < 0 || index >= lines.Length) return;
 
-        DialogueData.DialogueLine line = lines[index]; //LÌnia actual del di‡leg
+        DialogueData.DialogueLine line = lines[index]; //L√≠nia actual del di√†leg
 
         if(line.lineAudio != null && dialogueAudioSource != null)
         {
@@ -198,27 +214,27 @@ public class DialogueUI : MonoBehaviour
             continueButton.gameObject.SetActive(false);
         }
 
-        if (line.requestCameraZoom && useCameraZoom && vcam != null) //Fes zoom si la lÌnia ho sol∑licita
+        if (line.requestCameraZoom && useCameraZoom && vcam != null) //Fes zoom si la l√≠nia ho sol¬∑licita
         {
             if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
             zoomCoroutine = StartCoroutine(ZoomToFOV(zoomedFOV, zoomDuration));
         }
         else
         {
-            if (useCameraZoom && originalFOV >= 0f && vcam != null) //Torna a la mida original de la c‡mera si cal
+            if (useCameraZoom && originalFOV >= 0f && vcam != null) //Torna a la mida original de la c√†mera si cal
             {
                 if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
                 zoomCoroutine = StartCoroutine(ZoomToFOV(originalFOV, zoomDuration));
             }
         }
 
-        if (!string.IsNullOrEmpty(line.animatorTrigger) && currentTargetAnimator != null) //Fes l'animaciÛ si es proporciona un trigger
+        if (!string.IsNullOrEmpty(line.animatorTrigger) && currentTargetAnimator != null) //Fes l'animaci√≥ si es proporciona un trigger
         {
             currentTargetAnimator.SetTrigger(line.animatorTrigger); //Activa el trigger de l'animator
         }
         if(line.deactivateObjects == true)
         {
-            Debug.Log("DialogueUI: Desactivant objectes per la lÌnia de di‡leg " + index);
+            Debug.Log("DialogueUI: Desactivant objectes per la l√≠nia de di√†leg " + index);
             if (currentNPCDialogue != null)
             {
                 Debug.Log("DialogueUI: Desactivant l'objecte " + currentNPCDialogue.objectToHide.name);
@@ -227,12 +243,12 @@ public class DialogueUI : MonoBehaviour
             }
         }
 
-        dialogueText.text = ""; //Neteja el text abans d'escriure la nova lÌnia
+        dialogueText.text = ""; //Neteja el text abans d'escriure la nova l√≠nia
         if (typingCoroutine != null) StopCoroutine(typingCoroutine); //Atura qualsevol escriptura en curs
-        typingCoroutine = StartCoroutine(TypeLine(line.text)); //Inicia l'escriptura de la lÌnia car‡cter per car‡cter
+        typingCoroutine = StartCoroutine(TypeLine(line.text)); //Inicia l'escriptura de la l√≠nia car√†cter per car√†cter
     }
 
-    IEnumerator TypeLine(string line) //Corrutina per escriure la lÌnia car‡cter per car‡cter
+    IEnumerator TypeLine(string line) //Corrutina per escriure la l√≠nia car√†cter per car√†cter
     {
         isTyping = true;
         canContinue = false;
@@ -240,7 +256,7 @@ public class DialogueUI : MonoBehaviour
         foreach (char c in line)
         {
             dialogueText.text += c;
-            yield return new WaitForSeconds(typingSpeed); //Espera entre cada car‡cter
+            yield return new WaitForSeconds(typingSpeed); //Espera entre cada car√†cter
         }
         isTyping = false;
         canContinue = true;
@@ -269,16 +285,16 @@ public class DialogueUI : MonoBehaviour
 
     private void EndDialogue()
     {
-        Debug.Log("DialogueUI: Di‡leg acabat.");
+        Debug.Log("DialogueUI: Di√†leg acabat.");
 
         if(dialogueAudioSource != null && dialogueAudioSource.isPlaying)
         {
             dialogueAudioSource.Stop();
         }
 
-        dialoguePanel.SetActive(false); //Desactiva el panell de di‡leg
+        dialoguePanel.SetActive(false); //Desactiva el panell de di√†leg
       
-        onFinishCallback?.Invoke(); //Invoca el callback quan el di‡leg acaba
+        onFinishCallback?.Invoke(); //Invoca el callback quan el di√†leg acaba
         
         lines = null;
         index = 0;
@@ -290,7 +306,7 @@ public class DialogueUI : MonoBehaviour
 
     public void ForceCameraZoom()
     {
-        if (!useCameraZoom) return; //No fem res si no s'ha activat l'opciÛ de zoom
+        if (!useCameraZoom) return; //No fem res si no s'ha activat l'opci√≥ de zoom
         if (vcam == null) return;
     
         if (originalFOV < 0f)

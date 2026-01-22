@@ -181,6 +181,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""6151065f-f91d-40dc-9a2a-5c47c0afe392"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -511,6 +520,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""SpecialAttackStaff"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""986419e7-76d5-417d-aac9-d26edaa91aa4"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7050b155-d0be-4e4e-8fce-5b7228877e90"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1170,6 +1201,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Swing = m_Player.FindAction("Swing", throwIfNotFound: true);
         m_Player_Climb = m_Player.FindAction("Climb", throwIfNotFound: true);
         m_Player_SpecialAttackStaff = m_Player.FindAction("SpecialAttackStaff", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1275,6 +1307,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Swing;
     private readonly InputAction m_Player_Climb;
     private readonly InputAction m_Player_SpecialAttackStaff;
+    private readonly InputAction m_Player_Interact;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1326,6 +1359,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/SpecialAttackStaff".
         /// </summary>
         public InputAction @SpecialAttackStaff => m_Wrapper.m_Player_SpecialAttackStaff;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Interact".
+        /// </summary>
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1382,6 +1419,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @SpecialAttackStaff.started += instance.OnSpecialAttackStaff;
             @SpecialAttackStaff.performed += instance.OnSpecialAttackStaff;
             @SpecialAttackStaff.canceled += instance.OnSpecialAttackStaff;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         /// <summary>
@@ -1423,6 +1463,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @SpecialAttackStaff.started -= instance.OnSpecialAttackStaff;
             @SpecialAttackStaff.performed -= instance.OnSpecialAttackStaff;
             @SpecialAttackStaff.canceled -= instance.OnSpecialAttackStaff;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         /// <summary>
@@ -1815,6 +1858,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSpecialAttackStaff(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Interact" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInteract(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

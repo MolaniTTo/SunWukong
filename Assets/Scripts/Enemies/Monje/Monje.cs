@@ -90,6 +90,19 @@ public class Monje : EnemyBase
     public AudioClip ThrowLightningSound;
     public AudioClip ThrowToxicGasSound;
 
+    [Header("Spawn Settings")]
+    [SerializeField] private Vector3 defaultScale = new Vector3(-1, 1, 1);
+    private bool justSpawned = true;
+
+    private void OnEnable()
+    {
+        transform.localScale = defaultScale;
+        justSpawned = true;
+
+        lockFacing = true;
+        lookAtPlayer = false;
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -99,7 +112,12 @@ public class Monje : EnemyBase
             var pGo = GameObject.FindGameObjectWithTag("Player");
             if (pGo != null) player = pGo.transform;
         }
-        
+
+        if (justSpawned)
+        {
+            transform.localScale = defaultScale;
+        }
+
         if (rb == null) rb = GetComponent<Rigidbody2D>();
 
         if (punchCollider != null) punchCollider.SetActive(false);
@@ -121,6 +139,9 @@ public class Monje : EnemyBase
         }
 
     }
+
+
+
 
     private void OnDestroy()
     {
@@ -195,6 +216,18 @@ public class Monje : EnemyBase
         {
             playerRef = player.GetComponent<PlayerStateMachine>();
         }
+        if(player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+        StartCoroutine(AllowFlipAfterSpawn());
+        transform.localScale = defaultScale;
+    }
+
+    private IEnumerator AllowFlipAfterSpawn()
+    {
+        yield return new WaitForSeconds(0.5f);
+        justSpawned = false;
     }
 
     public bool CheckIfPlayerIsDead()
@@ -230,7 +263,7 @@ public class Monje : EnemyBase
 
     public void Flip()
     {
-        if (lockFacing || player == null) return;
+        if (lockFacing || player == null || justSpawned) return;
 
         bool shouldFaceRight;
 

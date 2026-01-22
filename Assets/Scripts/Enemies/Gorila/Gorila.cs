@@ -105,6 +105,11 @@ public class Gorila : EnemyBase
 
     private void HandleCharacterDeath()
     {
+        if (ProgressManager.Instance != null)
+        {
+            ProgressManager.Instance.RegisterBossDefeated("GorilaBoss");
+        }
+
         // Canviem d'estat a DeathState
         if (DeathState != null && StateMachine != null)
         {
@@ -115,11 +120,6 @@ public class Gorila : EnemyBase
         if (bossTriggerZone != null)
         {
             bossTriggerZone.OnBossDefeated();
-        }
-
-        if(ProgressManager.Instance != null)
-        {
-            ProgressManager.Instance.RegisterBossDefeated("GorilaBoss");
         }
 
         // Aturem moviment i desactivem collider d'atac

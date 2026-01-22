@@ -1,5 +1,6 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using System.Collections;
 
 public enum BossType { Gorila, Monje }
 public class BossTriggerZone2D : MonoBehaviour
@@ -43,6 +44,12 @@ public class BossTriggerZone2D : MonoBehaviour
                 Debug.LogWarning("BossSpawnController no encontrado! OnPlayerDefeated no funcionará correctamente.");
             }
         }
+
+        if (camNormal == null)
+        {
+            camNormal = GameObject.FindGameObjectWithTag("CinemachineMainCam").GetComponent<CinemachineCamera>();
+        }
+
 
         UpdateGameManagerReference();
     }
@@ -148,7 +155,7 @@ public class BossTriggerZone2D : MonoBehaviour
             }
             if (bossSpawnController != null)
             {
-                bossSpawnController.SpawnGorilaBossZone();
+                bossSpawnController.StartCoroutine(bossSpawnController.SpawnGorilaBossZone());
             }
             else
             {
@@ -157,20 +164,24 @@ public class BossTriggerZone2D : MonoBehaviour
                 bossSpawnController = FindFirstObjectByType<BossSpawnController>();
                 if (bossSpawnController != null)
                 {
-                    bossSpawnController.SpawnGorilaBossZone();
+                    bossSpawnController.StartCoroutine(bossSpawnController.SpawnGorilaBossZone());
                 }
             }
         }
         else if (bossType == BossType.Monje)
         {
+            if(ProgressManager.Instance != null)
+            {
+                Debug.Log("Reseteando diálogos del Monje en ProgressManager.");
+                ProgressManager.Instance.ResetBossDialogues();
+            }
             if (playerStateMachine != null)
             {
                 playerStateMachine.isPlayerOnMonjeBossZone = false;
             }
-
             if (bossSpawnController != null)
             {
-                bossSpawnController.SpawnMonjeBossZone();
+                bossSpawnController.StartCoroutine(bossSpawnController.SpawnMonjeBossZone());
             }
             else
             {
@@ -179,7 +190,7 @@ public class BossTriggerZone2D : MonoBehaviour
                 bossSpawnController = FindFirstObjectByType<BossSpawnController>();
                 if (bossSpawnController != null)
                 {
-                    bossSpawnController.SpawnMonjeBossZone();
+                    bossSpawnController.StartCoroutine(bossSpawnController.SpawnMonjeBossZone());
                 }
             }
         }

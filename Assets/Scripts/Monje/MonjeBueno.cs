@@ -5,6 +5,15 @@ public class MonjeBueno : MonoBehaviour
     [SerializeField] private NPCDialogue monjeDialogue;
     public DialogueData[] dialogue;
     public PlayerStateMachine player;
+
+    public void Start()
+    {
+        if (player == null)
+        {
+            player = FindObjectsByType<PlayerStateMachine>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0]; //Busca el PlayerStateMachine encara que estigui inactiu
+        }
+    }
+
     public void ChangeDialogue(string name)
     {
         if (monjeDialogue != null && dialogue.Length > 0)

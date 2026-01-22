@@ -6,6 +6,7 @@ public class FirstSequence : MonoBehaviour
 {
     public ScreenFade screenFader;
     public PlayerStateMachine player; //per bloquejar input del jugador
+    public bool isOnSequence = false;
 
     public void StartSequence()
     {
@@ -13,6 +14,7 @@ public class FirstSequence : MonoBehaviour
     }
     private IEnumerator FirstSequenceRoutine()
     {
+        isOnSequence = true;
         yield return new WaitForSeconds(0f); //esperem que faci el fade out
         player.animator.SetTrigger("WakeUp"); 
         Debug.Log("First Sequence started");
@@ -28,6 +30,7 @@ public class FirstSequence : MonoBehaviour
         AudioManager.Instance.PlayMusic("Base", 1f); //posem musica base
         player.ExitDialogueMode(); //el jugador ja pot moure's
         player.wakeUpFromSleep = true; //el jugador ja no està despertant-se
+        isOnSequence = false;
     }
 
 }

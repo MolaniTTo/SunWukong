@@ -37,7 +37,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     [Header("Ki System")]
     public float maxKi = 100f;
-    [HideInInspector] public float currentKi;
+    public float currentKi;
 
     [Header("Ki Costs")]
     public float specialAttackPunchCost = 50f;
@@ -72,6 +72,8 @@ public class PlayerStateMachine : MonoBehaviour
     public FirstSequence firstSequence;
     public bool isPlayerOnGorilaBossZone = false; 
     public bool isPlayerOnMonjeBossZone = false;
+    public GameObject colliderAttackStaff;
+    public ParticleSystem staffImpactEffect;
 
 
     [Header("Jump tuning")]
@@ -115,8 +117,7 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("Particles")]
     [SerializeField] private GameObject touchGroundParticlePrefab;
     private Vector2 lastGroundPoint;
-    [SerializeField] private GameObject invertedControllsParticlePrefab;
-    public GameObject invertedParticleSpawnPoint;
+    public ParticleSystem dizzyPS;
     [SerializeField] private GameObject healingAura;
 
     [Header("Attack Cooldowns")]
@@ -199,6 +200,7 @@ public class PlayerStateMachine : MonoBehaviour
 
         punchDamageCollider.SetActive(false); //desactivem el collider de dany al iniciar
         tailDamageCollider.SetActive(false); //desactivem el collider de dany al iniciar
+        colliderAttackStaff.SetActive(false); //desactivem el collider de dany del basto al iniciar
         if (!hasStaff) { staffObj.SetActive(false); }
 
     if (healingAura != null)
@@ -654,7 +656,7 @@ public class PlayerStateMachine : MonoBehaviour
         }
 
         //BASTO
-        if (staffClimbPressed && isGrounded && hasStaff) //si premem el boto dret del ratoli i estem a terra i tenim el basto
+        if (staffClimbPressed && isGrounded && hasStaff && !onSlope) //si premem el boto dret del ratoli i estem a terra i tenim el basto i no estem a una pendent
         {
             staffController.ResetStaff();
             animator.SetTrigger("StaffClimbing");
@@ -667,6 +669,8 @@ public class PlayerStateMachine : MonoBehaviour
         { 
             animator.SetFloat("speed", 0);
             animator.SetBool("isGrounded", true);
+            isHealing = false;
+            healingAura.SetActive(false);
             return; 
         }
         if (Mathf.Abs(moveInput.x) > 0.25f) //Si es mou
@@ -739,7 +743,7 @@ public class PlayerStateMachine : MonoBehaviour
         if (isHealing)
         {
             // Activar el aura si no está activa
-            if (healingAura != null && !healingAura.activeSelf)
+            if (healingAura != null && !healingAura.activeSelf && dialogueLocked == false)
             {
                 healingAura.SetActive(true);
             }
@@ -989,9 +993,31 @@ public class PlayerStateMachine : MonoBehaviour
         ChangeState(PlayerState.Climbing);
     }
 
-    private void OnSpecialAttackStaffImpact() //Cridat des de l'animacio mitjancant un Animation Event
+    private bool hasImpacted = false;
+    public float linearVelocityNeededForImpact = -20f;
+
+    public void OnSpecialAttackStaffImpact() //Cridat des de l'animacio mitjancant un Animation Event
     {
-        //activar collider del pal per fer dany
+        Debug.Log("Checking Staff Special Attack Impact...");
+        if (rb.linearVelocity.y <= linearVelocityNeededForImpact)
+        {
+            hasImpacted = true;
+            colliderAttackStaff.SetActive(true); //activa el collider de l'atac especial del basto per fer dany
+            staffImpactEffect.Play();
+            Debug.Log("Staff Special Attack Impact!");
+        }
+    }
+
+    public void OnSpecialAttackStaffImpactEnd() //Cridat des de l'animacio mitjancant un Animation Event
+    {
+        Debug.Log("Ending Staff Special Attack Impact...");
+        if (hasImpacted)
+        {
+            colliderAttackStaff.SetActive(false); //desactiva el collider de l'atac especial del basto per fer dany
+            hasImpacted = false;
+            Debug.Log("Staff Special Attack Impact End!");
+        }
+            
     }
 
 
@@ -1364,6 +1390,7 @@ public class PlayerStateMachine : MonoBehaviour
         dialogueLocked = true;
 
         ResetInputFlags();
+        isHealing = false;
         moveInput = Vector2.zero;
 
         animator.SetBool("HealButton", false);
@@ -1434,6 +1461,7 @@ public class PlayerStateMachine : MonoBehaviour
     {
         //aqui falta posar el so o efecte visual que indica que els controls estan invertits
         invertedControls = true;
+        dizzyPS.Play();
         yield return new WaitForSeconds(duration);
         invertedControls = false;
     }

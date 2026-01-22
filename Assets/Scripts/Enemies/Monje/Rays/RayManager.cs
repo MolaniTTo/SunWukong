@@ -31,6 +31,11 @@ public class RayManager : MonoBehaviour
     public AudioClip StormSound;
     public AudioClip WarningSound;
 
+    public void Start()
+    {
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
 
     public void ThrowRaysRoutine()
     {
