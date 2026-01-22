@@ -28,8 +28,10 @@ public class EnemySnake : EnemyBase
     [Header("Ground & Wall Detection")]
     public Transform groundCheck;
     public Transform wallCheck;
-    public float wallCheckDistance = 0.5f;
+    public float wallCheckDistance = 1f;
+    public float groundCheckDistance = 1f;
     public LayerMask groundLayer;
+    public LayerMask wallLayer;
 
     [Header("Movement Settings")]
     public float patrolSpeed = 2f;
@@ -44,6 +46,8 @@ public class EnemySnake : EnemyBase
     public float contactDamageCooldown = 1f;
     private float lastContactDamageTime = -999f;
     private float lastAttackTime = 0f;
+    private float attackAnimationDuration = 1f;
+    private float attackEndTime = -999f;
     public GameObject biteCollider;
 
     [Header("Audio")]
@@ -58,6 +62,9 @@ public class EnemySnake : EnemyBase
 
     [Header("PlayerRef")]
     public PlayerStateMachine playerRef;
+
+    [Header("Debug")]
+    public bool enableDebug = true;
 
     private Rigidbody2D rb;
     private Transform player;
@@ -135,6 +142,8 @@ public class EnemySnake : EnemyBase
         {
             playerRef = FindAnyObjectByType<PlayerStateMachine>();
         }
+
+        if (enableDebug) Debug.Log("[SNAKE] Initialized in PATROL state");
     }
 
     protected override void Update()
@@ -150,6 +159,8 @@ public class EnemySnake : EnemyBase
         if (isDead) return;
         
         isDead = true;
+        if (enableDebug) Debug.Log("[SNAKE] DEATH triggered");
+        
         animator.SetTrigger("Die");
 
         StopHissSound();
@@ -163,21 +174,18 @@ public class EnemySnake : EnemyBase
             rb.bodyType = RigidbodyType2D.Static;
         }
 
-        // Deshabilitar colisiones
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
 
         if (biteCollider != null)
             biteCollider.SetActive(false);
 
-        // Iniciar secuencia de muerte con efectos
         if (deathEffectHandler != null)
         {
             deathEffectHandler.TriggerDeathSequence();
         }
         else
         {
-            // Fallback: destruir después de un tiempo
             Destroy(gameObject, 2f);
         }
     }
@@ -186,12 +194,14 @@ public class EnemySnake : EnemyBase
     {
         if (isDead) return;
 
-        isAttacking = false;
-        if (biteCollider != null) 
-            biteCollider.SetActive(false);
+        if (enableDebug) Debug.Log($"[SNAKE] DAMAGED - isAttacking before: {isAttacking}");
+
+        ForceStopAttack();
 
         animator.ResetTrigger("Attack");
         animator.SetTrigger("Damaged");
+
+        if (enableDebug) Debug.Log($"[SNAKE] DAMAGED - isAttacking after: {isAttacking}");
 
         if (audioSource != null && HurtSound != null)
         {
@@ -217,6 +227,7 @@ public class EnemySnake : EnemyBase
             {
                 playerHealth.TakeDamage(contactDamage, gameObject);
                 lastContactDamageTime = Time.time;
+                if (enableDebug) Debug.Log("[SNAKE] Contact damage dealt");
             }
         }
     }
@@ -237,6 +248,8 @@ public class EnemySnake : EnemyBase
             pos.x *= -1;
             rayOrigin.localPosition = pos;
         }
+
+        if (enableDebug) Debug.Log($"[SNAKE] Flipped - facingRight: {facingRight}");
     }
 
     public void PlayHissSound()
@@ -264,26 +277,21 @@ public class EnemySnake : EnemyBase
     {
         if (player == null || isDead) return false;
 
-        // Verificar si el jugador está muerto
         if (CheckIfPlayerIsDead()) return false;
 
         Vector2 origenConOffset = (Vector2)transform.position + rayOffset;
         Vector2 direccion = facingRight ? Vector2.right : Vector2.left;
 
-        // Primero verificar distancia
         float distanceToPlayer = Vector2.Distance(origenConOffset, player.position);
         if (distanceToPlayer > detectionRange) return false;
 
-        // Verificar dirección del jugador
         Vector2 dirToPlayer = (player.position - (Vector3)origenConOffset).normalized;
         float dot = Vector2.Dot(direccion, dirToPlayer);
 
-        // Raycast para detectar al jugador
         RaycastHit2D hit = Physics2D.Raycast(origenConOffset, dirToPlayer, detectionRange, playerLayer);
 
         if (hit.collider != null && hit.collider.CompareTag("Player"))
         {
-            // Si el jugador está detrás, girar
             if (dot < 0)
             {
                 Flip();
@@ -310,6 +318,34 @@ public class EnemySnake : EnemyBase
     {
         if (player == null || rb == null || isDead) return;
 
+        Vector2 frontDirection = facingRight ? Vector2.right : Vector2.left;
+        
+        RaycastHit2D wallHit = Physics2D.Raycast(
+            wallCheck.position,
+            frontDirection,
+            wallCheckDistance,
+            wallLayer
+        );
+
+        if (wallHit.collider != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            animator.SetBool("isChasing", false);
+            animator.SetBool("isMoving", false);
+            return;
+        }
+
+        Vector2 frontGroundCheck = (Vector2)groundCheck.position + (frontDirection * 0.5f);
+        RaycastHit2D groundHit = Physics2D.Raycast(frontGroundCheck, Vector2.down, 1f, groundLayer);
+
+        if (groundHit.collider == null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            animator.SetBool("isChasing", false);
+            animator.SetBool("isMoving", false);
+            return;
+        }
+
         Vector2 direction = (player.position - transform.position).normalized;
 
         if ((direction.x > 0 && !facingRight) || (direction.x < 0 && facingRight))
@@ -317,23 +353,12 @@ public class EnemySnake : EnemyBase
             Flip();
         }
 
-        Vector2 frontDirection = facingRight ? Vector2.right : Vector2.left;
-        Vector2 frontGroundCheck = (Vector2)groundCheck.position + (frontDirection * 0.5f);
-        RaycastHit2D groundHit = Physics2D.Raycast(frontGroundCheck, Vector2.down, 1f, groundLayer);
+        rb.linearVelocity = new Vector2(direction.x * chaseSpeed, rb.linearVelocity.y);
 
-        if (groundHit.collider != null)
+        if (!isAttacking)
         {
-            rb.linearVelocity = new Vector2(direction.x * chaseSpeed, rb.linearVelocity.y);
-
-            if (!isAttacking)
-            {
-                animator.SetBool("isChasing", true);
-                animator.SetBool("isMoving", false);
-            }
-        }
-        else
-        {
-            StopMovement();
+            animator.SetBool("isChasing", true);
+            animator.SetBool("isMoving", false);
         }
     }
 
@@ -345,10 +370,20 @@ public class EnemySnake : EnemyBase
         float rightLimit = startPosition.x + patrolDistance;
 
         Vector2 wallDirection = facingRight ? Vector2.right : Vector2.left;
-        RaycastHit2D wallHit = Physics2D.Raycast(wallCheck.position, wallDirection, wallCheckDistance, groundLayer);
+        RaycastHit2D wallHit = Physics2D.Raycast(
+            wallCheck.position,
+            wallDirection,
+            wallCheckDistance,
+            wallLayer
+        );
 
         Vector2 frontGroundCheck = (Vector2)groundCheck.position + (wallDirection * 0.5f);
-        RaycastHit2D groundHit = Physics2D.Raycast(frontGroundCheck, Vector2.down, 1f, groundLayer);
+        RaycastHit2D groundHit = Physics2D.Raycast(
+            frontGroundCheck,
+            Vector2.down,
+            1f,
+            groundLayer
+        );
 
         bool needsToFlip = false;
 
@@ -379,11 +414,20 @@ public class EnemySnake : EnemyBase
     {
         if (player == null || isDead) return;
 
+        if (enableDebug) Debug.Log("[SNAKE] Attack() called");
+
         if (IsPlayerInAttackRange())
         {
             CharacterHealth playerHealth = player.GetComponent<CharacterHealth>();
             if (playerHealth != null)
+            {
                 playerHealth.TakeDamage(attackDamage, gameObject);
+                if (enableDebug) Debug.Log("[SNAKE] Attack damage dealt to player");
+            }
+        }
+        else
+        {
+            if (enableDebug) Debug.LogWarning("[SNAKE] Attack() called but player NOT in range!");
         }
 
         if (audioSource != null && AttackSound != null)
@@ -392,40 +436,111 @@ public class EnemySnake : EnemyBase
 
     public bool CanAttack()
     {
-        return Time.time - lastAttackTime >= attackCooldown && !isAttacking && !isDead;
+        float timeSinceLastAttack = Time.time - lastAttackTime;
+        float timeSinceAttackEnd = Time.time - attackEndTime;
+        
+        bool cooldownReady = timeSinceLastAttack >= attackCooldown;
+        bool notCurrentlyAttacking = !isAttacking;
+        bool animationFinished = timeSinceAttackEnd >= 0.2f;
+        bool notDead = !isDead;
+        
+        bool canAttack = cooldownReady && notCurrentlyAttacking && animationFinished && notDead;
+        
+        if (enableDebug && !canAttack)
+        {
+            Debug.Log($"[SNAKE] CanAttack = FALSE | " +
+                      $"TimeSinceLastAttack: {timeSinceLastAttack:F2} (need {attackCooldown}) | " +
+                      $"TimeSinceAttackEnd: {timeSinceAttackEnd:F2} | " +
+                      $"isAttacking: {isAttacking} | " +
+                      $"isDead: {isDead}");
+        }
+        
+        return canAttack;
     }
 
     public void StartAttack()
     {
-        if (isAttacking || isDead) return;
+        if (isAttacking || isDead)
+        {
+            if (enableDebug) Debug.LogWarning($"[SNAKE] StartAttack BLOCKED - isAttacking: {isAttacking} | isDead: {isDead}");
+            return;
+        }
+
+        if (Time.time - lastAttackTime < attackCooldown)
+        {
+            if (enableDebug) Debug.LogWarning($"[SNAKE] StartAttack BLOCKED - Cooldown not ready: {Time.time - lastAttackTime:F2}/{attackCooldown}");
+            return;
+        }
 
         isAttacking = true;
         lastAttackTime = Time.time;
 
-        animator.SetBool("isMoving", false);
         animator.SetBool("isChasing", false);
-
         animator.SetTrigger("Attack");
+
+        if (enableDebug) Debug.Log($"[SNAKE] StartAttack SUCCESS - Time: {Time.time:F2}");
     }
 
     public void OnBiteImpact()
     {
         if (isDead) return;
         
+        if (enableDebug) Debug.Log($"[SNAKE] OnBiteImpact - Time: {Time.time:F2}");
+        
         if (biteCollider != null)
             biteCollider.SetActive(true);
+        
         Attack();
     }
 
     public void OnBiteImpactEnd()
     {
+        if (enableDebug) Debug.Log($"[SNAKE] OnBiteImpactEnd - Time: {Time.time:F2}");
+        
         if (biteCollider != null)
             biteCollider.SetActive(false);
     }
 
     public void OnAttackEnd()
     {
+        if (enableDebug) Debug.Log($"[SNAKE] OnAttackEnd - Animation Event - Time: {Time.time:F2} | isAttacking: {isAttacking}");
+        
+        attackEndTime = Time.time;
+        
+        if (isAttacking)
+        {
+            isAttacking = false;
+            if (enableDebug) Debug.Log($"[SNAKE] OnAttackEnd - isAttacking set to FALSE");
+        }
+        
+        if (biteCollider != null)
+            biteCollider.SetActive(false);
+    }
+
+    public bool IsCurrentlyAttacking()
+    {
+        return isAttacking;
+    }
+
+    public void ForceStopAttack()
+    {
+        if (enableDebug) Debug.Log($"[SNAKE] ForceStopAttack called - Time: {Time.time:F2} | isAttacking before: {isAttacking}");
+        
         isAttacking = false;
+        attackEndTime = Time.time;
+        
+        if (biteCollider != null) 
+            biteCollider.SetActive(false);
+        
+        animator.ResetTrigger("Attack");
+            
+        if (enableDebug) Debug.Log($"[SNAKE] ForceStopAttack - isAttacking after: {isAttacking}");
+    }
+
+    public bool IsAttackCooldownReady()
+    {
+        return Time.time - lastAttackTime >= attackCooldown && 
+               Time.time - attackEndTime >= 0.2f;
     }
 
     public override void Die()
@@ -459,6 +574,7 @@ public class EnemySnake : EnemyBase
     private void OnDrawGizmos()
     {
         Vector3 origenGizmo = transform.position + (Vector3)rayOffset;
+
         Vector3 forwardDir = facingRight ? Vector3.right : Vector3.left;
 
         Gizmos.color = Color.blue;
@@ -466,9 +582,24 @@ public class EnemySnake : EnemyBase
 
         if (wallCheck != null)
         {
-            Vector3 wallDir = facingRight ? Vector3.right : Vector3.left;
+            Vector3 wallCheckPos = wallCheck.position + Vector3.down * 0.2f;
+
             Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(wallCheck.position, wallCheck.position + wallDir * wallCheckDistance);
+            Gizmos.DrawLine(
+                wallCheckPos,
+                wallCheckPos + forwardDir * wallCheckDistance
+            );
+        }
+
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(
+                groundCheck.position,
+                groundCheck.position + Vector3.down * groundCheckDistance
+            );
+            
+            Gizmos.DrawWireSphere(groundCheck.position, 0.1f);
         }
     }
 }
