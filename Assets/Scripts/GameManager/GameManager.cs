@@ -107,6 +107,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator EndGameRoutine()
     {
         SaveCombatStats();
+        yield return new WaitForSeconds(4f); //esperem 2 segons abans de fer el fade out
         screenFade.FadeOut();
         yield return new WaitForSeconds(2f); //esperem que faci el fade out
         SceneManager.LoadScene("Creditos");
