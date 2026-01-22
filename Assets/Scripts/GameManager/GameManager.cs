@@ -109,6 +109,7 @@ public class GameManager : MonoBehaviour
         SaveCombatStats();
         screenFade.FadeOut();
         yield return new WaitForSeconds(2f); //esperem que faci el fade out
+        SceneManager.LoadScene("Creditos");
         //ir a la escena de los creditos
         //en la escena de creditos, poner un boton de volver que nos lleve a la escena de stats
     }
@@ -139,7 +140,7 @@ public class GameManager : MonoBehaviour
             player.ForceNewState(PlayerStateMachine.PlayerState.Idle);
             player.animator.SetTrigger("Respawn");
             player.isDead = false;
-            CombatEvents.PlayerDeath(false); // notificar que ya no está muerto
+            CombatEvents.PlayerDeath(false); // notificar que ya no estï¿½ muerto
             screenFade.FadeIn();
         }
     }
