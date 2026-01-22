@@ -24,7 +24,7 @@ public class BossTriggerZone2D : MonoBehaviour
         camBoss.Priority = 0;
         invisibleWalls.SetActive(false);
 
-        // Buscar referencias si no están asignadas
+        // Buscar referencias si no estï¿½n asignadas
         if (playerObject == null)
         {
             playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -35,13 +35,13 @@ public class BossTriggerZone2D : MonoBehaviour
             playerStateMachine = playerObject.GetComponent<PlayerStateMachine>();
         }
 
-        // Buscar BossSpawnController si no está asignado
+        // Buscar BossSpawnController si no estï¿½ asignado
         if (bossSpawnController == null)
         {
             bossSpawnController = FindFirstObjectByType<BossSpawnController>();
             if (bossSpawnController == null)
             {
-                Debug.LogWarning("BossSpawnController no encontrado! OnPlayerDefeated no funcionará correctamente.");
+                Debug.LogWarning("BossSpawnController no encontrado! OnPlayerDefeated no funcionarï¿½ correctamente.");
             }
         }
 
@@ -131,6 +131,7 @@ public class BossTriggerZone2D : MonoBehaviour
             {
                 playerStateMachine.isPlayerOnMonjeBossZone = false;
             }
+            CombatEvents.PlayerWin(true);
         }
 
         camBoss.Priority = 0;
@@ -160,7 +161,7 @@ public class BossTriggerZone2D : MonoBehaviour
             else
             {
                 Debug.LogError("BossSpawnController es null! No se puede respawnear la zona del Gorila.");
-                // Intentar encontrarlo de nuevo como último recurso
+                // Intentar encontrarlo de nuevo como ï¿½ltimo recurso
                 bossSpawnController = FindFirstObjectByType<BossSpawnController>();
                 if (bossSpawnController != null)
                 {
@@ -172,7 +173,7 @@ public class BossTriggerZone2D : MonoBehaviour
         {
             if(ProgressManager.Instance != null)
             {
-                Debug.Log("Reseteando diálogos del Monje en ProgressManager.");
+                Debug.Log("Reseteando diï¿½logos del Monje en ProgressManager.");
                 ProgressManager.Instance.ResetBossDialogues();
             }
             if (playerStateMachine != null)
@@ -186,7 +187,7 @@ public class BossTriggerZone2D : MonoBehaviour
             else
             {
                 Debug.LogError("BossSpawnController es null! No se puede respawnear la zona del Monje.");
-                // Intentar encontrarlo de nuevo como último recurso
+                // Intentar encontrarlo de nuevo como ï¿½ltimo recurso
                 bossSpawnController = FindFirstObjectByType<BossSpawnController>();
                 if (bossSpawnController != null)
                 {
