@@ -718,6 +718,16 @@ public class ProgressManager : MonoBehaviour
     {
         return currentProgress;
     }
+
+    private void OnApplicationQuit()
+    {
+        // Si estamos en modo NoHit y el jugador está muerto, borrar el slot
+        if (currentProgress.isOneHitMode && player != null && player.isDead)
+        {
+            ResetSlot(currentSlot);
+            Debug.Log("Aplicación cerrada en modo NoHit con jugador muerto - Slot borrado");
+        }
+    }
 }
 
 // ==================== Estructura de dades ====================

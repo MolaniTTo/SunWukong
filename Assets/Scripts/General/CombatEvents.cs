@@ -9,6 +9,7 @@ public static class CombatEvents //no posem monobehaviour perque no cal que esti
     public static event Action<GameObject> OnEnemyKilled; //es crida quan un enemic es mort, envia el GameObject de l'enemic mort
     public static event Action<float> OnPlayerDamaged; //es crida quan el jugador rep danys, envia la quantitat de danys rebuts
     public static event Action<bool> OnPlayerDeath; //es crida quan el jugador mor, envia true si mor, false si respawna
+    public static event Action<bool> OnPlayerWin;
 
 
     public static void PlayerAttack() => OnPlayerAttack?.Invoke(); //es crida quan el jugador ataca
@@ -17,6 +18,7 @@ public static class CombatEvents //no posem monobehaviour perque no cal que esti
     public static void EnemyKilled(GameObject enemy) => OnEnemyKilled?.Invoke(enemy); //es crida quan un enemic es mort
     public static void PlayerDamaged(float damage) => OnPlayerDamaged?.Invoke(damage); //es crida quan el jugador rep danys
     public static void PlayerDeath(bool isDead) => OnPlayerDeath?.Invoke(isDead); //es crida quan el jugador mor o respawna
+    public static void PlayerWin(bool hasWon) => OnPlayerWin?.Invoke(hasWon); //es crida quan el jugador guanya
 
 
 
