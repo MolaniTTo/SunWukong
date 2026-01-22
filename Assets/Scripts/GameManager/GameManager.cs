@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
         CombatEvents.OnEnemyKilled += OnKill;
         CombatEvents.OnPlayerDamaged += OnPlayerDamaged;
         CombatEvents.OnPlayerDeath += OnPlayerDeath;
+        CombatEvents.OnPlayerWin += OnPlayerWin;
+
     }
 
     private void OnDisable()
@@ -48,6 +50,7 @@ public class GameManager : MonoBehaviour
         CombatEvents.OnEnemyKilled -= OnKill;
         CombatEvents.OnPlayerDamaged -= OnPlayerDamaged;
         CombatEvents.OnPlayerDeath -= OnPlayerDeath;
+        CombatEvents.OnPlayerWin -= OnPlayerWin;
     }
 
     private void OnAttack() => totalAttacks++;
@@ -63,7 +66,15 @@ public class GameManager : MonoBehaviour
         {
             if(isOneHitMode) //si estem en mode onetap s'acaba la partida i mostrem stats
             {
-                SaveCombatStats();     
+                SaveCombatStats();
+
+                if (ProgressManager.Instance != null)
+                {
+                    int currentSlot = PlayerPrefs.GetInt("CurrentSlot", 0);
+                    ProgressManager.Instance.ResetSlot(currentSlot);
+                    Debug.Log($"Modo NoHit: Slot {currentSlot} borrado por muerte");
+                }
+                
                 ChangeToStatsScene();
             }
             else
@@ -84,6 +95,25 @@ public class GameManager : MonoBehaviour
         }
 
     }
+
+    public void OnPlayerWin(bool hasWon)
+    {
+        if (hasWon)
+        {
+            StartCoroutine(EndGameRoutine());
+        }
+    }
+
+    private IEnumerator EndGameRoutine()
+    {
+        SaveCombatStats();
+        screenFade.FadeOut();
+        yield return new WaitForSeconds(2f); //esperem que faci el fade out
+        SceneManager.LoadScene("Creditos");
+        //ir a la escena de los creditos
+        //en la escena de creditos, poner un boton de volver que nos lleve a la escena de stats
+    }
+
 
     private IEnumerator RespawnPlayer()
     {
@@ -110,7 +140,7 @@ public class GameManager : MonoBehaviour
             player.ForceNewState(PlayerStateMachine.PlayerState.Idle);
             player.animator.SetTrigger("Respawn");
             player.isDead = false;
-            CombatEvents.PlayerDeath(false); // notificar que ya no está muerto
+            CombatEvents.PlayerDeath(false); // notificar que ya no estï¿½ muerto
             screenFade.FadeIn();
         }
     }
@@ -164,13 +194,13 @@ public class GameManager : MonoBehaviour
         return "Impresionante";
     }
 
-    private void ChangeToStatsScene()
+    private IEnumerator ChangeToStatsScene()
     {
         if (screenFade != null)
         {
             screenFade.FadeOut();
         }
-        //esperem una mica per fer el fade out
+        yield return new WaitForSeconds(2f); //esperem que faci el fade out
         UnityEngine.SceneManagement.SceneManager.LoadScene("StatsScene");
 
     }
