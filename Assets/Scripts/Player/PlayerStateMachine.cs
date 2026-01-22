@@ -1053,6 +1053,8 @@ public class PlayerStateMachine : MonoBehaviour
         }
     }
 
+    private float originalMass;
+
     private void AttachToVine() //funcio per enganxar-se a la liana
     {
         if (cachedVineCollider == null || currentVineJoint != null) { return; } //si no hi ha liana o ja estem enganxats a una liana, sortim
@@ -1066,6 +1068,9 @@ public class PlayerStateMachine : MonoBehaviour
                 rb.linearVelocity.y * vineAttachSpeedDamping
             );
         }
+
+        originalMass = rb.mass;
+        rb.mass = originalMass * 0.3f;
 
         currentVineJoint = gameObject.AddComponent<HingeJoint2D>(); //creem un nou HingeJoint2D al jugador
         currentVineJoint.connectedBody = cachedVineCollider.attachedRigidbody; //connectem el HingeJoint2D al Rigidbody2D de la liana
@@ -1092,6 +1097,9 @@ public class PlayerStateMachine : MonoBehaviour
             Destroy(currentVineJoint); //eliminem el HingeJoint2D
             currentVineJoint = null;
         }
+
+        rb.mass = originalMass;
+
         cachedVineCollider = null;
         nearVine = false;
         RestoreDefaultGravity();

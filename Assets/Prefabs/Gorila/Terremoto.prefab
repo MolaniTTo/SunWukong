@@ -132,8 +132,6 @@ MonoBehaviour:
   owner: 0
   speed: 20
   lifetime: 3
-  particleHitPrefab: {fileID: 3009009412502480865, guid: 792c1130a4b1b3144a719df67306eb0b, type: 3}
-  particleSpawnPoint: {fileID: 7501173885360068280}
   GroundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -209,7 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a35c5e00ae1574ea5ce8f5e8cb1ebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 20
+  damage: 40
   knockBackForce: 10
   knockBackDuration: 0.5
   tagToDamage: Player

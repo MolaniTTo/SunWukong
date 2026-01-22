@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
         CombatEvents.OnEnemyKilled += OnKill;
         CombatEvents.OnPlayerDamaged += OnPlayerDamaged;
         CombatEvents.OnPlayerDeath += OnPlayerDeath;
+        CombatEvents.OnPlayerWin += OnPlayerWin;
+
     }
 
     private void OnDisable()
@@ -48,6 +50,7 @@ public class GameManager : MonoBehaviour
         CombatEvents.OnEnemyKilled -= OnKill;
         CombatEvents.OnPlayerDamaged -= OnPlayerDamaged;
         CombatEvents.OnPlayerDeath -= OnPlayerDeath;
+        CombatEvents.OnPlayerWin -= OnPlayerWin;
     }
 
     private void OnAttack() => totalAttacks++;
@@ -63,7 +66,15 @@ public class GameManager : MonoBehaviour
         {
             if(isOneHitMode) //si estem en mode onetap s'acaba la partida i mostrem stats
             {
-                SaveCombatStats();     
+                SaveCombatStats();
+
+                if (ProgressManager.Instance != null)
+                {
+                    int currentSlot = PlayerPrefs.GetInt("CurrentSlot", 0);
+                    ProgressManager.Instance.ResetSlot(currentSlot);
+                    Debug.Log($"Modo NoHit: Slot {currentSlot} borrado por muerte");
+                }
+                
                 ChangeToStatsScene();
             }
             else
@@ -84,6 +95,16 @@ public class GameManager : MonoBehaviour
         }
 
     }
+
+    private void OnPlayerWin(bool hasWon)
+    {
+        if (hasWon)
+        {
+            SaveCombatStats();
+            ChangeToStatsScene();
+        }
+    }
+
 
     private IEnumerator RespawnPlayer()
     {
@@ -164,13 +185,13 @@ public class GameManager : MonoBehaviour
         return "Impresionante";
     }
 
-    private void ChangeToStatsScene()
+    private IEnumerator ChangeToStatsScene()
     {
         if (screenFade != null)
         {
             screenFade.FadeOut();
         }
-        //esperem una mica per fer el fade out
+        yield return new WaitForSeconds(2f); //esperem que faci el fade out
         UnityEngine.SceneManagement.SceneManager.LoadScene("StatsScene");
 
     }
