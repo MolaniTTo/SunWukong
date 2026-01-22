@@ -98,6 +98,7 @@ public class GameManager : MonoBehaviour
             playerRb.simulated = false; 
             playerRb.linearVelocity = Vector2.zero;
             player.transform.position = checkPoint.position;
+            player.dialogueLocked = false; //ens assegurem que el jugador pot parlar
 
 
             if (player.characterHealth != null)

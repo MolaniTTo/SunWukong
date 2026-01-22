@@ -11,6 +11,7 @@ public class ProgressManager : MonoBehaviour
     [Header("Referencias")]
     [SerializeField] private GameManager gameManager;
     [SerializeField] private PlayerStateMachine player;
+    [SerializeField] private DialogueData bossDialogueToReset; //Diàleg de boss a resetear
 
     [Header("NPC Prefabs")]
     [SerializeField] private GameObject[] npcPrefabs; //Array de prefabs de NPCs
@@ -208,27 +209,16 @@ public class ProgressManager : MonoBehaviour
             return;
         }
 
-        //Instanciem el NPC
         GameObject npcInstance = Instantiate(npcPrefab, targetSpawn.transform.position, Quaternion.identity);
+        npcInstance.SetActive(false);
 
-        //Guardem la instància al diccionari
-        if (spawnedNPCs.ContainsKey(npcID))
-        {
-            Destroy(spawnedNPCs[npcID]); //destruïm l'anterior instància si existeix
-            spawnedNPCs[npcID] = npcInstance;
-        }
-        else //si no existeix encara l'entrada
-        {
-            spawnedNPCs.Add(npcID, npcInstance); //afegim la nova entrada al diccionari
-        }
-
-        //Assignem l'ID i el diàleg a l'NPC instanciat
         NPCDialogue npcDialogue = npcInstance.GetComponent<NPCDialogue>();
         if (npcDialogue != null)
         {
             npcDialogue.npcID = npcID;
+            npcDialogue.MarkAsSpawned(); 
 
-            //Carreguem el diàleg actual des del progrés
+            // Cargar y asignar el diálogo
             string dialogueKey = GetNPCCurrentDialogue(npcID);
             if (!string.IsNullOrEmpty(dialogueKey))
             {
@@ -240,6 +230,18 @@ public class ProgressManager : MonoBehaviour
                 }
             }
         }
+
+        if (spawnedNPCs.ContainsKey(npcID))
+        {
+            Destroy(spawnedNPCs[npcID]); // Destruir instancia anterior si existe
+            spawnedNPCs[npcID] = npcInstance;
+        }
+        else
+        {
+            spawnedNPCs.Add(npcID, npcInstance);
+        }
+
+        npcInstance.SetActive(true);
 
         Debug.Log($"NPC {npcID} spawneado en {locationID}");
     }
@@ -289,6 +291,8 @@ public class ProgressManager : MonoBehaviour
             currentProgress.isOneHitMode = gameManager.isOneHitMode;
         }
 
+        currentProgress.ConvertDictionariesToLists(); //converteix els diccionaris a llistes per serialitzar-los
+
         //Ho passa a JSON i ho guarda al PlayerPrefs
         string json = JsonUtility.ToJson(currentProgress, true); //serialitza a JSON
         PlayerPrefs.SetString($"Slot{currentSlot}_GameProgress", json); //guarda el JSON al PlayerPrefs
@@ -298,8 +302,12 @@ public class ProgressManager : MonoBehaviour
         PlayerPrefs.SetFloat($"Slot{currentSlot}_Progress", progressPercentage); //guarda el percentatge en un PlayerPrefs amb el nom del slot
         PlayerPrefs.SetInt($"Slot{currentSlot}_HasData", 1); //marca que aquest slot té dades guardades
 
-        PlayerPrefs.Save(); //assegura que es guardin les dades
-        Debug.Log($"? Progreso guardado en Slot {currentSlot}: {progressPercentage:F0}%");
+        PlayerPrefs.Save();
+        Debug.Log($"Progreso guardado en Slot {currentSlot}: {progressPercentage:F0}%");
+        Debug.Log($"   - Enemigos derrotados: {currentProgress.defeatedEnemies.Count}");
+        Debug.Log($"   - Plátanos recogidos: {currentProgress.collectedBananas.Count}");
+        Debug.Log($"   - Diálogos completados: {currentProgress.completedDialogues.Count}");
+        Debug.Log($"   - Bosses derrotados: {currentProgress.defeatedBosses.Count}");
     }
 
     public void LoadProgress() //carrega el progrés desat
@@ -314,15 +322,33 @@ public class ProgressManager : MonoBehaviour
             currentProgress = new GameProgress(); //inicialitza nou progrés
             currentProgress.isOneHitMode = PlayerPrefs.GetInt($"Slot{currentSlot}_NoHit", 0) == 1; //carrega la configuració de NoHit
             Debug.Log("Nueva partida iniciada");
-            gameManager.firstSequence.StartSequence(); //nomes comença la sequència si es nova partida
+            if (gameManager != null && gameManager.firstSequence != null)
+            {
+                gameManager.firstSequence.StartSequence();
+            }
 
         }
         else
         {
             currentProgress = JsonUtility.FromJson<GameProgress>(json); //deserialitza el JSON a l'objecte GameProgress
-            Debug.Log($"Progreso cargado: {currentProgress.defeatedEnemies.Count} enemigos derrotados");
-            gameManager.screenFade.FadeIn(); //fa un fade in suau al carregar
-            AudioManager.Instance.PlayMusic("Base", 1f); //posem musica base
+
+            currentProgress.ConvertListsToDictionaries(); //converteix les llistes a diccionaris per facilitar l'accés
+
+            Debug.Log($"📂 Progreso cargado del Slot {currentSlot}:");
+            Debug.Log($"   - Enemigos derrotados: {currentProgress.defeatedEnemies.Count}");
+            Debug.Log($"   - Plátanos recogidos: {currentProgress.collectedBananas.Count}");
+            Debug.Log($"   - Diálogos completados: {currentProgress.completedDialogues.Count}");
+            Debug.Log($"   - Bosses derrotados: {currentProgress.defeatedBosses.Count}");
+
+            if (gameManager != null && gameManager.screenFade != null)
+            {
+                gameManager.screenFade.FadeIn();
+            }
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayMusic("Base", 1f);
+            }
         }
     }
 
@@ -356,6 +382,15 @@ public class ProgressManager : MonoBehaviour
         if (currentProgress.lastCheckpointPosition != Vector3.zero)
         {
             player.transform.position = currentProgress.lastCheckpointPosition; //posa al player a la posició del checkpoint
+            GameObject checkpointObj = GameObject.Find(currentProgress.lastCheckpointName);
+            if (checkpointObj != null)
+            {
+                CheckpointTrigger checkpoint = checkpointObj.GetComponent<CheckpointTrigger>();
+                if (checkpoint != null)
+                {
+                    player.lastCheckPoint = checkpoint.transform; //actualitza el checkpoint del player
+                }
+            }
         }
 
         //Aplica la configuració de NoHit
@@ -484,7 +519,7 @@ public class ProgressManager : MonoBehaviour
         if (!currentProgress.defeatedBosses.Contains(bossID))
         {
             currentProgress.defeatedBosses.Add(bossID);
-            Debug.Log($"⚡ BOSS DERROTADO: {bossID}");
+            Debug.Log($"BOSS DERROTADO: {bossID}");
             SaveProgress();
 
             // IMPORTANTE: Intentar spawnear NPCs que estaban esperando este boss
@@ -509,6 +544,26 @@ public class ProgressManager : MonoBehaviour
         }
     }
 
+    public void ResetBossDialogues()
+    {
+        if (bossDialogueToReset != null)
+        {
+            bossDialogueToReset.hasBeenUsed = false;
+
+            if (currentProgress.completedDialogues.Contains(bossDialogueToReset.name))
+            {
+                currentProgress.completedDialogues.Remove(bossDialogueToReset.name);
+            }
+
+            Debug.Log($"✓ Diálogo del boss '{bossDialogueToReset.name}' reseteado.");
+            SaveProgress();
+        }
+        else
+        {
+            Debug.LogWarning("No se ha asignado ningún diálogo de boss para resetear.");
+        }
+    }
+
 
     public bool IsEnemyDefeated(GameObject enemy) //comprova si un enemic ja ha sigut derrotat
     {
@@ -519,9 +574,23 @@ public class ProgressManager : MonoBehaviour
     
     private string GenerateEnemyID(GameObject enemy) //Generem un ID únic per a cada enemic basat en l'escena i la seva posició
     {
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name; //nom de l'escena actual
-        Vector3 pos = enemy.transform.position; //posició de l'enemic
-        return $"{sceneName}_{enemy.name}_{Mathf.RoundToInt(pos.x)}_{Mathf.RoundToInt(pos.y)}"; //ID únic
+        UniqueID uniqueID = enemy.GetComponent<UniqueID>();
+        if (uniqueID != null)
+        {
+            return uniqueID.ID;
+        }
+        else
+        {
+            // Fallback: usar posición inicial + nombre + índice en jerarquía
+            Debug.LogWarning($"El enemigo {enemy.name} no tiene componente UniqueID. Usando fallback.");
+
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            int siblingIndex = enemy.transform.GetSiblingIndex();
+            Transform parent = enemy.transform.parent;
+            string parentName = parent != null ? parent.name : "Root";
+
+            return $"{sceneName}_{parentName}_{enemy.name}_{siblingIndex}";
+        }
     }
 
     // ==================== PLÁTANOS ====================
@@ -561,6 +630,8 @@ public class ProgressManager : MonoBehaviour
     public void RegisterDialogueCompleted(DialogueData dialogue)
     {
         if (dialogue == null) return;
+
+        if(dialogue.isBossDialogue) return; //no registrem diàlegs de bosses aquí
 
         string dialogueID = dialogue.name; //Usem el nom del ScriptableObject
 
@@ -676,14 +747,14 @@ public class GameProgress //estructura que guarda totes les dades del progrés d
     public List<string> defeatedBosses = new List<string>();
 
     [System.Serializable]
-    public class StringStringPair //estructura per a parells clau-valor
+    public class StringPair //estructura per a parells clau-valor
     {
         public string key;
         public string value; 
     }
 
-    public List<StringStringPair> npcLocationsList = new List<StringStringPair>(); //llista per serialitzar el diccionari de ubicacions dels NPCs
-    public List<StringStringPair> npcCurrentDialoguesList = new List<StringStringPair>(); //llista per serialitzar el diccionari de diàlegs actuals dels NPCs
+    public List<StringPair> npcLocationsList = new List<StringPair>(); //llista per serialitzar el diccionari de ubicacions dels NPCs
+    public List<StringPair> npcDialoguesList = new List<StringPair>(); //llista per serialitzar el diccionari de diàlegs actuals dels NPCs
     public List<string> npcPendingLocations = new List<string>(); //NPCs esperando condiciones
 
     [System.NonSerialized]
@@ -694,7 +765,21 @@ public class GameProgress //estructura que guarda totes les dades del progrés d
     //Configuracio de mode NoHit
     public bool isOneHitMode = false;
 
-    public void OnAfterDeserialize()
+    public void ConvertDictionariesToLists()
+    {
+        npcLocationsList.Clear();
+        foreach (var kvp in npcLocations)
+        {
+            npcLocationsList.Add(new StringPair { key = kvp.Key, value = kvp.Value });
+        }
+
+        npcDialoguesList.Clear();
+        foreach (var kvp in npcCurrentDialogues)
+        {
+            npcDialoguesList.Add(new StringPair { key = kvp.Key, value = kvp.Value });
+        }
+    }
+    public void ConvertListsToDictionaries()
     {
         npcLocations = new Dictionary<string, string>();
         foreach (var pair in npcLocationsList)
@@ -704,24 +789,10 @@ public class GameProgress //estructura que guarda totes les dades del progrés d
         }
 
         npcCurrentDialogues = new Dictionary<string, string>();
-        foreach (var pair in npcCurrentDialoguesList) 
+        foreach (var pair in npcDialoguesList)
         {
             if (!npcCurrentDialogues.ContainsKey(pair.key))
                 npcCurrentDialogues.Add(pair.key, pair.value);
-        }
-    }
-    public void OnBeforeSerialize()
-    {
-        npcLocationsList.Clear();
-        foreach (var kvp in npcLocations)
-        {
-            npcLocationsList.Add(new StringStringPair { key = kvp.Key, value = kvp.Value });
-        }
-
-        npcCurrentDialoguesList.Clear();
-        foreach (var kvp in npcCurrentDialogues)
-        {
-            npcCurrentDialoguesList.Add(new StringStringPair { key = kvp.Key, value = kvp.Value });
         }
     }
 }

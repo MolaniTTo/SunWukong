@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
+using UnityEngine.UI;
 public class PauseMenu : MonoBehaviour
 {
     [Header("UI")]
@@ -8,9 +10,17 @@ public class PauseMenu : MonoBehaviour
 
     [Header("Ref")]
     [SerializeField] private PlayerStateMachine player; //ref del player per bloquejar controls
+    //referencia a un boton de UI
+    public Button firstSelectedButton;
 
     [Header("Input Actions")]
-    [SerializeField] private InputActionReference pauseAction; 
+    public InputActionReference pauseAction;
+
+
+
+    [Header("Refs")]
+    DialogueManager dialogueManager; //ref del DialogueManager per comprovar si hi ha un dialogo actiu
+    public FirstSequence firstSequence;
 
     private bool isPaused = false;
 
@@ -38,7 +48,7 @@ public class PauseMenu : MonoBehaviour
     void Update()
     {
         //Detectar tecla ESC o el boto de pausa del mando
-        if (pauseAction != null && pauseAction.action.WasPerformedThisFrame())
+        if (pauseAction != null && pauseAction.action.WasPerformedThisFrame() && firstSequence.isOnSequence == false && DialogueManager.Instance.DialogueActive == false)
         {
             if (isPaused)
             {
@@ -53,9 +63,11 @@ public class PauseMenu : MonoBehaviour
 
     public void PauseGame()
     {
+        firstSelectedButton.Select(); //selecciona el boto per defecte quan s'obre el menu de pausa
         isPaused = true;
         pausePanel.SetActive(true);
         Time.timeScale = 0f; //pausa el joc
+
 
         //bloqueja els controls del player
         if (player != null)

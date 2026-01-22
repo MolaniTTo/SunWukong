@@ -1,6 +1,4 @@
 using UnityEngine;
-using static EarthquakeWave;
-
 public class EarthquakeWave : MonoBehaviour
 {
     public enum Owner
@@ -13,13 +11,9 @@ public class EarthquakeWave : MonoBehaviour
     public Owner owner = Owner.Enemy;
     public float speed = 8f;
     public float lifetime = 3f;
-    public float damage = 20f;
     private float direction;
     private Transform ownerTransform;
 
-    [Header("Particle")]
-    [SerializeField] private GameObject particleHitPrefab;
-    [SerializeField] private Transform particleSpawnPoint;
 
     [Header("Collision Detection")]
     [SerializeField] private LayerMask GroundLayer;
@@ -69,11 +63,11 @@ public class EarthquakeWave : MonoBehaviour
         Vector2 pos = transform.position;
 
         //RAYCAST FRONTAL (DETECTA PARETS)
-        Vector2 frontRayOrigin = pos + ( new Vector2(0f, 0.2f) * direction); //Lleugerament elevat per evitar col·lisions amb el terra
+        Vector2 frontRayOrigin = pos + new Vector2(0f, 0.2f); //Lleugerament elevat per evitar col·lisions amb el terra
         RaycastHit2D wallHit = Physics2D.Raycast(frontRayOrigin, Vector2.right * direction, wallCheckDistance, GroundLayer);
 
         //RAYCAST INFERIOR (DETECTA EL TERRA)
-        Vector2 groundRayOrigin = pos + ( new Vector2(0f, -0.1f) * direction); //Lleugerament abaixat per evitar col·lisions amb parets
+        Vector2 groundRayOrigin = pos + new Vector2(0f, -0.1f); //Lleugerament abaixat per evitar col·lisions amb parets
         RaycastHit2D groundHit = Physics2D.Raycast(groundRayOrigin, Vector2.down, groundCheckDistance, GroundLayer);
 
         Debug.DrawRay(frontRayOrigin, Vector2.right * direction * wallCheckDistance, Color.red);
@@ -85,15 +79,10 @@ public class EarthquakeWave : MonoBehaviour
 
     private void DestroyWave()
     {
-        if (particleHitPrefab != null && particleSpawnPoint != null)
-        {
-            Instantiate(particleHitPrefab, particleSpawnPoint.position, Quaternion.identity);
-        }
-
         Destroy(gameObject);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    /*void OnTriggerEnter2D(Collider2D other)
     {
         if (owner == Owner.Enemy && other.CompareTag("Player"))
         {
@@ -117,6 +106,8 @@ public class EarthquakeWave : MonoBehaviour
         {
             knockBack.ApplyKnockBack(ownerTransform.gameObject, 0.3f, 15f);
         }
-    }
+        DestroyWave();
+
+    }*/
 
 }

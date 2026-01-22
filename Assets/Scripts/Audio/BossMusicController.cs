@@ -81,7 +81,7 @@ public class BossMusicController : MonoBehaviour
         Debug.Log("Boss derrotado, cambiando música");
     }
 
-    private void ReturnToNormalMusic() //torna a la musica normal després del boss
+    public void ReturnToNormalMusic() //torna a la musica normal després del boss
     {
         if (AudioManager.Instance != null)
         {

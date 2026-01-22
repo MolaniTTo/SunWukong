@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac904e20e0756e5478f5a82c04981101, type: 3}
+  m_Name: Dialogue1
+  m_EditorClassIdentifier: 
+  exitDialogueModeByScripting: 1
+  onlyOnce: 1
+  hasBeenUsed: 0
+  changeMusic: 1
+  dialogueMusicKey: Dialogue1
+  isBossDialogue: 1
+  lines:
+  - text: "Finalmente\u2026 alguien ha osado acercarse a mi santuario\u2026"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: 35e35681cf8adf049acb69b41bb50505, type: 3}
+  - text: "El viento trae tu olor\u2026 el mono que busca la inmortalidad\u2026"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: b748c01cd7f5f0245852ac564eaefec5, type: 3}
+  - text: "Cada paso que das retumba en mi templo\u2026 y cada paso te acerca a tu
+      fracaso."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: c0dfa6ca0f6a64442a96a1ee30c00b02, type: 3}
+  - text: "Los siglos me han ense\xF1ado a esperar\u2026 y ahora tu insolencia me
+      divierte."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: b748c01cd7f5f0245852ac564eaefec5, type: 3}
+  - text: "\xBFDe verdad crees que con esa cola y ese bast\xF3n tan delgado podr\xE1s
+      hacer algo contra m\xED?"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: 35e35681cf8adf049acb69b41bb50505, type: 3}
+  - text: "\xBFAh, s\xED? \xBFEso crees? Entonces prueba un poco de esto!"
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: edec3ddf9bd6900489ad606d8923142e, type: 3}
+  teleportNPCAfterDialogue: 0
+  nextLocationID: 
+  nextDialogueKey: 
+  requiresBossDefeated: 0
+  requiredBossID: 

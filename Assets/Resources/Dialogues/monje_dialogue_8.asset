@@ -17,6 +17,7 @@ MonoBehaviour:
   hasBeenUsed: 0
   changeMusic: 1
   dialogueMusicKey: Dialogue1
+  isBossDialogue: 0
   lines:
   - text: "En fin\u2026 no tengo escapatoria."
     animatorTrigger: 
@@ -51,6 +52,32 @@ MonoBehaviour:
     blockPlayerDuringLine: 1
     deactivateObjects: 1
     lineAudio: {fileID: 8300000, guid: faf5a956b726a7e41bfaad999027ae79, type: 3}
+  - text: Ve en busca de la inmortalidad; es un camino prohibido.
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: d014b3aaa5c20954a8e620cd29837972, type: 3}
+  - text: "La leyenda cuenta que solo un monje malvado la alcanz\xF3."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: cc8c1fc88930fa247b56378accaa0cc9, type: 3}
+  - text: "Aquel que la posee jam\xE1s muri\xF3\u2026 ni fue vencido."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: d014b3aaa5c20954a8e620cd29837972, type: 3}
+  - text: "Solo quien logre derrotarlo podr\xE1 reclamarla."
+    animatorTrigger: 
+    requestCameraZoom: 0
+    blockPlayerDuringLine: 1
+    deactivateObjects: 0
+    lineAudio: {fileID: 8300000, guid: faf5a956b726a7e41bfaad999027ae79, type: 3}
   teleportNPCAfterDialogue: 0
   nextLocationID: 
   nextDialogueKey: 
+  requiresBossDefeated: 0
+  requiredBossID: 
