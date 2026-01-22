@@ -17,6 +17,8 @@ public class TigerIdle : IState
         tiger.animator.SetBool("isRunning", false);
         tiger.StopMovement();
         idleTimer = 0f;
+        
+        Debug.Log("Tigre entra en IDLE - facingRight: " + tiger.facingRight);
     }
 
     public void Update()
@@ -37,12 +39,25 @@ public class TigerIdle : IState
         idleTimer += Time.deltaTime;
         if (idleTimer >= idleDuration)
         {
+            // CORRECCIÓN: Antes de patrullar, asegurarse de que está en una orientación válida
+            // Verificar si hay suelo delante, si no, girar
+            Vector2 frontDirection = tiger.facingRight ? Vector2.right : Vector2.left;
+            Vector2 frontGroundCheck = (Vector2)tiger.groundCheck.position + (frontDirection * 0.5f);
+            RaycastHit2D groundHit = Physics2D.Raycast(frontGroundCheck, Vector2.down, 1f, tiger.groundLayer);
+            
+            // Si no hay suelo delante, girar antes de empezar a patrullar
+            if (groundHit.collider == null)
+            {
+                Debug.Log("IDLE: No hay suelo delante, girando antes de patrullar");
+                tiger.Flip();
+            }
+            
             tiger.StateMachine.ChangeState(new TigerPatrol(tiger));
         }
     }
 
     public void Exit()
     {
-        // Nada especial al salir
+        Debug.Log("Tigre sale de IDLE - facingRight: " + tiger.facingRight);
     }
 }

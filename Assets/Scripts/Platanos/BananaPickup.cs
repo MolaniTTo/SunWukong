@@ -8,7 +8,7 @@ public class BananaPickup : MonoBehaviour
     public BananaType bananaType;
     
     [Header("Temporary Effects Duration")]
-    [SerializeField] private float blueEffectDuration = 60f; // Duración del Ki ilimitado
+    [SerializeField] private float blueEffectDuration = 15f; // Duración del Ki ilimitado
     
     [Header("Visual Feedback")]
     [SerializeField] private GameObject pickupParticles; // Partículas que se instancian al recoger
@@ -194,19 +194,19 @@ public class BananaPickup : MonoBehaviour
     }
     
     private void SpawnPlayerAura(Transform playerTransform, GameObject auraPrefab, float duration)
-    {
-        // Instanciar el aura como hijo del jugador
-        GameObject aura = Instantiate(auraPrefab, playerTransform.position, Quaternion.identity, playerTransform);
-        
-        // Posicionar el aura en el centro del jugador (ajusta Y para centrarlo verticalmente)
-        aura.transform.localPosition = new Vector3(0f, 1f, 0f); // Ajusta el 1f según la altura de tu personaje
-        
-        // Escalar el aura para que sea visible (ajusta según necesites)
-        aura.transform.localScale = new Vector3(2f, 2f, 2f); // Multiplica el tamaño por 2
-        
-        // Destruir el aura después de la duración especificada
-        Destroy(aura, duration);
-        
-        Debug.Log($"Aura activada durante {duration} segundos en posición: {aura.transform.localPosition} con escala: {aura.transform.localScale}");
-    }
+{
+    // Instanciar el aura SIN parent (no como hijo)
+    GameObject aura = Instantiate(auraPrefab, playerTransform.position, Quaternion.identity);
+    
+    // Crear un script simple para seguir al jugador
+    AuraFollower follower = aura.AddComponent<AuraFollower>();
+    follower.target = playerTransform;
+    follower.offset = new Vector3(0f, 1f, 0f);
+    
+    // Escalar el aura
+    aura.transform.localScale = new Vector3(2f, 2f, 2f);
+    
+    // Destruir después de la duración
+    Destroy(aura, duration);
+}
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6253686573904482352}
   - component: {fileID: 5968912888938953988}
   m_Layer: 0
-  m_Name: Heal
+  m_Name: VIda
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,7 +106,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 1
+  moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
   randomSeed: 0
@@ -4873,15 +4873,75 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1271525329561863365, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
       propertyPath: m_Name
-      value: Efecto fuego platano 1
+      value: Efecto fuego platano efecto con vida
+      objectReference: {fileID: 0}
+    - target: {fileID: 1466645399887493460, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1466645399887493460, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: moveWithTransform
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1466645399887493460, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1466645399887493460, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1466645399887493460, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369890082794099679, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: m_Name
+      value: LaserFuegoAura
+      objectReference: {fileID: 0}
+    - target: {fileID: 2823811406448627148, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2823811406448627148, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: moveWithTransform
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2823811406448627148, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4259278810207152704, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: m_Name
+      value: Fuego
+      objectReference: {fileID: 0}
+    - target: {fileID: 4944922127748168256, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4944922127748168256, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: moveWithTransform
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4944922127748168256, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4944922127748168256, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4944922127748168256, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6377982592007947962, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.972939
+      value: 3.4372883
       objectReference: {fileID: 0}
     - target: {fileID: 6377982592007947962, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -16.07892
+      value: -14.833162
       objectReference: {fileID: 0}
     - target: {fileID: 6377982592007947962, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4914,6 +4974,30 @@ PrefabInstance:
     - target: {fileID: 6377982592007947962, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6889805798868115894, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: m_Name
+      value: MasFuego
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719560124904448469, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719560124904448469, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 9123127074658179227, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: ShapeModule.type
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 9123127074658179227, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: moveWithTransform
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9123127074658179227, guid: 1cc7e25705090514e9edfcd628855d2e, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
