@@ -3,6 +3,8 @@ using UnityEngine;
 public class SerpienteChase : IState
 {
     private EnemySnake snake;
+    private float lastRangeCheck = 0f;
+    private float rangeCheckInterval = 0.15f;
 
     public SerpienteChase(EnemySnake snake)
     {
@@ -11,35 +13,41 @@ public class SerpienteChase : IState
 
     public void Enter()
     {
+        Debug.Log("[SNAKE CHASE] ENTER");
         snake.animator.SetBool("isChasing", true);
         snake.animator.SetBool("isMoving", false);
         snake.PlayHissSound();
+        lastRangeCheck = Time.time;
     }
 
     public void Update()
     {
-        // Si el jugador muere, volver a patrullar
         if (snake.CheckIfPlayerIsDead())
         {
+            Debug.Log("[SNAKE CHASE] Player died, returning to patrol");
             snake.StateMachine.ChangeState(new SerpientePatrol(snake));
             return;
         }
 
-        // Si el jugador está en rango de ataque y puede atacar, atacar
-        if (snake.IsPlayerInAttackRange() && snake.CanAttack())
+        if (Time.time - lastRangeCheck >= rangeCheckInterval)
         {
-            snake.StateMachine.ChangeState(new SerpienteAttack(snake));
-            return;
+            lastRangeCheck = Time.time;
+            
+            if (snake.IsPlayerInAttackRange() && snake.CanAttack())
+            {
+                Debug.Log("[SNAKE CHASE] Player in attack range, changing to ATTACK");
+                snake.StateMachine.ChangeState(new SerpienteAttack(snake));
+                return;
+            }
         }
 
-        // Si pierde de vista al jugador, volver a patrullar
         if (!snake.CanSeePlayer())
         {
+            Debug.Log("[SNAKE CHASE] Lost sight of player, returning to patrol");
             snake.StateMachine.ChangeState(new SerpientePatrol(snake));
             return;
         }
 
-        // Si no está en rango de ataque, seguir moviéndose hacia el jugador
         if (!snake.IsPlayerInAttackRange())
         {
             snake.MoveTowardsPlayer();
@@ -52,6 +60,7 @@ public class SerpienteChase : IState
 
     public void Exit()
     {
+        Debug.Log("[SNAKE CHASE] EXIT");
         snake.StopMovement();
     }
 }

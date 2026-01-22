@@ -28,7 +28,7 @@ public class EnemyTiger : EnemyBase
     public LayerMask groundLayer;
 
     [Header("Combat Settings")]
-    public float attackDamage = 15f;
+    public float attackDamage = 30f;
     public float attackCooldown = 1.5f;
     private float lastAttackTime = 0f;
 
