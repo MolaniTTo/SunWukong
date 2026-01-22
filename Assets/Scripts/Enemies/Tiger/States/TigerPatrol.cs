@@ -3,6 +3,7 @@ using UnityEngine;
 public class TigerPatrol : IState
 {
     private EnemyTiger tiger;
+    private bool hasInitialized = false;
 
     public TigerPatrol(EnemyTiger tiger)
     {
@@ -13,9 +14,9 @@ public class TigerPatrol : IState
     {
         tiger.animator.SetBool("isWalking", true);
         tiger.animator.SetBool("isRunning", false);
+        hasInitialized = false;
         
-        // SOLUCIÓN: Sincronizar la dirección de movimiento con la dirección visual
-        tiger.SyncMovementDirection();
+        Debug.Log("Tigre entra en PATROL - facingRight: " + tiger.facingRight + " Posición: " + tiger.transform.position.x);
     }
 
     public void Update()
@@ -33,6 +34,27 @@ public class TigerPatrol : IState
             return;
         }
 
+        // CORRECCIÓN: En el primer frame de patrol, verificar orientación
+        if (!hasInitialized)
+        {
+            hasInitialized = true;
+            
+            // Verificar si hay suelo delante
+            Vector2 frontDirection = tiger.facingRight ? Vector2.right : Vector2.left;
+            Vector2 frontGroundCheck = (Vector2)tiger.groundCheck.position + (frontDirection * 0.5f);
+            RaycastHit2D groundHit = Physics2D.Raycast(frontGroundCheck, Vector2.down, 1f, tiger.groundLayer);
+            
+            // Si no hay suelo o hay pared, girar inmediatamente
+            Vector2 wallDirection = tiger.facingRight ? Vector2.right : Vector2.left;
+            RaycastHit2D wallHit = Physics2D.Raycast(tiger.wallCheck.position, wallDirection, tiger.wallCheckDistance, tiger.groundLayer);
+            
+            if (groundHit.collider == null || wallHit.collider != null)
+            {
+                Debug.Log("PATROL: Corrigiendo orientación al iniciar patrulla");
+                tiger.Flip();
+            }
+        }
+
         // Continuar patrullando
         tiger.Patrol();
     }
@@ -40,5 +62,6 @@ public class TigerPatrol : IState
     public void Exit()
     {
         tiger.StopMovement();
+        Debug.Log("Tigre sale de PATROL");
     }
 }

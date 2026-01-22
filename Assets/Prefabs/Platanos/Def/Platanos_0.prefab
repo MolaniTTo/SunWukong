@@ -14172,7 +14172,7 @@ SortingGroup:
   m_GameObject: {fileID: 9155265880706028528}
   m_Enabled: 1
   m_SortingLayerID: -634182055
-  m_SortingLayer: 10
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!198 &1870402386321012057
@@ -16831,14 +16831,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bananaType: 0
-  yellowMaxKiBonus: 100
-  greenMaxHealthBonus: 100
-  redDamageBonus: 7.5
-  blueKiReductionPercent: 25
+  blueEffectDuration: 60
   pickupParticles: {fileID: 0}
-  pickupSound: {fileID: 8300000, guid: 4ccb9ca79dd6ee44b95f64384bcf0eef, type: 3}
+  pickupSound: {fileID: 8300000, guid: cefad32b76d084742a4e37a1775761fb, type: 3}
   visualContainer: {fileID: 0}
-  interactionRange: 2
+  yellowAuraPrefab: {fileID: 6183661725538748256, guid: 8d6fbbbdb5b68c14fad4e2587b26df52, type: 3}
+  redAuraPrefab: {fileID: 6941917231635216918, guid: 86f28fc19a0291a41a0a24e6351f0aaa, type: 3}
+  blueAuraPrefab: {fileID: 2089822561479285461, guid: 00afe9d87e03980449b8ea3f248c2716, type: 3}
+  shortAuraDuration: 3
   audioSource: {fileID: 3155860307853354672}
 --- !u!58 &8738498551407441358
 CircleCollider2D:

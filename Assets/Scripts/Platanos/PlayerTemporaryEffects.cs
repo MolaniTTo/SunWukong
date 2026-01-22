@@ -44,10 +44,12 @@ public class PlayerTemporaryEffects : MonoBehaviour
         // Activar aura de ki infinito si existe el prefab
         if (infiniteKiAuraPrefab != null && currentInfiniteKiAura == null)
         {
-            currentInfiniteKiAura = Instantiate(infiniteKiAuraPrefab, transform.position, Quaternion.identity, transform);
-            // Posicionar el aura en el centro del jugador
-            currentInfiniteKiAura.transform.localPosition = new Vector3(0f, 1f, 0f);
-            // Escalar el aura para que sea visible
+            currentInfiniteKiAura = Instantiate(infiniteKiAuraPrefab, transform.position, Quaternion.identity);
+            
+            AuraFollower follower = currentInfiniteKiAura.AddComponent<AuraFollower>();
+            follower.target = transform;
+            follower.offset = new Vector3(0f, 1f, 0f);
+            
             currentInfiniteKiAura.transform.localScale = new Vector3(2f, 2f, 2f);
         }
         
